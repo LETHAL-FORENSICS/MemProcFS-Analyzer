@@ -1,4 +1,4 @@
-<a href="https://github.com/PowerShell/PowerShell"><img src="https://img.shields.io/badge/Language-Powershell-blue"></a> <img src="https://img.shields.io/badge/Maintenance%20Level-Actively%20Developed-brightgreen"> <a href="https://github.com/evild3ad/MemProcFS-Analyzer/releases/latest"><img src="https://img.shields.io/github/v/release/evild3ad/MemProcFS-Analyzer?label=Release"></a> <a href="https://twitter.com/Evild3ad79"><img src="https://img.shields.io/twitter/follow/Evild3ad79?style=social"></a>
+<a href="https://github.com/PowerShell/PowerShell"><img src="https://img.shields.io/badge/Language-Powershell-blue"></a> <img src="https://img.shields.io/badge/Maintenance%20Level-Actively%20Developed-brightgreen"> <a href="https://github.com/evild3ad/MemProcFS-Analyzer/releases/latest"><img src="https://img.shields.io/github/v/release/evild3ad/MemProcFS-Analyzer?label=Release"></a> <a href="https://x.com/LETHAL_DFIR"><img src="https://img.shields.io/twitter/follow/LETHAL_DFIR?style=social"></a>
 
 # MemProcFS-Analyzer
 MemProcFS-Analyzer.ps1 is a PowerShell script utilized to simplify the usage of MemProcFS and to optimize your memory analysis workflow.
