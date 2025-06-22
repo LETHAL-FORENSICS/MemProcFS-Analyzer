@@ -1,9 +1,9 @@
-<img src="https://img.shields.io/badge/Language-Powershell-blue"> <img src="https://img.shields.io/badge/Maintenance%20Level-Actively%20Developed-brightgreen"> ![GitHub Release](https://img.shields.io/github/v/release/evild3ad/MemProcFS-Analyzer) <a href="https://twitter.com/Evild3ad79"><img src="https://img.shields.io/twitter/follow/Evild3ad79?style=social"></a>
+<p align="center"><a href="https://github.com/PowerShell/PowerShell"><img src="https://img.shields.io/badge/Language-Powershell-blue" style="text-align:center;display:block;"><a href="https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/wiki"><img src="https://img.shields.io/badge/Wiki-Documentation-blue" style="text-align:center;display:block;"></a><a href="https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/releases/latest"><img src="https://img.shields.io/github/v/release/LETHAL-FORENSICS/MemProcFS-Analyzer?label=Release" style="text-align:center;display:block;"><img src="https://img.shields.io/badge/Maintenance%20Level-Actively%20Developed-brightgreen" style="text-align:center;display:block;"><img src="https://img.shields.io/badge/Digital%20Signature-Valid-brightgreen" style="text-align:center;display:block;"><a href="https://x.com/LETHAL_DFIR"><img src="https://img.shields.io/twitter/follow/LETHAL_DFIR?style=social" style="text-align:center;display:block;"></a></p>
 
 # MemProcFS-Analyzer
 MemProcFS-Analyzer.ps1 is a PowerShell script utilized to simplify the usage of MemProcFS and to optimize your memory analysis workflow.
 
-MemProcFS - The Memory Process File System by [Ulf Frisk](https://twitter.com/ulffrisk)  
+MemProcFS - The Memory Process File System by [Ulf Frisk](https://x.com/ulffrisk)  
 https://github.com/ufrisk/MemProcFS  
 
 Features:
@@ -21,7 +21,7 @@ Features:
 * Extracting IPv4/IPv6  
 * IP2ASN Mapping and GeoIP w/ [IPinfo CLI](https://github.com/ipinfo/cli) &#8594; Get your token for free at [https://ipinfo.io/signup](https://ipinfo.io/signup)  
 * Checking for Suspicious Port Numbers
-* [Process Tree](https://github.com/evild3ad/MemProcFS-Analyzer/wiki/Process-Tree) (TreeView) including complete Process Call Chain (Special thanks to [Dominik Schmidt](https://github.com/DaFuqs))
+* [Process Tree](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/wiki/Process-Tree) (TreeView) including complete Process Call Chain (Special thanks to [Dominik Schmidt](https://github.com/DaFuqs))
 * Checking Processes for Unusual Parent-Child Relationships and Number of Instances  
 * Checking Processes for Unusual User Context
 * Checking for Process Path Masquerading and Process Name Masquerading (Damerau Levenshtein Distance)
@@ -37,7 +37,7 @@ Features:
 * Simple Prefetch View (based on Forensic Timeline)  
 * Analyzing Auto-Start Extensibility Points (ASEPs) w/ RECmd ([EZTools](https://ericzimmerman.github.io/) by Eric Zimmerman)  
 * Analyzing RecentDocs, Office Trusted Document w/ RECmd ([EZTools](https://ericzimmerman.github.io/) by Eric Zimmerman)  
-* Analyzing Registry w/ Kroll RECmd Batch File ([Kroll Batch File](https://github.com/EricZimmerman/RECmd/projects/1) by Andrew Rathbun)  
+* Analyzing Registry w/ DFIR RECmd Batch File ([DFIR Batch File](https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.md) by Andrew Rathbun)  
 * Analyzing Metadata of Recovered Process Modules (experimental)  
 * Extracting Windows Shortcut Files (LNK)  
 * Hunting Malicious Windows Shortcut Files (LNK)
@@ -78,7 +78,7 @@ Note: It's recommended to uncomment/disable the "Updater" function after install
 ![Processes](https://github.com/evild3ad/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/08.png)  
 **Fig 8:** Processes
 
-![RunningAndExited](https://github.com/evild3ad/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/09.png)  
+![RunningAndExited](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/8af0a369fab704daa9bb8b59be69f4d6a885d33f/Screenshots/09.png)  
 **Fig 9:** Running and Exited Processes
 
 ![ProcessTree](https://github.com/evild3ad/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/10.png)  
