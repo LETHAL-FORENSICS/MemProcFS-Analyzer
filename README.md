@@ -136,8 +136,8 @@ Check out [Super Easy Memory Forensics](https://www.slideshare.net/IIJ_PR/super-
 1. Download and install the latest Dokany Library Bundle &#8594; DokanSetup.exe  
 https://github.com/dokan-dev/dokany/releases/latest  
 
-2. Download and install the latest .NET 6 Desktop Runtime (Requirement for [EZTools](https://ericzimmerman.github.io/))  
-https://dotnet.microsoft.com/en-us/download/dotnet/6.0   
+2. Download and install the latest .NET 9 Desktop Runtime (Requirement for [EZTools](https://ericzimmerman.github.io/))  
+https://dotnet.microsoft.com/en-us/download/dotnet/9.0   
 
 3. Download and install the latest Windows package of ClamAV.  
 https://www.clamav.net/downloads#otherversions 
@@ -170,10 +170,13 @@ If NuGet is not installed on your system yet, you have to install it.
 
 8. Make sure to comment/uncomment (selectively enable or disable) the functions you want to play with (Elasticsearch and ELKImport are disabled by default). Check out the "Main" in the bottom of the script.  
 
-9.  Done! :smiley:   
+9. Launch the Automated Installer/Updater for MemProcFS-Analyzer  
+`.\Updater.ps1`  
+
+10.  Done! :smiley:   
 
 Notes: 
-- Turn off your antivirus protection temporarily or better exclude your MemProcFS-Analyzer directory from scanning.  
+- Turn off your antivirus protection temporarily or better exclude your MemProcFS-Analyzer directory from scanning (e.g. Zircolite).  
 - [Elasticsearch Tips](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/wiki/Elasticsearch)
 
 ## Dependencies
