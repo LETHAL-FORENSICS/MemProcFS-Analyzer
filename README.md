@@ -173,9 +173,11 @@ If NuGet is not installed on your system yet, you have to install it.
 
 10.  Done! :smiley:   
 
-Notes: 
-- Turn off your antivirus protection temporarily or better exclude your MemProcFS-Analyzer directory from scanning (e.g. Zircolite).  
-- [Elasticsearch Tips](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/wiki/Elasticsearch)
+> [!NOTE]  
+> Turn off your antivirus protection temporarily or better exclude your MemProcFS-Analyzer directory from scanning (e.g. for Zircolite).
+
+> [!TIP]
+> [How to configure Elastic](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/wiki/Elasticsearch)
 
 ## Dependencies
 7-Zip 24.09 Standalone Console (2024-11-29)  
