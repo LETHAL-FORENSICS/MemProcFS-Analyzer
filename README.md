@@ -52,7 +52,7 @@ Download the latest version of **MemProcFS-Analyzer** from the [Releases](https:
 ## Usage  
 Launch Windows PowerShell (or Windows PowerShell ISE or Visual Studio Code w/ PSVersion: 5.1) as Administrator and open/run MemProcFS-Analyzer.ps1. 
 
-![First-Run](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/01.png)  
+![First-Run](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/c72fccb18998de6a1bb40f7aa99dd7e812887f46/Screenshots/01.png)  
 **Fig 1:** Please run 'Updater.ps1' to install MemProcFS-Analyzer including all dependencies (First Run)  
 
 ![Auto-Install](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/02.png)  
