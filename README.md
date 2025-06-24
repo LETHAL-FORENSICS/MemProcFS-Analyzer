@@ -97,7 +97,7 @@ Launch Windows PowerShell (or Windows PowerShell ISE or Visual Studio Code w/ PS
 ![MapReport](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/15.png)  
 **Fig 15:** Map IPs w/ IPinfo.io
 
-![EVTX](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/16.png)  
+![EVTX](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/fed7f32994d5ca7d3685bb9b52a87ad8f21cb1b0/Screenshots/16.png)  
 **Fig 16:** Processing Windows Event Logs (EVTX)
 
 ![Zircolite](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/17.png)  
