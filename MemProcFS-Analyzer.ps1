@@ -156,7 +156,7 @@ $script:EvtxECmd = "$SCRIPT_DIR\Tools\EvtxECmd\EvtxECmd.exe"
 $script:IPinfo = "$SCRIPT_DIR\Tools\IPinfo\ipinfo.exe"
 
 # IPinfo CLI - Access Token
-$IPInfoToken = "access_token" # Please insert your Access Token here (Default: access_token)
+$Token = "access_token" # Please insert your Access Token here (Default: access_token)
 
 # jq
 $script:jq = "$SCRIPT_DIR\Tools\jq\jq-win64.exe"
