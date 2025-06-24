@@ -70,7 +70,7 @@ Launch Windows PowerShell (or Windows PowerShell ISE or Visual Studio Code w/ PS
 ![Mounted](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/06.png)  
 **Fig 6:** You can investigate the mounted memory dump by exploring drive letter
 
-![FindEvil](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/07.png)  
+![FindEvil](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/ccb23ed7ac29c4d0bf8f32dfc3e93b861a80d980/Screenshots/07.png)  
 **Fig 7:** FindEvil feature and additional analytics
 
 ![Processes](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/7ffb6b4a4b90e92cefa2c86c1f6b7aebeca3dbfa/Screenshots/08.png)  
