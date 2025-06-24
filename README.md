@@ -240,3 +240,5 @@ https://github.com/wagga40/Zircolite
 [Demo of MemProcFS with Elasticsearch](https://www.youtube.com/watch?v=JcIlowlrvyI)  
 [Sponsor MemProcFS Project](https://github.com/sponsors/ufrisk)  
 [MemProcFS-Plugins](https://github.com/ufrisk/MemProcFS-Plugins)  
+
+[![Discord](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/a71db13259314b08652ffcb0f2b10b8eaaf1e553/Screenshots/Discord.png)](https://discord.gg/pcileech)  
