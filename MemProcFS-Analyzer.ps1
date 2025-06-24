@@ -1,10 +1,10 @@
-﻿# MemProcFS-Analyzer v1.1.0
+﻿# MemProcFS-Analyzer v1.2.0
 #
 # @author:    Martin Willing
-# @copyright: Copyright (c) 2021-2024 Martin Willing. All rights reserved.
+# @copyright: Copyright (c) 2021-2025 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2024-09-02
+# @date:      2025-06-24
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -16,195 +16,68 @@
 #
 #
 # Dependencies:
-# 7-Zip 24.08 Standalone Console (2024-08-11)
+# 7-Zip 24.09 Standalone Console (2024-11-29)
 # https://www.7-zip.org/download.html --> 7za.exe (x64)
 #
-# AmcacheParser v1.5.1.0 (.NET 6)
+# AmcacheParser v1.5.2.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
-# AppCompatCacheParser v1.5.0.0 (.NET 6)
+# AppCompatCacheParser v1.5.1.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
-# ClamAV - Download --> Windows --> clamav-1.4.0.win.x64.msi (2024-08-15)
+# ClamAV - Download --> Windows --> clamav-1.4.3.win.x64.msi (2025-06-17)
 # https://www.clamav.net/downloads
 # https://docs.clamav.net/manual/Usage/Configuration.html#windows --> First Time Set-Up
 # https://blog.clamav.net/
 #
-# Dokany File System Library v2.2.0.1000 (2024-08-18)
+# Dokany File System Library v2.3.0.1000 (2025-04-19)
 # https://github.com/dokan-dev/dokany/releases/latest --> DokanSetup.exe
 #
-# Elasticsearch 8.15.0 (2024-08-08)
+# Elasticsearch 9.0.2 (2025-06-03)
 # https://www.elastic.co/downloads/elasticsearch
 #
 # entropy v1.1 (2023-07-28)
 # https://github.com/merces/entropy
 #
-# EvtxECmd v1.5.0.0 (.NET 6)
+# EvtxECmd v1.5.2.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
-# ImportExcel v7.8.9 (2024-06-21)
+# ImportExcel v7.8.10 (2024-10-21)
 # https://github.com/dfinke/ImportExcel
 #
 # IPinfo CLI 3.3.1 (2024-03-01)
 # https://github.com/ipinfo/cli
 #
-# jq v1.7.1 (2023-12-13)
+# jq v1.8.0 (2025-06-01)
 # https://github.com/stedolan/jq
 #
-# Kibana 8.15.0 (2024-08-08)
+# Kibana 9.0.2 (2025-06-03)
 # https://www.elastic.co/downloads/kibana
 #
-# lnk_parser v0.2.0 (2022-08-10)
+# lnk_parser v0.4.1 (2025-01-02)
 # https://github.com/AbdulRhmanAlfaifi/lnk_parser
 #
-# MemProcFS v5.11.4 - The Memory Process File System (2024-07-29)
+# MemProcFS v5.15.0 - The Memory Process File System (2025-06-22)
 # https://github.com/ufrisk/MemProcFS
 #
-# RECmd v2.0.0.0 (.NET 6)
+# RECmd v2.1.0.0 (.NET 9)
 # https://ericzimmerman.github.io/
+# https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.md
 #
-# SBECmd v2.0.0.0 (.NET 6)
+# SBECmd v2.1.0.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
 # xsv v0.13.0 (2018-05-12)
 # https://github.com/BurntSushi/xsv
 #
-# YARA v4.5.1 (2024-05-25)
+# YARA v4.5.4 (2025-05-27)
 # https://virustotal.github.io/yara/
 #
-# Zircolite v2.20.0 (2024-03-29)
+# Zircolite v2.40.0 (2025-04-06)
 # https://github.com/wagga40/Zircolite
 #
 #
-# Changelog:
-# Version 0.1
-# Release Date: 2021-05-15
-# Initial Release
-#
-# Version 0.2
-# Release Date: 2021-05-26
-# Added: IPinfo CLI
-# Added: Collecting Registry Hives
-# Added: AmcacheParser
-# Added: AppCompatCacheParser (ShimCache)
-# Added: PowerShell module 'ImportExcel'
-# Added: Collection of PE_INJECT (PW: infected)
-# Added: Hunting for suspicious Services
-# Added: Hunting for suspicious Scheduled Tasks
-# Fixed: Other minor fixes and improvements
-#
-# Version 0.3
-# Release Date: 2021-06-17
-# Added: OS Fingerprinting
-# Added: Registry Explorer/RECmd
-# Added: UserAssist
-# Added: Syscache
-# Added: ShellBags Explorer/SBECmd
-# Added: Registry ASEPs (Auto-Start Extensibility Points)
-# Fixed: Other minor fixes and improvements
-#
-# Version 0.4
-# Release Date: 2022-07-27
-# Added: Web Browser History
-# Added: Forensic Timeline (CSV, XLSX)
-# Added: JSON to CSV and XLSX output (including Handles)
-# Added: Collecting output of pypykatz and regsecrets (MemProcFS Plugins)
-# Added: RecentDocs
-# Added: Office Trusted Documents
-# Added: Adobe RecentDocs
-# Added: Startup Folders
-# Fixed: Other minor fixes and improvements
-#
-# Version 0.5
-# Release Date: 2022-09-06
-# Added: BitLocker Plugin
-# Added: Kroll RECmd Batch File v1.20 (2022-06-01)
-# Added: FS_Forensic_CSV + XLSX
-# Added: FS_SysInfo_Users
-# Added: Windows Shortcut Files (LNK)
-# Added: Process Modules (Metadata)
-# Added: Number of Sub-Processes (proc.csv, Processes.xlsx, and RunningandExited.xlsx)
-# Added: Colorized Running and Exited Processes (RunningandExited.xlsx)
-# Fixed: Other minor fixes and improvements
-#
-# Version 0.6
-# Release Date: 2022-10-10
-# Added: Process Tree (TreeView)
-# Added: Unusual Number of Process Instances
-# Added: Process Path Masquerading
-# Added: Process Name Masquerading (Damerau Levenshtein Distance)
-# Added: Suspicious Port Numbers
-# Fixed: Other minor fixes and improvements
-#
-# Version 0.7
-# Release Date: 2022-11-21
-# Added: User Interface
-# Added: Pagefile Support
-# Added: Zircolite - A standalone SIGMA-based detection tool for EVTX
-# Added: Event Log Overview
-# Added: Checking for Processes w/ Unusual User Context
-# Added: Process Tree: Properties View
-# Added: Searching for Cobalt Strike Beacons Configuration(s) w/ 1768.py (needs to be installed manually, disabled by default)
-# Added: Simple Prefetch View (based on Forensic Timeline)
-# Fixed: Other minor fixes and improvements
-#
-# Version 0.8
-# Release Date: 2023-01-23
-# Added: MUICache
-# Added: Windows Background Activity Moderator (BAM)
-# Added: Check if it's a Domain Controller
-# Added: Check if it's a Microsoft Exchange Server
-# Added: jq - Command-line JSON processor
-# Added: Checking for processes spawned from suspicious folder locations
-# Added: Checking for suspicious processes without any command-line arguments
-# Added: Checking for suspicious process lineage
-# Added: Checking for processes with suspicious command-line arguments
-# Added: Parent Name (proc.csv, Processes.xlsx, and RunningandExited.xlsx)
-# Added: Listing of MiniDumps
-# Added: Status Bar (User Interface)
-# Fixed: Other minor fixes and improvements
-#
-# Version 0.9
-# Release Date: 2023-05-25
-# Added: FS_Forensic_Yara (YARA Custom Rules)
-# Added: FS_Forensic_Files (incl. ClamAV)
-# Added: Checking for suspicious processes with double file extensions
-# Added: Checking for Command and Scripting Interpreters
-# Added: Recent Folder Artifacts
-# Added: Hunting Suspicious Image Mounts
-# Added: OpenSaveMRU (OpenSavePidlMRU)
-# Added: LastVisitedMRU (LastVisitedPidlMRU)
-# Added: Terminal Server Client (RDP)
-# Added: Kroll RECmd Batch File v1.21 (2023-03-04)
-# Added: Improved Microsoft Defender AntiVirus Handling
-# Added: Improved Drive Letter (Mount Point) Handling
-# Fixed: Other minor fixes and improvements
-#
-# Version 1.0.0
-# Release Date: 2023-11-22
-# Added: Improved Hunting for Suspicious Scheduled Tasks
-# Added: 318 YARA Custom Rules
-# Added: Get-YaraCustomRules
-# Added: Kroll RECmd Batch File v1.22 (2023-06-20)
-# Added: Checkbox Forensic Timeline (CSV)
-# Added: Checkbox Forensic Timeline (XLSX)
-# Added: FindEvil: AV_DETECT
-# Fixed: Other minor fixes and improvements
-#
-# Version 1.1.0
-# Release Date: 2024-09-02
-# Added: Updater.ps1
-# Added: FS_Sys_Sysinfo
-# Added: FS_Forensic_Prefetch
-# Added: 376 YARA Custom Rules
-# Added: Offline Mode
-# Added: MemProcFS.log
-# Added: Microsoft Protection Logs (MPLogs)
-# Added: ProcessesAndModules-Extended_Info.ps1 (Collect-MemoryDump)
-# Fixed: Other minor fixes and improvements
-#
-#
-# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.4780) and PowerShell 5.1 (5.1.19041.4780)
+# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.5965) and PowerShell 5.1 (5.1.19041.5965)
 #
 #
 #############################################################################################################################################################################################
@@ -212,7 +85,7 @@
 
 <#
 .SYNOPSIS
-  MemProcFS-Analyzer v1.1.0 - Automated Forensic Analysis of Windows Memory Dumps for DFIR
+  MemProcFS-Analyzer v1.2.0 - Automated Forensic Analysis of Windows Memory Dumps for DFIR
 
 .DESCRIPTION
   MemProcFS-Analyzer.ps1 is a PowerShell script utilized to simplify the usage of MemProcFS and to assist with the memory analysis workflow.
@@ -224,7 +97,7 @@
   Author - Martin Willing
 
 .LINK
-  https://github.com/evild3ad/MemProcFS-Analyzer
+  https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer
 #>
 
 #############################################################################################################################################################################################
@@ -249,6 +122,9 @@ else
 # Analysis date (ISO 8601)
 $script:Date = [datetime]::Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") # YYYY-MM-DDThh:mm:ss
 $script:Timestamp = $Date -replace ":", "" # YYYY-MM-DDThhmmss
+
+# Version
+$Version = "v1.2.0"
 
 # Tools
 
@@ -346,7 +222,7 @@ Function Header {
 
 # Windows Title
 $script:DefaultWindowsTitle = $Host.UI.RawUI.WindowTitle
-$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer v1.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
+$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
 
 # Check if MemProcFS.exe exists
 if (!(Test-Path "$($MemProcFS)"))
@@ -361,6 +237,14 @@ if (!(Test-Path "$($MemProcFS)"))
 if (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 {
     Write-Host "[Error] This PowerShell script must be run with admin rights." -ForegroundColor Red
+    $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
+    Exit
+}
+
+# Check IPinfo CLI Access Token 
+if ("$Token" -eq "access_token")
+{
+    Write-Host "[Error] No IPinfo CLI Access Token provided. Please add your personal access token in Line 159." -ForegroundColor Red
     $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
     Exit
 }
@@ -381,19 +265,19 @@ if (!(Test-Path "$($Dokany)"))
 # EZTools
 if (Get-Command -CommandType Application dotnet -ErrorAction SilentlyContinue)
 {
-    # TargetFramework (.NET 6)
-    if (!(dotnet --list-runtimes | Select-String -Pattern "^Microsoft\.WindowsDesktop\.App" -Quiet))
+    # TargetFramework (.NET 9)
+    if (!(dotnet --list-runtimes | Select-String -Pattern "^Microsoft\.WindowsDesktop\.App 9" -Quiet))
     {
-        Write-Host "[Error] Please download/install at least .NET 6.0 or newer manually:" -ForegroundColor Red
-        Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/6.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
+        Write-Host "[Error] Please download/install at least .NET 9.0 or newer manually:" -ForegroundColor Red
+        Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/9.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
         $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
         Exit
     }
 }
 else
 {
-    Write-Host "[Error] Please download/install at least .NET 6.0 or newer manually:" -ForegroundColor Red
-    Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/6.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
+    Write-Host "[Error] Please download/install at least .NET 9.0 or newer manually:" -ForegroundColor Red
+    Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/9.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
     $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
     Exit
 }
@@ -477,7 +361,7 @@ Function Show-UserInterface
     }
 
     $LinkLabel_LinkClicked=[System.Windows.Forms.LinkLabelLinkClickedEventHandler]{
-        Start-Process "https://github.com/evild3ad/MemProcFS-Analyzer"
+        Start-Process "https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer"
     }
 
     $ButtonExit_Click={
@@ -490,12 +374,12 @@ Function Show-UserInterface
 
     $CheckForUpdatesToolStripMenuItem_Click={
 
-        $CurrentVersion = "1.1.0"
+        $CurrentVersion = "1.2.0"
 
         $StatusBar.Text = "Checking latest release on GitHub ..."
 
         # Check for latest release on GitHub
-        $Repository = "evild3ad/MemProcFS-Analyzer"
+        $Repository = "LETHAL-FORENSICS/MemProcFS-Analyzer"
         $Releases = "https://api.github.com/repos/$Repository/releases"
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         if (Test-Connection -ComputerName 8.8.8.8 -Count 1 -Quiet -ErrorAction SilentlyContinue)
@@ -516,14 +400,14 @@ Function Show-UserInterface
 
                 if ($Result -eq "OK")
                 {
-                    Start-Process "https://github.com/evild3ad/MemProcFS-Analyzer/releases/latest"
+                    Start-Process "https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/releases/latest"
                 }
             }
             
             # Up-To-Date
             if ($CurrentVersion -eq $LatestRelease)
             {
-                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2024 Martin Willing`n`nYou are using the latest version of MemProcFS-Analyzer."
+                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2025 Martin Willing`n`nYou are using the latest version of MemProcFS-Analyzer."
                 $MessageTitle = "MemProcFS-Analyzer"
                 $ButtonType = "OK"
                 $MessageIcon = "Info"
@@ -534,7 +418,7 @@ Function Show-UserInterface
             # Beta-Tester
             if ($CurrentVersion -gt $LatestRelease)
             {
-                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2024 Martin Willing`n`nHello Beta-Tester. Happy Testing! ;-)"
+                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2025 Martin Willing`n`nHello Beta-Tester. Happy Testing! ;-)"
                 $MessageTitle = "MemProcFS-Analyzer"
                 $ButtonType = "OK"
                 $MessageIcon = "Info"
@@ -558,11 +442,11 @@ Function Show-UserInterface
     }
 	
 	$GitHubToolStripMenuItem_Click = {
-		Start-Process "https://github.com/evild3ad/MemProcFS-Analyzer"
+		Start-Process "https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer"
 	}
 	
 	$WikiToolStripMenuItem_Click={
-		Start-Process "https://github.com/evild3ad/MemProcFS-Analyzer/wiki"
+		Start-Process "https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/wiki"
 	}
 
     $MemProcFSToolStripMenuItem_Click = {
@@ -574,7 +458,7 @@ Function Show-UserInterface
 	}
 
     $AboutToolStripMenuItem_Click = {
-        $MessageBody = "MemProcFS-Analyzer v1.1`nCopyright (c) 2021-2024 Martin Willing"
+        $MessageBody = "MemProcFS-Analyzer $Version`nCopyright (c) 2021-2025 Martin Willing"
         $MessageTitle = "MemProcFS-Analyzer"
         $ButtonType = "OK"
         $MessageIcon = "Info"
@@ -726,7 +610,7 @@ Function Show-UserInterface
     $FormMemProcFSAnalyzer.MinimizeBox = $False
     $FormMemProcFSAnalyzer.Name = 'FormMemProcFSAnalyzer'
     $FormMemProcFSAnalyzer.StartPosition = 'CenterScreen'
-    $FormMemProcFSAnalyzer.Text = 'MemProcFS-Analyzer v1.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR'
+    $FormMemProcFSAnalyzer.Text = "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
     $FormMemProcFSAnalyzer.TopLevel = $True
     $FormMemProcFSAnalyzer.TopMost = $True
     $FormMemProcFSAnalyzer.Add_Shown({$FormMemProcFSAnalyzer.Activate()})
@@ -858,17 +742,17 @@ Function Show-UserInterface
     $OpenFileDialog1.Filter = 'Memory Dump Files (*.001;*.bin;*.dmp;*.img;*.mem;*.raw;*.vmem)|*.001;*.bin;*.dmp;*.img;*.mem;*.raw;*.vmem|All Files (*.*)|*.*'
     $OpenFileDialog1.InitialDirectory = "::{20D04FE0-3AEA-1069-A2D8-08002B30309D}" # MyComputer
     $OpenFileDialog1.ReadOnlyChecked = $True
-    $OpenFileDialog1.Title = 'MemProcFS-Analyzer v1.1.0 - Select your Raw Physical Memory Dump'
+    $OpenFileDialog1.Title = "MemProcFS-Analyzer $Version - Select your Raw Physical Memory Dump"
 
     # OpenFileDialog2
     $OpenFileDialog2.Filter = 'Page Files (*.sys)|*.sys|All Files (*.*)|*.*'
     $OpenFileDialog2.ReadOnlyChecked = $True
-    $OpenFileDialog2.Title = 'MemProcFS-Analyzer v1.1.0 - Select your pagefile.sys (Optional)'
+    $OpenFileDialog2.Title = "MemProcFS-Analyzer $Version - Select your pagefile.sys (Optional)"
 
     # ButtonStart
     $ButtonStart.DialogResult = 'OK'
     $ButtonStart.Enabled = $False
-    $ButtonStart.Location = New-Object System.Drawing.Point(446, 202) # 227
+    $ButtonStart.Location = New-Object System.Drawing.Point(446, 202)
     $ButtonStart.Name = 'ButtonStart'
     $ButtonStart.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonStart.TabIndex = 2
@@ -880,7 +764,7 @@ Function Show-UserInterface
 
     # ButtonExit
     $ButtonExit.DialogResult = 'Cancel'
-    $ButtonExit.Location = New-Object System.Drawing.Point(539, 202) # 227
+    $ButtonExit.Location = New-Object System.Drawing.Point(539, 202)
     $ButtonExit.Name = 'ButtonExit'
     $ButtonExit.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonExit.TabIndex = 3
@@ -891,7 +775,7 @@ Function Show-UserInterface
     $ToolTip1.SetToolTip($ButtonExit, 'Exit')
 
     # LinkLabel
-    $LinkLabel.Location = New-Object System.Drawing.Point(12, 204) # 227
+    $LinkLabel.Location = New-Object System.Drawing.Point(12, 204)
     $LinkLabel.Name = 'LinkLabel'
     $LinkLabel.Size = New-Object System.Drawing.Size(269, 23)
     $LinkLabel.TabIndex = 7
@@ -1040,8 +924,8 @@ Write-Host "$Logo"
 
 # Header
 Write-Output ""
-Write-Output "MemProcFS-Analyzer v1.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
-Write-Output "(c) 2021-2024 Martin Willing at Lethal-Forensics (https://lethal-forensics.com/)"
+Write-Output "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
+Write-Output "(c) 2021-2025 Martin Willing at Lethal-Forensics (https://lethal-forensics.com/)"
 Write-Output ""
 
 # Analysis date (ISO 8601)
@@ -1934,6 +1818,24 @@ if (Test-Path "$($MemProcFS)")
 
         Get-MPLogs
 
+        # FS_Process_Console
+        # https://github.com/ufrisk/MemProcFS/wiki/FS_Process_Console
+        if (Test-Path "$DriveLetter\name\conhost.exe-*\console\console.txt")
+        {
+            $Console = Get-ChildItem -Path "$DriveLetter\name\conhost.exe-*\console\console.txt"
+            $Count = ($Console | Measure-Object).Count
+
+            Write-Output "[Info]  $Count Console Information File(s) found"
+            New-Item "$OUTPUT_FOLDER\forensic\console" -ItemType Directory -Force | Out-Null
+
+            $Files = ($Console).FullName
+            ForEach($File in $Files)
+            {
+                $Suffix = $File | ForEach-Object{($_ -split "-")[1]} | ForEach-Object{($_ -split "\\")[0]}
+                Copy-Item -Path "$File" -Destination "$OUTPUT_FOLDER\forensic\console\console-$Suffix.txt"
+            }
+        }
+
         # FS_Forensic_Files
         # https://github.com/ufrisk/MemProcFS/wiki/FS_Forensic_Files
         if (Test-Path "$DriveLetter\forensic\files\files.txt")
@@ -2076,6 +1978,23 @@ if (Test-Path "$($MemProcFS)")
                     Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
                     # HorizontalAlignment "Center" of columns A-J
                     $WorkSheet.Cells["A:J"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
+            # netdns.csv --> DNS Information
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\netdns.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\netdns.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\netdns.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\netdns.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DNS" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    # HorizontalAlignment "Center" of columns A-D
+                    $WorkSheet.Cells["A:D"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -3116,6 +3035,25 @@ if (Test-Path "$($MemProcFS)")
             }
         }
 
+        # FS_SysInfo_Network - DNS
+        # https://github.com/ufrisk/MemProcFS/wiki/FS_SysInfo_Network
+        if (Test-Path "$DriveLetter\sys\net\dns\*.txt")
+        {
+            New-Item "$OUTPUT_FOLDER\sys\net\dns" -ItemType Directory -Force | Out-Null
+
+            # dns.txt
+            if (Test-Path "$DriveLetter\sys\net\dns\dns.txt")
+            { 
+                Copy-Item "$DriveLetter\sys\net\dns\dns.txt" -Destination "$OUTPUT_FOLDER\sys\net\dns\dns.txt"
+            }
+
+            # readme.txt
+            if (Test-Path "$DriveLetter\sys\net\dns\readme.txt")
+            { 
+                Copy-Item "$DriveLetter\sys\net\dns\readme.txt" -Destination "$OUTPUT_FOLDER\sys\net\dns\readme.txt"
+            }
+        }
+
         # FS_SysInfo_Process
         # https://github.com/ufrisk/MemProcFS/wiki/FS_SysInfo_Process
         if (Test-Path "$DriveLetter\sys\proc\*.txt")
@@ -3225,7 +3163,7 @@ if (Test-Path "$($MemProcFS)")
                         Unblock-File -Path "$SCRIPT_DIR\Scripts\Get-ProcessTree\Get-ProcessTree.ps1"
                         Start-Process -FilePath "powershell" -NoNewWindow -ArgumentList "-NoProfile", "-File", "$SCRIPT_DIR\Scripts\Get-ProcessTree\Get-ProcessTree.ps1", "-CSVPath", "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv"
                         Start-Sleep -Seconds 3
-                        $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer v1.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
+                        $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
                     }
                 }
             }
@@ -3238,7 +3176,7 @@ if (Test-Path "$($MemProcFS)")
                     if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv") -gt 0)
                     {
                         New-Item "$OUTPUT_FOLDER\sys\proc\XLSX" -ItemType Directory -Force | Out-Null
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t" | Sort-Object { $_."Create Time" -as [datetime] } -Descending
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t" | Sort-Object { $_."Create Time" -as [datetime] }
                         $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\XLSX\RunningAndExited.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Processes" -CellStyleSB {
                         param($WorkSheet)
                         # BackgroundColor and FontColor for specific cells of TopRow
@@ -3254,7 +3192,7 @@ if (Test-Path "$($MemProcFS)")
                         Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=NOT(OR($M1="", $M1="Exit Time"))' -BackgroundColor $ExitedColor
 
                         # Running Processes
-                        $RunningColor = [System.Drawing.Color]::FromArgb(0,255,0) # Green
+                        $RunningColor = [System.Drawing.Color]::FromArgb(0,176,80) # Green
                         Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=($M1="")' -BackgroundColor $RunningColor
                         }
                     }
@@ -6462,7 +6400,7 @@ if (Test-Path "$($MemProcFS)")
                 }
 
                 # Windows Title (Default)
-                $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer v1.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
+                $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
             }
         }
         else
@@ -9124,35 +9062,58 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
 #############################################################################################################################################################################################
 #############################################################################################################################################################################################
 
-#region Kroll_Batch
+#region DFIR_Batch
 
-Function KrollBatch {
+Function DFIRBatch {
 
-# Kroll RECmd Batch File v1.22 (2023-06-20)
-# https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/Kroll_Batch.md
-# https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/Kroll_Batch.reb
+# DFIR RECmd Batch File v2.11 (2025-03-31)
+# https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.md
+# https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.reb
+# https://github.com/AndrewRathbun
 if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive") 
 {
     if (Test-Path "$($RECmd)")
     {
         # Check if batch processing file exists
-        if (Test-Path "$SCRIPT_DIR\Tools\RECmd_BatchFiles\Kroll_Batch.reb")
+        if (Test-Path "$SCRIPT_DIR\Tools\RECmd\BatchExamples\DFIRBatch.reb")
         {
-            # Analyzing Registry Hives w/ RECmd (Kroll Batch)
-            Write-Output "[Info]  Analyzing Registry Hives w/ RECmd (Kroll Batch) ... "
-            New-Item "$OUTPUT_FOLDER\Registry\Kroll\CSV" -ItemType Directory -Force | Out-Null
+            # Sync for RECmd Batch Files
+            Write-Output "[Info]  Updating RECmd Batch Files ... "
+            & $RECmd --sync > "$SCRIPT_DIR\Tools\RECmd\Sync.log" 2> $null
+
+            # No new batch files available
+            if (Test-Path "$SCRIPT_DIR\Tools\RECmd\Sync.log")
+            {
+                if (Get-Content "$SCRIPT_DIR\Tools\RECmd\Sync.log" | Select-String -Pattern "No new batch files available" -Quiet)
+                {
+                    Write-Output "[Info]  No new RECmd Batch Files available."
+                }
+            }
+
+            # Updates found!
+            if (Test-Path "$SCRIPT_DIR\Tools\RECmd\Sync.log")
+            {
+                if (Get-Content "$SCRIPT_DIR\Tools\RECmd\Sync.log" | Select-String -Pattern "Updates found!" -Quiet)
+                {
+                    Write-Output "[Info]  RECmd Batch Files updated."
+                }
+            }
+
+            # Analyzing Registry Hives w/ RECmd (DFIR Batch)
+            Write-Output "[Info]  Analyzing Registry Hives w/ RECmd (DFIR Batch) ... "
+            New-Item "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV" -ItemType Directory -Force | Out-Null
 
             # CSV
             Get-ChildItem "$OUTPUT_FOLDER\Registry\Registry" | Where-Object {($_.FullName -match "ntuse")} | Rename-Item -NewName {$_.Name -replace "\.reghive$","ntuser.dat"}
             Get-ChildItem "$OUTPUT_FOLDER\Registry\Registry" | Where-Object {($_.FullName -match "UsrClas")} | Rename-Item -NewName {$_.Name -replace "\.reghive$","UsrClass.dat"}
             Get-ChildItem "$OUTPUT_FOLDER\Registry\Registry" | Rename-Item -NewName {$_.Name -replace "\.reghive$",""}
-            & $RECmd -d "$OUTPUT_FOLDER\Registry\Registry" --bn "$SCRIPT_DIR\Tools\RECmd_BatchFiles\Kroll_Batch.reb" --csv "$OUTPUT_FOLDER\Registry\Kroll\CSV" --csvf "Kroll.csv" > "$OUTPUT_FOLDER\Registry\Kroll\Kroll_Batch.log" 2> $null
+            & $RECmd -d "$OUTPUT_FOLDER\Registry\Registry" --bn "$SCRIPT_DIR\Tools\RECmd\BatchExamples\DFIRBatch.reb" --csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV" --csvf "DFIR.csv" > "$OUTPUT_FOLDER\Registry\DFIRBatch\DFIR_Batch.log" 2> $null
             Get-ChildItem "$OUTPUT_FOLDER\Registry\Registry" | Where-Object {($_.FullName -match "ntuse")} | Rename-Item -NewName {$_.Name -replace "ntuser\.dat$",".reghive"}
             Get-ChildItem "$OUTPUT_FOLDER\Registry\Registry" | Where-Object {($_.FullName -match "UsrClas")} | Rename-Item -NewName {$_.Name -replace "UsrClass\.dat$",".reghive"}
             Get-ChildItem "$OUTPUT_FOLDER\Registry\Registry" | Where-Object {($_.FullName -notmatch "\.reghive$")} | Rename-Item -NewName { $PSItem.Name + ".reghive" }
 
             # Rename PluginDetailFiles Directory
-            $Directory = (Get-ChildItem "$OUTPUT_FOLDER\Registry\Kroll\CSV" -Directory | Select-Object FullName).FullName
+            $Directory = (Get-ChildItem "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV" -Directory | Select-Object FullName).FullName
             if ($Directory)
             {
                 if (Test-Path "$($Directory)")
@@ -9162,22 +9123,22 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
             }
 
             # Stats
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\Kroll_Batch.log")
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\DFIR_Batch.log")
             {
-                $Total = Get-Content "$OUTPUT_FOLDER\Registry\Kroll\Kroll_Batch.log" | Select-String -Pattern "key/value pair"
+                $Total = Get-Content "$OUTPUT_FOLDER\Registry\DFIRBatch\DFIR_Batch.log" | Select-String -Pattern "key/value pair"
                 Write-Host "[Info]  $Total"
             }
 
             # XLSX
 
-            # Kroll.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\Kroll.csv")
+            # DFIR.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\DFIR.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\Kroll.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\DFIR.csv") -gt 0)
                 {
-                    New-Item "$OUTPUT_FOLDER\Registry\Kroll\XLSX" -ItemType Directory -Force | Out-Null
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\Kroll.csv" -Delimiter "," | Sort-Object { $_.LastWriteTimestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\Kroll.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_Batch" -CellStyleSB {
+                    New-Item "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX" -ItemType Directory -Force | Out-Null
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\DFIR.csv" -Delimiter "," | Sort-Object { $_.LastWriteTimestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\DFIR.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Batch" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9193,15 +9154,15 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
             }
 
             # PluginDetailFiles
-            New-Item "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles" -ItemType Directory -Force | Out-Null
+            New-Item "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles" -ItemType Directory -Force | Out-Null
 
-            # Kroll_Adobe.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Adobe.csv")
+            # DFIR_Adobe.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Adobe.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Adobe.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Adobe.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Adobe.csv" -Delimiter "," | Sort-Object { $_.LastOpened -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_Adobe.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_Adobe" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Adobe.csv" -Delimiter "," | Sort-Object { $_.LastOpened -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Adobe.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Adobe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9219,13 +9180,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_AppCompat.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppCompat.csv")
+            # DFIR_AppCompat.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppCompat.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppCompat.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppCompat.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppCompat.csv" -Delimiter "," | Sort-Object { $_.LastOpened -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_AppCompat.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_AppCompat" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppCompat.csv" -Delimiter "," | Sort-Object { $_.LastOpened -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_AppCompat.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_AppCompat" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9237,13 +9198,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_AppCompatFlags2.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppCompatFlags2.csv")
+            # DFIR_AppCompatFlags2.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppCompatFlags2.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppCompatFlags2.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppCompatFlags2.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppCompatFlags2.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_AppCompatFlags2.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_AppCompatFlags2" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppCompatFlags2.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_AppCompatFlags2.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_AppCompatFlags2" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9254,13 +9215,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_AppPaths.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppPaths.csv")
+            # DFIR_AppPaths.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppPaths.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppPaths.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppPaths.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_AppPaths.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_AppPaths.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_AppPaths" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_AppPaths.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_AppPaths.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_AppPaths" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9272,13 +9233,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_BamDam.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_BamDam.csv")
+            # DFIR_BamDam.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_BamDam.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_BamDam.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_BamDam.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_BamDam.csv" -Delimiter "," | Sort-Object { $_.ExecutionTime -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_BamDam.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_BamDam" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_BamDam.csv" -Delimiter "," | Sort-Object { $_.ExecutionTime -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_BamDam.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_BamDam" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9289,13 +9250,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_CIDSizeMRU.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_CIDSizeMRU.csv")
+            # DFIR_CIDSizeMRU.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_CIDSizeMRU.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_CIDSizeMRU.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_CIDSizeMRU.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_CIDSizeMRU.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_CIDSizeMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_CIDSizeMRU" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_CIDSizeMRU.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_CIDSizeMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_CIDSizeMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9306,13 +9267,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_DeviceClasses.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_DeviceClasses.csv")
+            # DFIR_DeviceClasses.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_DeviceClasses.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_DeviceClasses.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_DeviceClasses.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_DeviceClasses.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_DeviceClasses.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_DeviceClasses" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_DeviceClasses.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_DeviceClasses.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_DeviceClasses" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9324,13 +9285,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_ETW.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_ETW.csv")
+            # DFIR_ETW.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_ETW.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_ETW.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_ETW.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_ETW.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_ETW.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_ETW" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_ETW.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_ETW.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_ETW" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9343,13 +9304,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }            
 
-            # Kroll_FileExts.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FileExts.csv")
+            # DFIR_FileExts.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FileExts.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FileExts.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FileExts.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FileExts.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_FileExts.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_FileExts" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FileExts.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_FileExts.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_FileExts" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9361,13 +9322,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_FirewallRules.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FirewallRules.csv")
+            # DFIR_FirewallRules.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FirewallRules.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FirewallRules.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FirewallRules.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FirewallRules.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_FirewallRules.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_FirewallRules" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FirewallRules.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_FirewallRules.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_FirewallRules" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9379,13 +9340,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_FirstFolder.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FirstFolder.csv")
+            # DFIR_FirstFolder.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FirstFolder.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FirstFolder.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FirstFolder.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_FirstFolder.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_FirstFolder.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_FirstFolder" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_FirstFolder.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_FirstFolder.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_FirstFolder" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9396,13 +9357,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_JumplistData.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_JumplistData.csv")
+            # DFIR_JumplistData.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_JumplistData.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_JumplistData.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_JumplistData.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_JumplistData.csv" -Delimiter "," | Sort-Object { $_.ExecutedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_JumplistData.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_JumplistData" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_JumplistData.csv" -Delimiter "," | Sort-Object { $_.ExecutedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_JumplistData.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_JumplistData" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9413,13 +9374,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_KnownNetworks.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_KnownNetworks.csv")
+            # DFIR_KnownNetworks.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_KnownNetworks.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_KnownNetworks.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_KnownNetworks.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_KnownNetworks.csv" -Delimiter "," | Sort-Object { $_.LastConnectedLOCAL -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_KnownNetworks.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_KnownNetworks" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_KnownNetworks.csv" -Delimiter "," | Sort-Object { $_.LastConnectedLOCAL -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_KnownNetworks.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_KnownNetworks" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9431,13 +9392,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_LastVisitedPidlMRU.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_LastVisitedPidlMRU.csv")
+            # DFIR_LastVisitedPidlMRU.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_LastVisitedPidlMRU.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_LastVisitedPidlMRU.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_LastVisitedPidlMRU.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_LastVisitedPidlMRU.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_LastVisitedPidlMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_LastVisitedPidlMRU" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_LastVisitedPidlMRU.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_LastVisitedPidlMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_LastVisitedPidlMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9450,13 +9411,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_MountedDevices.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_MountedDevices.csv")
+            # DFIR_MountedDevices.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_MountedDevices.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_MountedDevices.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_MountedDevices.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_MountedDevices.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_MountedDevices.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_MountedDevices" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_MountedDevices.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_MountedDevices.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_MountedDevices" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9465,13 +9426,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_NetworkAdapters.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_NetworkAdapters.csv")
+            # DFIR_NetworkAdapters.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_NetworkAdapters.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_NetworkAdapters.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_NetworkAdapters.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_NetworkAdapters.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_NetworkAdapters.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_NetworkAdapters" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_NetworkAdapters.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_NetworkAdapters.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_NetworkAdapters" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9483,13 +9444,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_NetworkSetup2.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_NetworkSetup2.csv")
+            # DFIR_NetworkSetup2.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_NetworkSetup2.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_NetworkSetup2.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_NetworkSetup2.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_NetworkSetup2.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_NetworkSetup2.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_NetworkSetup2" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_NetworkSetup2.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_NetworkSetup2.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_NetworkSetup2" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9500,13 +9461,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_OpenSavePidlMRU.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_OpenSavePidlMRU.csv")
+            # DFIR_OpenSavePidlMRU.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_OpenSavePidlMRU.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_OpenSavePidlMRU.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_OpenSavePidlMRU.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_OpenSavePidlMRU.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_OpenSavePidlMRU.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_OpenSavePidlMRU" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_OpenSavePidlMRU.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_OpenSavePidlMRU.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_OpenSavePidlMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9519,13 +9480,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_Products.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Products.csv")
+            # DFIR_Products.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Products.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Products.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Products.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Products.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_Products.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_Products" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Products.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Products.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Products" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9538,13 +9499,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_ProfileList.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_ProfileList.csv")
+            # DFIR_ProfileList.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_ProfileList.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_ProfileList.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_ProfileList.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_ProfileList.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_ProfileList.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_ProfileList" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_ProfileList.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_ProfileList.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_ProfileList" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9556,13 +9517,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_RADAR.csv
-                   if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RADAR.csv")
+            # DFIR_RADAR.csv
+                   if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RADAR.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RADAR.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RADAR.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RADAR.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_RADAR.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_RADAR" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RADAR.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_RADAR.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_RADAR" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9574,13 +9535,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }     
 
-            # Kroll_RecentDocs.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RecentDocs.csv")
+            # DFIR_RecentDocs.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RecentDocs.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RecentDocs.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RecentDocs.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RecentDocs.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_RecentDocs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_RecentDocs" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RecentDocs.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_RecentDocs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_RecentDocs" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9593,13 +9554,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_RunMRU.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RunMRU.csv")
+            # DFIR_RunMRU.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RunMRU.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RunMRU.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RunMRU.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_RunMRU.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_RunMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_RunMRU" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RunMRU.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_RunMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_RunMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9611,13 +9572,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_SAMBuiltin.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_SAMBuiltin.csv")
+            # DFIR_SAMBuiltin.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_SAMBuiltin.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_SAMBuiltin.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_SAMBuiltin.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_SAMBuiltin.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_SAMBuiltin.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_SAMBuiltin" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_SAMBuiltin.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_SAMBuiltin.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_SAMBuiltin" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9629,13 +9590,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_SCSI.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_SCSI.csv")
+            # DFIR_SCSI.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_SCSI.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_SCSI.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_SCSI.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_SCSI.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_SCSI.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_SCSI" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_SCSI.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_SCSI.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_SCSI" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9647,13 +9608,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_Services.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Services.csv")
+            # DFIR_Services.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Services.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Services.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Services.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Services.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_Services.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_Services" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Services.csv" -Delimiter "," | Sort-Object { $_.OpenedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Services.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Services" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9666,13 +9627,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_Taskband.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Taskband.csv")
+            # DFIR_Taskband.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Taskband.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Taskband.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Taskband.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_Taskband.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_Taskband.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_Taskband" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_Taskband.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Taskband.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Taskband" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9683,13 +9644,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_TaskCache.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TaskCache.csv")
+            # DFIR_TaskCache.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TaskCache.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TaskCache.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TaskCache.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TaskCache.csv" -Delimiter "," | Sort-Object { $_.CreatedOn -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_TaskCache.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_TaskCache" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TaskCache.csv" -Delimiter "," | Sort-Object { $_.CreatedOn -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TaskCache.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TaskCache" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9701,13 +9662,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_TimeZoneInfo.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TimeZoneInfo.csv")
+            # DFIR_TimeZoneInfo.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TimeZoneInfo.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TimeZoneInfo.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TimeZoneInfo.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TimeZoneInfo.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_TimeZoneInfo.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_TimeZoneInfo" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TimeZoneInfo.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TimeZoneInfo.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TimeZoneInfo" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9721,13 +9682,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_TrustedDocuments.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TrustedDocuments.csv")
+            # DFIR_TrustedDocuments.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TrustedDocuments.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TrustedDocuments.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TrustedDocuments.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TrustedDocuments.csv" -Delimiter ","
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_TrustedDocuments.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_TrustedDocuments" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TrustedDocuments.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TrustedDocuments.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TrustedDocuments" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9740,13 +9701,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_TypedURLs.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TypedURLs.csv")
+            # DFIR_TypedURLs.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TypedURLs.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TypedURLs.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TypedURLs.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_TypedURLs.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_TypedURLs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_TypedURLs" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_TypedURLs.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TypedURLs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TypedURLs" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9758,13 +9719,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_UnInstall.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UnInstall.csv")
+            # DFIR_UnInstall.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UnInstall.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UnInstall.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UnInstall.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UnInstall.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_UnInstall.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_UnInstall" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UnInstall.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_UnInstall.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_UnInstall" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9777,13 +9738,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_USB.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_USB.csv")
+            # DFIR_USB.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_USB.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_USB.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_USB.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_USB.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_USB.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_USB" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_USB.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_USB.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_USB" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9795,13 +9756,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_USBSTOR.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_USBSTOR.csv")
+            # DFIR_USBSTOR.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_USBSTOR.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_USBSTOR.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_USBSTOR.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_USBSTOR.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_USBSTOR.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_USBSTOR" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_USBSTOR.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_USBSTOR.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_USBSTOR" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9813,13 +9774,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_UserAccounts.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UserAccounts.csv")
+            # DFIR_UserAccounts.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UserAccounts.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UserAccounts.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UserAccounts.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UserAccounts.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_UserAccounts.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_UserAccounts" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UserAccounts.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_UserAccounts.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_UserAccounts" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9832,13 +9793,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_UserAssist.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UserAssist.csv")
+            # DFIR_UserAssist.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UserAssist.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UserAssist.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UserAssist.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_UserAssist.csv" -Delimiter "," | Sort-Object { $_.LastExecuted -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_UserAssist.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_UserAssist" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_UserAssist.csv" -Delimiter "," | Sort-Object { $_.LastExecuted -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_UserAssist.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_UserAssist" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9849,13 +9810,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_VolumeInfoCache.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_VolumeInfoCache.csv")
+            # DFIR_VolumeInfoCache.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_VolumeInfoCache.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_VolumeInfoCache.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_VolumeInfoCache.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_VolumeInfoCache.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_VolumeInfoCache.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_VolumeInfoCache" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_VolumeInfoCache.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_VolumeInfoCache.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_VolumeInfoCache" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9867,13 +9828,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_WindowsApp.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WindowsApp.csv")
+            # DFIR_WindowsApp.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WindowsApp.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WindowsApp.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WindowsApp.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WindowsApp.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_WindowsApp.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_WindowsApp" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WindowsApp.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_WindowsApp.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_WindowsApp" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9884,13 +9845,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_WindowsPortableDevices.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WindowsPortableDevices.csv")
+            # DFIR_WindowsPortableDevices.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WindowsPortableDevices.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WindowsPortableDevices.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WindowsPortableDevices.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WindowsPortableDevices.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_WindowsPortableDevices.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_WindowsPortableDevices" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WindowsPortableDevices.csv" -Delimiter "," | Sort-Object { $_.Timestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_WindowsPortableDevices.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_WindowsPortableDevices" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9902,13 +9863,13 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
 
-            # Kroll_WordWheelQuery.csv
-            if (Test-Path "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WordWheelQuery.csv")
+            # DFIR_WordWheelQuery.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WordWheelQuery.csv")
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WordWheelQuery.csv") -gt 0)
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WordWheelQuery.csv") -gt 0)
                 {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\Kroll\CSV\PluginDetailFiles\Kroll_WordWheelQuery.csv" -Delimiter "," | Sort-Object { $_.LastWriteTimestamp -as [datetime] } -Descending
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\Kroll\XLSX\PluginDetailFiles\Kroll_WordWheelQuery.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kroll_WordWheelQuery" -CellStyleSB {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_WordWheelQuery.csv" -Delimiter "," | Sort-Object { $_.LastWriteTimestamp -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_WordWheelQuery.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_WordWheelQuery" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
                     $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
@@ -9920,6 +9881,10 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 }
             }
         }
+        else
+        {
+            Write-Host "[Error] DFIRBatch.reb NOT found." -ForegroundColor Red
+        }
     }
     else
     {
@@ -9929,7 +9894,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
 
 }
 
-#endregion Kroll_Batch
+#endregion DFIR_Batch
 
 #############################################################################################################################################################################################
 #############################################################################################################################################################################################
@@ -10647,7 +10612,7 @@ if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogs\Microsoft-Windows-VHDMP-Operat
             & $EvtxECmd -f "$OUTPUT_FOLDER\EventLogs\VHDMP\Microsoft-Windows-VHDMP-Operational.evtx" --csv "$OUTPUT_FOLDER\EventLogs\VHDMP\CSV" --csvf "EvtxECmd.csv" > "$OUTPUT_FOLDER\EventLogs\VHDMP\EvtxECmd.log" 2> $null
 
             # Windows Title (Default)
-            $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer v1.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
+            $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
 
             # Stats
             if (Get-Content "$OUTPUT_FOLDER\EventLogs\VHDMP\EvtxECmd.log" | Select-String -Pattern "^Total event log records found:" -Quiet)
@@ -11042,7 +11007,7 @@ $Time_Modules = ($EndTime_Modules-$StartTime_Modules)
 
 Function Invoke-1768 {
 
-# 1768.py v.0.0.21 (2024-05-22)
+# 1768.py v.0.0.23 (2025-03-07)
 # https://blog.didierstevens.com/?s=1768.py
 # https://github.com/DidierStevens/DidierStevensSuite/blob/master/1768.py
 if ((Test-Path "$SCRIPT_DIR\Scripts\1768\1768.py") -and (Test-Path "$SCRIPT_DIR\Scripts\1768\1768.json"))
@@ -11249,12 +11214,12 @@ if ($ClamAV -eq "Enabled")
 }
 
 Documents
-KrollBatch
+DFIRBatch
 #LNK
 #LNK_Hunt
 ImageMount
 Modules
-Invoke-1768
+#Invoke-1768
 SecureArchive
 Footer
 
