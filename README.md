@@ -151,7 +151,7 @@ Launch Windows PowerShell console as Administrator.
 `write.exe .\clamd.conf` &#8594; Comment or remove the line that says "Example".  
 https://docs.clamav.net/manual/Usage/Configuration.html#windows  
 
-5. Optimize ClamAV scan speed performance (30% faster)    
+5. Optimize ClamAV scan speed performance (30% faster)  
 Open "C:\Program Files\ClamAV\clamd.conf" with your text editor and search for: "Don't scan files and directories matching regex"  
 `ExcludePath "\\heaps\\"`  
 `ExcludePath "\\handles\\"`  
@@ -168,12 +168,11 @@ Open "MemProcFS-Analyzer.ps1" with your text editor, search for "Please insert y
 `.\Updater.ps1`  
 
 9. Install Python 3.x (and check the box "Add Python 3.x to PATH").  
-
-Install dependencies for Zircolite: 
-`cd .\Tools\Zircolite`
+Install dependencies for Zircolite:  
+`cd .\Tools\Zircolite`  
 `pip3 install -r requirements.txt`  
 
-10.  Done! :smiley:   
+1.   Done! :smiley:   
 
 Notes: 
 - Turn off your antivirus protection temporarily or better exclude your MemProcFS-Analyzer directory from scanning (e.g. Zircolite).  
