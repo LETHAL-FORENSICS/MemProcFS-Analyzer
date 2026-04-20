@@ -170,7 +170,8 @@ Open "MemProcFS-Analyzer.ps1" with your text editor, search for "Please insert y
 9. Install Python 3.x (and check the box "Add Python 3.x to PATH").  
 Install dependencies for Zircolite:  
 `cd .\Tools\Zircolite`  
-`pip3 install -r requirements.txt`  
+`python -m pip install --upgrade pip`  
+`python -m pip install -r requirements.txt`  
 
 1.   Done! :smiley:   
 
