@@ -1,10 +1,10 @@
-﻿# MemProcFS-Analyzer v1.2.0
+﻿# MemProcFS-Analyzer v1.2.1
 #
 # @author:    Martin Willing
-# @copyright: Copyright (c) 2021-2025 Martin Willing. All rights reserved. Licensed under the MIT license.
+# @copyright: Copyright (c) 2021-2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2025-06-24
+# @date:      2026-04-20
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -16,7 +16,11 @@
 #
 #
 # Dependencies:
-# 7-Zip 24.09 Standalone Console (2024-11-29)
+#
+# 1768.py v.0.0.23 (2025-03-07)
+# https://blog.didierstevens.com/?s=1768.py
+#
+# 7-Zip 26.00 Standalone Console (2026-02-12)
 # https://www.7-zip.org/download.html --> 7za.exe (x64)
 #
 # AmcacheParser v1.5.2.0 (.NET 9)
@@ -25,15 +29,15 @@
 # AppCompatCacheParser v1.5.1.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
-# ClamAV - Download --> Windows --> clamav-1.4.3.win.x64.msi (2025-06-17)
+# ClamAV - Download --> Windows --> clamav-1.5.2.win.x64.msi (2026-03-04)
 # https://www.clamav.net/downloads
 # https://docs.clamav.net/manual/Usage/Configuration.html#windows --> First Time Set-Up
 # https://blog.clamav.net/
 #
-# Dokany File System Library v2.3.0.1000 (2025-04-19)
+# Dokany File System Library v2.3.1.1000 (2025-09-28)
 # https://github.com/dokan-dev/dokany/releases/latest --> DokanSetup.exe
 #
-# Elasticsearch 9.0.2 (2025-06-03)
+# Elasticsearch 9.3.3 (2026-04-08)
 # https://www.elastic.co/downloads/elasticsearch
 #
 # entropy v1.1 (2023-07-28)
@@ -48,16 +52,16 @@
 # IPinfo CLI 3.3.1 (2024-03-01)
 # https://github.com/ipinfo/cli
 #
-# jq v1.8.0 (2025-06-01)
+# jq v1.8.1 (2025-07-01)
 # https://github.com/stedolan/jq
 #
-# Kibana 9.0.2 (2025-06-03)
+# Kibana 9.3.3 (2026-04-08)
 # https://www.elastic.co/downloads/kibana
 #
-# lnk_parser v0.4.1 (2025-01-02)
+# lnk_parser v0.4.3 (2026-02-17)
 # https://github.com/AbdulRhmanAlfaifi/lnk_parser
 #
-# MemProcFS v5.15.0 - The Memory Process File System (2025-06-22)
+# MemProcFS v5.17.6 - The Memory Process File System (2026-04-19)
 # https://github.com/ufrisk/MemProcFS
 #
 # RECmd v2.1.0.0 (.NET 9)
@@ -70,14 +74,14 @@
 # xsv v0.13.0 (2018-05-12)
 # https://github.com/BurntSushi/xsv
 #
-# YARA v4.5.4 (2025-05-27)
+# YARA v4.5.5 (2025-10-30)
 # https://virustotal.github.io/yara/
 #
-# Zircolite v2.40.0 (2025-04-06)
+# Zircolite v3.6.3 (2026-04-06)
 # https://github.com/wagga40/Zircolite
 #
 #
-# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.5965) and PowerShell 5.1 (5.1.19041.5965)
+# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.6456) and PowerShell 5.1 (5.1.19041.6456)
 #
 #
 #############################################################################################################################################################################################
@@ -85,7 +89,7 @@
 
 <#
 .SYNOPSIS
-  MemProcFS-Analyzer v1.2.0 - Automated Forensic Analysis of Windows Memory Dumps for DFIR
+  MemProcFS-Analyzer v1.2.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR
 
 .DESCRIPTION
   MemProcFS-Analyzer.ps1 is a PowerShell script utilized to simplify the usage of MemProcFS and to assist with the memory analysis workflow.
@@ -124,7 +128,7 @@ $script:Date = [datetime]::Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")
 $script:Timestamp = $Date -replace ":", "" # YYYY-MM-DDThhmmss
 
 # Version
-$Version = "v1.2.0"
+$Version = "v1.2.1"
 
 # Tools
 
@@ -156,7 +160,7 @@ $script:EvtxECmd = "$SCRIPT_DIR\Tools\EvtxECmd\EvtxECmd.exe"
 $script:IPinfo = "$SCRIPT_DIR\Tools\IPinfo\ipinfo.exe"
 
 # IPinfo CLI - Access Token
-$Token = "access_token" # Please insert your Access Token here (Default: access_token)
+$script:IPInfoToken = "access_token" # Please insert your Access Token here (Default: access_token)
 
 # jq
 $script:jq = "$SCRIPT_DIR\Tools\jq\jq-win64.exe"
@@ -182,9 +186,6 @@ $script:xsv = "$SCRIPT_DIR\Tools\xsv\xsv.exe"
 # YARA
 $script:yara64 = "$SCRIPT_DIR\Tools\YARA\yara64.exe"
 
-# Zircolite
-$script:zircolite = "$SCRIPT_DIR\Tools\Zircolite\zircolite.exe"
-
 # Archive Password
 $script:PASSWORD = "MemProcFS"
 
@@ -199,6 +200,14 @@ $script:ForensicProcessWhitelist = "cyserver.exe,MsMpEng.exe,tlaworker.exe"
 # MsMpEng.exe   = Microsoft Defender
 # cyserver.exe  = Palo Alto Cortex XDR
 # tlaworker.exe = Palo Alto Cortex XDR
+
+# Colors
+Add-Type -AssemblyName System.Drawing
+$script:CriticalColor = [System.Drawing.Color]::FromArgb(153,0,0) # Dark Red
+$script:HighColor = [System.Drawing.Color]::FromArgb(255,0,0) # Red
+$script:MediumColor = [System.Drawing.Color]::FromArgb(255,192,0) # Orange
+$script:LowColor = [System.Drawing.Color]::FromArgb(255,255,0) # Yellow
+$script:InformationalColor = [System.Drawing.Color]::FromArgb(217,217,217) # LightGrey
 
 #endregion Declarations
 
@@ -374,7 +383,7 @@ Function Show-UserInterface
 
     $CheckForUpdatesToolStripMenuItem_Click={
 
-        $CurrentVersion = "1.2.0"
+        $CurrentVersion = "1.2.1"
 
         $StatusBar.Text = "Checking latest release on GitHub ..."
 
@@ -603,7 +612,7 @@ Function Show-UserInterface
     $FormMemProcFSAnalyzer.Controls.Add($MenuStrip1)
     $FormMemProcFSAnalyzer.AutoScaleDimensions = New-Object System.Drawing.SizeF(6, 13)
     $FormMemProcFSAnalyzer.AutoScaleMode = 'Font'
-    $FormMemProcFSAnalyzer.ClientSize = New-Object System.Drawing.Size(626, 262)
+    $FormMemProcFSAnalyzer.ClientSize = New-Object System.Drawing.Size(700, 262) # 626, 262
 	$FormMemProcFSAnalyzer.FormBorderStyle = 'FixedDialog'
     $FormMemProcFSAnalyzer.MainMenuStrip = $Menustrip1
     $FormMemProcFSAnalyzer.MaximizeBox = $False
@@ -652,7 +661,7 @@ Function Show-UserInterface
     $Checkbox4.add_CheckedChanged($Checkbox4_CheckedChanged)
 
     # CheckBoxOfflineMode
-    $CheckboxOfflineMode.Location = New-Object System.Drawing.Point(339, 200)
+    $CheckboxOfflineMode.Location = New-Object System.Drawing.Point(370, 200) # 339, 200
     $CheckboxOfflineMode.Name = 'CheckboxOfflineMode'
     $CheckboxOfflineMode.Size = New-Object System.Drawing.Size(92, 24)
     $CheckboxOfflineMode.TabIndex = 13
@@ -665,7 +674,7 @@ Function Show-UserInterface
     $StatusBar.Location = New-Object System.Drawing.Point(0, 240)
     $StatusBar.Name = 'StatusBar'
     [void]$StatusBar.Panels.Add($StatusBarPanel1)
-    $StatusBar.Size = New-Object System.Drawing.Size(626, 22)
+    $StatusBar.Size = New-Object System.Drawing.Size(700, 22) # 626, 22
     $StatusBar.SizingGrip = $False
     $StatusBar.TabIndex = 0
 
@@ -686,7 +695,7 @@ Function Show-UserInterface
     $LabelPageFile.Text = 'Page File:'
 
     # ButtonBrowse1
-    $ButtonBrowse1.Location = New-Object System.Drawing.Point(539, 33)
+    $ButtonBrowse1.Location = New-Object System.Drawing.Point(583, 33) # 539, 33
     $ButtonBrowse1.Name = 'ButtonBrowse1'
     $ButtonBrowse1.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonBrowse1.TabIndex = 0
@@ -696,7 +705,7 @@ Function Show-UserInterface
     $ToolTip1.SetToolTip($ButtonBrowse1, 'Select your Raw Physical Memory Dump')
 
     # ButtonBrowse2
-    $ButtonBrowse2.Location = New-Object System.Drawing.Point(539, 84)
+    $ButtonBrowse2.Location = New-Object System.Drawing.Point(583, 83) # 539, 84
     $ButtonBrowse2.Name = 'ButtonBrowse2'
     $ButtonBrowse2.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonBrowse2.TabIndex = 1
@@ -716,7 +725,7 @@ Function Show-UserInterface
     $TextBoxFile1.Name = 'TextBoxFile'
     $TextBoxFile1.ReadOnly = $True
     $TextBoxFile1.ShortcutsEnabled = $False
-    $TextBoxFile1.Size = New-Object System.Drawing.Size(437, 20)
+    $TextBoxFile1.Size = New-Object System.Drawing.Size(481, 20) # 437, 20
     $TextBoxFile1.TabIndex = 4
     $TextBoxFile1.TabStop = $False
     $TextBoxFile1.Text = 'Select your Raw Physical Memory Dump'
@@ -732,7 +741,7 @@ Function Show-UserInterface
     $TextBoxFile2.Location = New-Object System.Drawing.Point(96, 84)
     $TextBoxFile2.Name = 'TextBoxFile2'
     $TextBoxFile2.ReadOnly = $True
-    $TextBoxFile2.Size = New-Object System.Drawing.Size(437, 20)
+    $TextBoxFile2.Size = New-Object System.Drawing.Size(481, 20) # 437, 20
     $TextBoxFile2.TabIndex = 5
     $TextBoxFile2.TabStop = $False
     $TextBoxFile2.Text = 'Select your pagefile.sys (Optional)'
@@ -752,7 +761,7 @@ Function Show-UserInterface
     # ButtonStart
     $ButtonStart.DialogResult = 'OK'
     $ButtonStart.Enabled = $False
-    $ButtonStart.Location = New-Object System.Drawing.Point(446, 202)
+    $ButtonStart.Location = New-Object System.Drawing.Point(490, 202) # 446, 202
     $ButtonStart.Name = 'ButtonStart'
     $ButtonStart.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonStart.TabIndex = 2
@@ -764,7 +773,7 @@ Function Show-UserInterface
 
     # ButtonExit
     $ButtonExit.DialogResult = 'Cancel'
-    $ButtonExit.Location = New-Object System.Drawing.Point(539, 202)
+    $ButtonExit.Location = New-Object System.Drawing.Point(583, 202) # 539, 202
     $ButtonExit.Name = 'ButtonExit'
     $ButtonExit.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonExit.TabIndex = 3
@@ -777,10 +786,10 @@ Function Show-UserInterface
     # LinkLabel
     $LinkLabel.Location = New-Object System.Drawing.Point(12, 204)
     $LinkLabel.Name = 'LinkLabel'
-    $LinkLabel.Size = New-Object System.Drawing.Size(269, 23)
+    $LinkLabel.Size = New-Object System.Drawing.Size(330, 23) # 269, 23
     $LinkLabel.TabIndex = 7
     $LinkLabel.TabStop = $True
-    $LinkLabel.Text = 'https://github.com/evild3ad/MemProcFS-Analyzer'
+    $LinkLabel.Text = 'https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer'
     $LinkLabel.Add_LinkClicked($linklabel_LinkClicked)
 
     # MenuStrip1
@@ -788,7 +797,7 @@ Function Show-UserInterface
     [void]$MenuStrip1.Items.Add($HelpToolStripMenuItem)
     $MenuStrip1.Location = New-Object System.Drawing.Point(0, 0)
     $MenuStrip1.Name = 'MenuStrip1'
-    $MenuStrip1.Size = New-Object System.Drawing.Size(626, 24)
+    $MenuStrip1.Size = New-Object System.Drawing.Size(700, 24) # 262, 24
     $MenuStrip1.TabIndex = 8
     $MenuStrip1.Text = 'MenuStrip1'
 
@@ -925,7 +934,7 @@ Write-Host "$Logo"
 # Header
 Write-Output ""
 Write-Output "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
-Write-Output "(c) 2021-2025 Martin Willing at Lethal-Forensics (https://lethal-forensics.com/)"
+Write-Output "(c) 2021-2026 Martin Willing at Lethal-Forensics (https://lethal-forensics.com/)"
 Write-Output ""
 
 # Analysis date (ISO 8601)
@@ -946,7 +955,8 @@ Function Elasticsearch {
 
 # Launch Elasticsearch (PowerShell.exe)
 Write-Output "[Info]  Starting Elasticsearch ... "
-$Elasticsearch_Process = Start-Process powershell.exe "& $Elasticsearch" -WindowStyle Minimized -PassThru
+Start-Process pwsh.exe "& $Elasticsearch" -WindowStyle Minimized
+#$Elasticsearch_Process = Start-Process powershell.exe "& $Elasticsearch" -WindowStyle Minimized -PassThru
 $Elasticsearch_Id = $Elasticsearch_Process.Id
 $script:Elasticsearch_Termination = Get-Process | Where-Object {$_.Id -eq $Elasticsearch_Id}
 $ProgressPreference = 'SilentlyContinue'
@@ -954,6 +964,8 @@ do {
   Start-Sleep 3
   $ProgressPreference = 'SilentlyContinue'
 } until( Test-NetConnection 127.0.0.1 -Port 9200 -InformationLevel Quiet -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
+
+# $script:Elasticsearch = "$SCRIPT_DIR\Tools\Elasticsearch\bin\elasticsearch.bat"
 
 # Launch Kibana (PowerShell.exe)
 Write-Output "[Info]  Starting Kibana ... "
@@ -6417,7 +6429,7 @@ if (Test-Path "$($MemProcFS)")
         Function Update-ZircoliteRules {
 
         # Zircolite
-        if (Test-Path "$($Zircolite)")
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
         {
             # Offline Mode
             if ($OfflineMode -eq "Enabled")
@@ -6430,7 +6442,7 @@ if (Test-Path "$($MemProcFS)")
                 Write-Output "[Info]  Updating SIGMA Rulesets ..."
                 $MyLocation = $pwd
                 Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-                & $Zircolite --update-rules 2>&1 | Out-File "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log"
+                python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --update-rules 2>&1 | Out-File "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log"
                 Set-Location "$MyLocation"
 
                 # No newer rulesets found
@@ -6486,13 +6498,13 @@ if (Test-Path "$($MemProcFS)")
 
         Function Invoke-Zircolite {
 
-        # Zircolite
-        if (Test-Path "$($Zircolite)")
+        # Zircolite v3.x
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
         {
             if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogs\*.evtx") 
             {
                 Write-Output "[Info]  Processing Windows Event Logs w/ Zircolite ... "
-                New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite" -ItemType Directory -Force | Out-Null
+                New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX" -ItemType Directory -Force | Out-Null
 
                 $StartTime_Zircolite = (Get-Date)
 
@@ -6502,210 +6514,180 @@ if (Test-Path "$($MemProcFS)")
                 if ($Bytes -gt 524288000)
                 {
                     # JSON
-                    New-Item "$OUTPUT_FOLDER\EventLogs" -ItemType Directory -Force | Out-Null
+                    Write-Output "[Info]  Creating JSON output ..."
+                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON" -ItemType Directory -Force | Out-Null
+
                     $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
-                    $Ruleset = "rules\rules_windows_generic_full.json"
-                    $TempDir = "$OUTPUT_FOLDER\EventLogs\JSONL"
+                    $Ruleset = "rules\rules_windows_generic.json"
+                    $LogFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
+                    $OutputFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json"
                     $MyLocation = $pwd
+
                     Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-                    & $Zircolite --evtx $ScanPath --ruleset $Ruleset --noexternal --tmpdir $TempDir --keeptmp 2>&1 | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite-draft.txt"
+                    python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --events $ScanPath --ruleset $Ruleset -o $OutputFile --logfile $LogFile 2>&1  | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" -Encoding UTF8
                     Set-Location "$MyLocation"
                 }
                 else
                 {
-                    $MyLocation = $pwd
-                    Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-
-                    # JSON + Mini-GUI
+                    # JSON + Mini-GUI + ATT&CK Navigator
                     Write-Output "[Info]  Creating JSON output and ZircoGui package ..."
-                    New-Item "$OUTPUT_FOLDER\EventLogs" -ItemType Directory -Force | Out-Null
+                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON" -ItemType Directory -Force | Out-Null
+                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI" -ItemType Directory -Force | Out-Null
+                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Navigator" -ItemType Directory -Force | Out-Null # https://mitre-attack.github.io/attack-navigator/
+
                     $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
-                    $Ruleset = "rules\rules_windows_generic_full.json"
-                    $TempDir = "$OUTPUT_FOLDER\EventLogs\JSONL"
-                    & $Zircolite --evtx $ScanPath --ruleset $Ruleset --noexternal --package --tmpdir $TempDir --keeptmp 2>&1 | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite-draft.txt"
+                    $Ruleset = "rules\rules_windows_generic.json"
+                    $LogFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
+                    $PackageDir = "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI"
+                    $OutputFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json"
+                    $NavigatorOutput = "$OUTPUT_FOLDER\EventLogs\Zircolite\Navigator\navigator.json"
+                    $MyLocation = $pwd
 
-                    # Remove ANSI Control Characters
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite-draft.txt")
-                    {
-                        Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite-draft.txt" | ForEach-Object { $_ -replace "\x1b\[[0-9;]*m" } | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
-                        Remove-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite-draft.txt"
-                    }
-
-                    # Remove empty lines and add line breaks where needed
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt")
-                    {
-                        $Clean = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Where-Object {$_.Trim()} | ForEach-Object {($_ -replace "Finished in", "`nFinished in")} | ForEach-Object {($_ -replace "Sysmon Linux =-", "Sysmon Linux =-`n")}
-                        @("") + ($Clean) | Set-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
-                    }
-
-                    # Cleaning up
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt")
-                    {
-                        $Filter = @("^zircolite_win10\.exe","MemProcFS-Analyzer-v.*\.ps1","^\+","\+ CategoryInfo          : NotSpecified:","\+ FullyQualifiedErrorId : NativeCommandError","%\|","^tmp-rules-")
-                        $Clean = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern $Filter -NotMatch 
-                        $Clean | Set-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
-                    }
-
-                    # Executed Ruleset
-                    Start-Sleep 3
-                    if (Test-Path "$pwd\zircolite.log")
-                    {
-                        [int]$Count = Get-Content "$pwd\zircolite.log" | Select-String -Pattern "Executing ruleset" | Select-Object -First 1 | ForEach-Object{($_ -split "\s+")[-2]}
-                        $Rules = '{0:N0}' -f $Count
-                        Write-Output "[Info]  Executed ruleset - $Rules rules"
-                    }
-
-                    # zircolite.log
-                    if (Test-Path "$pwd\zircolite.log")
-                    {
-                        Remove-Item -Path "$pwd\zircolite.log" -Force
-                    }
-
-                    # JSON
-                    if (Test-Path "$pwd\detected_events.json")
-                    {
-                        New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON" -ItemType Directory -Force | Out-Null
-                        Move-Item -Path "$pwd\detected_events.json" -Destination "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json"
-                    }
-
-                    # File Size (JSON)
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json")
-                    {
-                        $Size = Get-FileSize((Get-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json").Length)
-                        Write-Output "[Info]  File Size (JSON): $Size"
-                    }
-
-                    # ZircoGui
-                    if (Test-Path "$pwd\zircogui-output-*.zip")
-                    {
-                        New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Package" -ItemType Directory -Force | Out-Null
-                        New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Mini-GUI" -ItemType Directory -Force | Out-Null
-                        Move-Item -Path "$pwd\zircogui-output-*.zip" -Destination "$OUTPUT_FOLDER\EventLogs\Zircolite\Package"
-
-                        # Unzip ZircoGui Package
-                        if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Package\zircogui-output-*.zip")
-                        {
-                            Expand-Archive "$OUTPUT_FOLDER\EventLogs\Zircolite\Package\zircogui-output-*.zip" -DestinationPath "$OUTPUT_FOLDER\EventLogs\Zircolite\Mini-GUI"
-                        }
-
-                        # Open ZircoGui
-                        if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Mini-GUI\index.html")
-                        {
-                            # Check if Google Chrome is installed
-                            if (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")
-                            {
-                                # Open ZircoGui w/ Google Chrome
-                                $Chrome = ((Get-Item (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")."(Default)").VersionInfo).FileName
-                                Start-Process -FilePath $Chrome -ArgumentList "--start-fullscreen $OUTPUT_FOLDER\EventLogs\Zircolite\Mini-GUI\index.html"
-                            }
-                            else
-                            {
-                                # Open ZircoGui in your Default Browser
-                                Start-Process "$OUTPUT_FOLDER\EventLogs\Zircolite\Mini-GUI\index.html"
-                            }
-                        }
-                    }
-
+                    Set-Location "$SCRIPT_DIR\Tools\Zircolite"
+                    python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --events $ScanPath --ruleset $Ruleset --package --package-dir $PackageDir -o $OutputFile --logfile $LogFile --navigator-output $NavigatorOutput 2>&1 | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" -Encoding UTF8
                     Set-Location "$MyLocation"
+                }
 
-                    # Stats
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt")
+                # File Size (JSON)
+                if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json")
+                {
+                    $Size = Get-FileSize((Get-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json").Length)
+                    Write-Output "[Info]  File Size (JSON): $Size"
+                }
+
+                # ZircoGui
+                if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip")
+                {
+                    # Unzip ZircoGui Package
+                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip")
                     {
-                        if (Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " -Quiet)
+                        Expand-Archive "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip" -DestinationPath "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI"
+                        Get-ChildItem -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip" | Remove-Item -Force
+                    }
+
+                    # Open ZircoGui
+                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\index.html")
+                    {
+                        # Check if Google Chrome is installed
+                        if (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")
                         {
-                            # Count triggered Sigma Rules
-                            $Rules = (Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | Measure-Object).Count
-
-                            if ($Rules -gt 0)
-                            {
-                                # Count Events (w/ thousands separators)
-                                [int]$Count = (Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | ForEach-Object{($_ -split "\s+")[-2]} | Measure-Object -Sum).Sum
-                                $Events = '{0:N0}' -f $Count
-
-                                Write-Host "[Alert] $Rules Detection(s) found ($Events events)" -ForegroundColor Red
-
-                                # Sort A-Z
-                                Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | ForEach-Object{($_ -replace "    - ","")} | Sort-Object | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Detections.txt"
-
-                                # SIGMA Rule Level (critical, high, medium, low)
-
-                                # Critical
-                                $Critical = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | Select-String -Pattern "\[critical\]" | ForEach-Object{($_ -replace "    - ","        ")} | Sort-Object
-                                $CriticalAlerts = ($Critical | Measure-Object).Count
-                                if ($CriticalAlerts -gt 0)
-                                { 
-                                    $Critical.Trim() | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Detections-Critical.txt" 
-                                }
-
-                                # High
-                                $High = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | Select-String -Pattern "\[high\]" | ForEach-Object{($_ -replace "    - ","        ")} | Sort-Object
-                                $HighAlerts = ($High | Measure-Object).Count
-                                if ($HighAlerts -gt 0)
-                                { 
-                                    $High.Trim() | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Detections-High.txt"
-                                }
-
-                                # Medium
-                                $Medium = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | Select-String -Pattern "\[medium\]" | ForEach-Object{($_ -replace "    - ","        ")} | Sort-Object
-                                $MediumAlerts = ($Medium | Measure-Object).Count
-                                if ($MediumAlerts -gt 0)
-                                { 
-                                    $Medium.Trim() | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Detections-Medium.txt"
-                                }
-
-                                # Low
-                                $Low = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | Select-String -Pattern "\[low\]" | ForEach-Object{($_ -replace "    - ","        ")} | Sort-Object
-                                $LowAlerts = ($Low | Measure-Object).Count
-                                if ($LowAlerts -gt 0)
-                                { 
-                                    $Low.Trim() | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Detections-Low.txt"
-                                }
-                            
-                                # Informational
-                                $Informational = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | Select-String -Pattern "\[informational\]" | ForEach-Object{($_ -replace "    - ","        ")} | Sort-Object
-                                $InformationalAlerts = ($Informational | Measure-Object).Count
-                                if ($InformationalAlerts -gt 0)
-                                { 
-                                    $Informational.Trim() | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Detections-Informational.txt"
-                                }
-                
-                                # Unknown
-                                $Unknown = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt" | Select-String -Pattern "    - " | Select-String -Pattern "\[unknown\]" | ForEach-Object{($_ -replace "    - ","        ")} | Sort-Object
-                                $UnknownAlerts = ($Unknown | Measure-Object).Count
-                                if ($UnknownAlerts -gt 0)
-                                { 
-                                    $Unknown.Trim() | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Detections-Unknown.txt"
-                                }
-
-                                # Stats (Alerts by Sigma Rules Level)
-                                Write-Output "$Rules Alerts ($Events events)" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt"
-                                Write-Output "" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                                Write-Output "Alerts by Sigma Rule Level" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                                Write-Output "Critical: $CriticalAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                                Write-Output "High:     $HighAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                                Write-Output "Medium:   $MediumAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                                Write-Output "Low:      $LowAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                                Write-Output "Info:     $InformationalAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                                Write-Output "Unknown:  $UnknownAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
-                
-                                $Critical | Write-Host -ForegroundColor Red
-                                $High | Write-Host -ForegroundColor Yellow
-                                $Medium | Write-Host -ForegroundColor DarkCyan
-                                $Low | Write-Host -ForegroundColor DarkGreen
-                                $Informational | Write-Host -ForegroundColor Gray
-                            }
+                            # Open ZircoGui w/ Google Chrome
+                            $Chrome = ((Get-Item (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")."(Default)").VersionInfo).FileName
+                            Start-Process -FilePath $Chrome -ArgumentList "--start-fullscreen $OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\index.html"
                         }
                         else
                         {
-                            Write-Host "[Info]  0 Detections found"
+                            # Open ZircoGui in your Default Browser
+                            Start-Process "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\index.html"
                         }
                     }
                 }
+
+                # CSV
+                Write-Output "[Info]  Creating CSV output ..."
+                New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV" -ItemType Directory -Force | Out-Null
+
+                $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
+                $Ruleset = "rules\rules_windows_generic.json"
+                $OutputFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv"
+                $MyLocation = $pwd
+
+                Set-Location "$SCRIPT_DIR\Tools\Zircolite"
+                python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --quiet --events $ScanPath --ruleset $Ruleset --csv -o $OutputFile 2>&1 | Out-Null
+                Set-Location "$MyLocation"
+
+                # File Size (CSV)
+                if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv")
+                {
+                    $Size = Get-FileSize((Get-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv").Length)
+                    Write-Output "[Info]  File Size (CSV): $Size"
+                }
+
+                # XLSX
+                if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv") -gt 0)
+                    {
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv" -Delimiter ";" -Encoding UTF8 | Select-Object @{Name='SystemTime [UTC]'; Expression={ (Get-Date $_.SystemTime).ToString("yyyy-MM-dd HH:mm:ss.ffffff") }},rule_title,rule_description,@{Name='rule_level'; Expression={ ($_.rule_level).Substring(0,1).ToUpper() + ($_.rule_level).Substring(1)}},rule_count,row_id,Channel,Computer,EventID,EventRecordID,Guid,Keywords,Level,Opcode,OriginalLogfile,ProcessID,Provider_Name,Task,ThreadID,UserID,Version,ProductName,ProductVersion | Sort-Object { $_."SystemTime [UTC]" -as [datetime] } -Descending
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Zircolite.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Zircolite" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
+                        Set-Format -Address $WorkSheet.Cells["A1:W1"] -BackgroundColor $BackgroundColor -FontColor White
+                        # HorizontalAlignment "Center" of columns A, D-N and P-W
+                        $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["D:N"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["P:W"].Style.HorizontalAlignment="Center"
+                        # ConditionalFormatting - rule_level
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["D:D"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Critical",$D1)))' -BackgroundColor $CriticalColor
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["D:D"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("High",$D1)))' -BackgroundColor $HighColor
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["D:D"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Medium",$D1)))' -BackgroundColor $MediumColor
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["D:D"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Low",$D1)))' -BackgroundColor $LowColor
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["D:D"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Informational",$D1)))' -BackgroundColor $InformationalColor
+                        }
+                    }
+                }
+
+                # Stats
+                if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt")
+                {
+                    # Executed Ruleset
+                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt")
+                    {
+                        [int]$Ruleset = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Executing ruleset against unified database" | ForEach-Object{($_ -split " - ")[1]} | ForEach-Object{($_ -split "\s+")[0]}
+                        $Events = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Total events processed:" | ForEach-Object{($_ -split ": ")[1]} | ForEach-Object{($_ -split "\s+")[0]} | ForEach-Object{($_ -replace ",",".")}
+                        $Rules = '{0:N0}' -f $Ruleset
+                        Write-Output "[Info]  Executed ruleset ($Events events) - $Rules rules"
+                    }
+
+                    # Coverage
+                    $Rules = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Coverage" | Select-Object -First 1 | ForEach-Object{($_ -split "/")[0]} | ForEach-Object{($_ -split "\s+")[-1]}
+                    $TotalRules = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Coverage" | Select-Object -First 1 | ForEach-Object{($_ -split "/")[1]} | ForEach-Object{($_ -split "\s+")[0]}
+                    $Percentage = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Coverage" | Select-Object -First 1 | ForEach-Object{($_ -split "\)")[0]} | ForEach-Object{($_ -split "\(")[-1]}
+                    Write-Output "[Info]  Coverage $Rules/$TotalRules matched ($Percentage)"
+
+                    if ($Rules -gt 0)
+                    {
+                        $Detections = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Matched" -CaseSensitive | ForEach-Object{($_ -split " events across")[-2]} | ForEach-Object{($_ -split "\s+")[-1]}
+
+                        Write-Host "[Alert] $Detections Alert(s) found ($Rules rules)" -ForegroundColor Red
+
+                        # Stats (Alerts by Sigma Rules Level)
+                        if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv")
+                        {
+                            $Data = Import-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv" -Delimiter ";" -Encoding UTF8
+
+                            $Alerts = ($Data | Select-Object rule_title | Measure-Object).Count
+                            $Rules = ($Data | Select-Object rule_title -Unique | Measure-Object).Count
+
+                            $CriticalAlerts = ($Data | Where-Object { $_.rule_level -eq "critical" } | Measure-Object).Count
+                            $HighAlerts = ($Data | Where-Object { $_.rule_level -eq "high" } | Measure-Object).Count
+                            $MediumAlerts = ($Data | Where-Object { $_.rule_level -eq "medium" } | Measure-Object).Count
+                            $LowAlerts = ($Data | Where-Object { $_.rule_level -eq "low" } | Measure-Object).Count
+                            $InformationalAlerts = ($Data | Where-Object { $_.rule_level -eq "informational" } | Measure-Object).Count
+                            $UnknownAlerts = ($Data | Where-Object { $_.rule_level -eq "unknown" } | Measure-Object).Count
+
+                            Write-Output "$Alerts Alerts ($Rules rules)" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt"
+                            Write-Output "" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                            Write-Output "Alerts by Sigma Rule Level" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                            Write-Output "Critical: $CriticalAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                            Write-Output "High:     $HighAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                            Write-Output "Medium:   $MediumAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                            Write-Output "Low:      $LowAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                            Write-Output "Info:     $InformationalAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                            Write-Output "Unknown:  $UnknownAlerts" | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Stats.txt" -Append
+                        }
+                    }
+                    else
+                    {
+                        Write-Host "[Info]  0 Detections found" -ForegroundColor Green
+                    }
+                }            
             }
         }
         else
         {
-            Write-Host "[Error] zircolite.exe NOT found." -ForegroundColor Red
+            Write-Host "[Error] zircolite.py NOT found." -ForegroundColor Red
         }
 
         # Results
@@ -6717,13 +6699,13 @@ if (Test-Path "$($MemProcFS)")
                 $Data = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json" | ConvertFrom-Json
 
                 # Alerts by Sigma Rules Level
-                $Events = ($Data | Select-Object count | Measure-Object Count -Sum).Sum
+                $Events   = ($Data | Select-Object count | Measure-Object Count -Sum).Sum
                 $Critical = ($Data | Where-Object { $_.rule_level -eq "critical" } | Select-Object count | Measure-Object Count -Sum).Sum
-                $High = ($Data | Where-Object { $_.rule_level -eq "high" } | Select-Object count | Measure-Object Count -Sum).Sum
-                $Medium = ($Data | Where-Object { $_.rule_level -eq "medium" } | Select-Object count | Measure-Object Count -Sum).Sum
-                $Low = ($Data | Where-Object { $_.rule_level -eq "low" } | Select-Object count | Measure-Object Count -Sum).Sum
-                $Informational = ($Data | Where-Object { $_.rule_level -eq "informational" } | Select-Object count | Measure-Object Count -Sum).Sum
-                $Unknown = ($Data | Where-Object { $_.rule_level -eq "unknown" } | Select-Object count | Measure-Object Count -Sum).Sum
+                $High     = ($Data | Where-Object { $_.rule_level -eq "high" } | Select-Object count | Measure-Object Count -Sum).Sum
+                $Medium   = ($Data | Where-Object { $_.rule_level -eq "medium" } | Select-Object count | Measure-Object Count -Sum).Sum
+                $Low      = ($Data | Where-Object { $_.rule_level -eq "low" } | Select-Object count | Measure-Object Count -Sum).Sum
+                $Info     = ($Data | Where-Object { $_.rule_level -eq "informational" } | Select-Object count | Measure-Object Count -Sum).Sum
+                $Unknown  = ($Data | Where-Object { $_.rule_level -eq "unknown" } | Select-Object count | Measure-Object Count -Sum).Sum
 
                 # Array
                 $Array = @()
@@ -6769,9 +6751,9 @@ if (Test-Path "$($MemProcFS)")
                 }
 
                 # Informational
-                if ($Informational)
+                if ($Info)
                 {
-                    $Array += @{Level = "Informational"; Description = "Rule is intended for enrichment of events, e.g. by tagging them. No case or alerting should be triggered by such rules because it is expected that a huge amount of events will match these rules."; Count = "$Informational"}
+                    $Array += @{Level = "Informational"; Description = "Rule is intended for enrichment of events, e.g. by tagging them. No case or alerting should be triggered by such rules because it is expected that a huge amount of events will match these rules."; Count = "$Info"}
                 }
                 else
                 {
@@ -6788,27 +6770,27 @@ if (Test-Path "$($MemProcFS)")
                     $Array += @{Level = "Unknown"; Description = "Unknown"; Count = "0"}
                 }
 
-                # CSV
-                $Array | ForEach-Object { New-Object PSObject -Property $_ } |  Export-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Sigma-Rule-Level.csv" -NoTypeInformation
+                $Alerts = $Array | ForEach-Object { New-Object PSObject -Property $_ }
 
                 # XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                $Total = $Events
+                if ($Total -ge "1")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Sigma-Rule-Level.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Sigma-Rule-Level.csv") -gt 0)
-                        {
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Sigma-Rule-Level.csv" -Delimiter "," | Sort-Object { $_.FileKeyLastWriteTimestamp -as [datetime] } -Descending
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Sigma-Rule-Level.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SIGMA Rule Level" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A and C
-                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
-                            }
-                        }
+                    $RuleLevel = $Alerts | Group-Object Level,Description,Count | Select-Object @{Name='Level'; Expression={ $_.Values[0] }},@{Name='Description'; Expression={ $_.Values[1] }},@{Name='Count'; Expression={ $_.Values[2] }},@{Name='PercentUse'; Expression={"{0:p2}" -f ($_.Values[2] / $Total)}} | Sort-Object { [int]$_.Count } -Descending
+                    $RuleLevel | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Alerts-by-Sigma-Rule-Level.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SIGMA Rule Level" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
+                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
+                    # HorizontalAlignment "Center" of columns A-A and C-D
+                    $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
+                    # ConditionalFormatting - Level
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["A:A"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Critical",$A1)))' -BackgroundColor $CriticalColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["A:A"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("High",$A1)))' -BackgroundColor $HighColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["A:A"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Medium",$A1)))' -BackgroundColor $MediumColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["A:A"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Low",$A1)))' -BackgroundColor $LowColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["A:A"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Informational",$A1)))' -BackgroundColor $InformationalColor
                     }
                 }
 
@@ -6818,158 +6800,158 @@ if (Test-Path "$($MemProcFS)")
                 # Array
                 $Array = @()
 
-                # Reconnaissance - The adversary is trying to gather information they can use to plan future operations [TA0043]
-                $Reconnaissance = ($Data | Where-Object { $_.tags -like "attack.reconnaissance" } | Select-Object count | Measure-Object Count -Sum).Sum
-                if ($Reconnaissance)
-                {
-                    $Array += @{ID = "TA0043"; Name = "Reconnaissance"; Description = "The adversary is trying to gather information they can use to plan future operations."; Count = "$Reconnaissance"}
-                }
-                else
-                {
-                    $Array += @{ID = "TA0043"; Name = "Reconnaissance"; Description = "The adversary is trying to gather information they can use to plan future operations."; Count = "0"}
-                }
-
-                # Resource Development - The adversary is trying to establish resources they can use to support operations [TA0042]
-                $ResourceDevelopment = ($Data | Where-Object { $_.tags -like "attack.resource_development" } | Select-Object count | Measure-Object Count -Sum).Sum
-                if ($ResourceDevelopment)
-                {
-                    $Array += @{ID = "TA0042"; Name = "Resource Development"; Description = "The adversary is trying to establish resources they can use to support operations."; Count = "$ResourceDevelopment"}
-                }
-                else
-                {
-                    $Array += @{ID = "TA0042"; Name = "Resource Development"; Description = "The adversary is trying to establish resources they can use to support operations."; Count = "0"}
-                }
-
                 # Initial Access - The adversary is trying to get into your network [TA0001]
                 $InitialAccess = ($Data | Where-Object { $_.tags -like "attack.initial_access" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($InitialAccess)
                 {
-                    $Array += @{ID = "TA0001"; Name = "Initial Access"; Description = "The adversary is trying to get into your network."; Count = "$InitialAccess"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0001`",`"TA0001`")"; Name = "Initial Access"; Description = "The adversary is trying to get into your network."; Count = "$InitialAccess"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0001"; Name = "Initial Access"; Description = "The adversary is trying to get into your network."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0001`",`"TA0001`")"; Name = "Initial Access"; Description = "The adversary is trying to get into your network."; Count = "0"}
                 }
 
                 # Execution - The adversary is trying to run malicious code [TA0002]
                 $Execution = ($Data | Where-Object { $_.tags -like "attack.execution" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($Execution)
                 {
-                    $Array += @{ID = "TA0002"; Name = "Execution"; Description = "The adversary is trying to run malicious code."; Count = "$Execution"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0002`",`"TA0002`")"; Name = "Execution"; Description = "The adversary is trying to run malicious code."; Count = "$Execution"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0002"; Name = "Execution"; Description = "The adversary is trying to run malicious code."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0002`",`"TA0002`")"; Name = "Execution"; Description = "The adversary is trying to run malicious code."; Count = "0"}
                 }
 
                 # Persistence - The adversary is trying to maintain their foothold [TA0003]
                 $Persistence = ($Data | Where-Object { $_.tags -like "attack.persistence" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($Persistence)
                 {
-                    $Array += @{ID = "TA0003"; Name = "Persistence"; Description = "The adversary is trying to maintain their foothold."; Count = "$Persistence"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0003`",`"TA0003`")"; Name = "Persistence"; Description = "The adversary is trying to maintain their foothold."; Count = "$Persistence"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0003"; Name = "Persistence"; Description = "The adversary is trying to maintain their foothold."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0003`",`"TA0003`")"; Name = "Persistence"; Description = "The adversary is trying to maintain their foothold."; Count = "0"}
                 }
 
                 # Privilege Escalation - The adversary is trying to gain higher-level permissions [TA0004]
                 $PrivilegeEscalation = ($Data | Where-Object { $_.tags -like "attack.privilege_escalation" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($PrivilegeEscalation)
                 {
-                    $Array += @{ID = "TA0004"; Name = "Privilege Escalation"; Description = "The adversary is trying to gain higher-level permissions."; Count = "$PrivilegeEscalation"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0004`",`"TA0004`")"; Name = "Privilege Escalation"; Description = "The adversary is trying to gain higher-level permissions."; Count = "$PrivilegeEscalation"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0004"; Name = "Privilege Escalation"; Description = "The adversary is trying to gain higher-level permissions."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0004`",`"TA0004`")"; Name = "Privilege Escalation"; Description = "The adversary is trying to gain higher-level permissions."; Count = "0"}
                 }
 
                 # Defense Evasion - The adversary is trying to avoid being detected [TA0005]
                 $DefenseEvasion = ($Data | Where-Object { $_.tags -like "attack.defense_evasion" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($DefenseEvasion)
                 {
-                    $Array += @{ID = "TA0005"; Name = "Defense Evasion"; Description = "The adversary is trying to avoid being detected."; Count = "$DefenseEvasion"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0005`",`"TA0005`")"; Name = "Defense Evasion"; Description = "The adversary is trying to avoid being detected."; Count = "$DefenseEvasion"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0005"; Name = "Defense Evasion"; Description = "The adversary is trying to avoid being detected."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0005`",`"TA0005`")"; Name = "Defense Evasion"; Description = "The adversary is trying to avoid being detected."; Count = "0"}
                 }
 
                 # Credential Access - The adversary is trying to steal account names and passwords [TA0006]
                 $CredentialAccess = ($Data | Where-Object { $_.tags -like "attack.credential_access" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($CredentialAccess)
                 {
-                    $Array += @{ID = "TA0006"; Name = "Credential Access"; Description = "The adversary is trying to steal account names and passwords."; Count = "$CredentialAccess"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0006`",`"TA0006`")"; Name = "Credential Access"; Description = "The adversary is trying to steal account names and passwords."; Count = "$CredentialAccess"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0006"; Name = "Credential Access"; Description = "The adversary is trying to steal account names and passwords."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0006`",`"TA0006`")"; Name = "Credential Access"; Description = "The adversary is trying to steal account names and passwords."; Count = "0"}
                 }
 
                 # Discovery - The adversary is trying to figure out your environment [TA0007]
                 $Discovery = ($Data | Where-Object { $_.tags -like "attack.discovery" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($Discovery)
                 {
-                    $Array += @{ID = "TA0007"; Name = "Discovery"; Description = "The adversary is trying to figure out your environment."; Count = "$Discovery"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0007`",`"TA0007`")"; Name = "Discovery"; Description = "The adversary is trying to figure out your environment."; Count = "$Discovery"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0007"; Name = "Discovery"; Description = "The adversary is trying to figure out your environment."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0007`",`"TA0007`")"; Name = "Discovery"; Description = "The adversary is trying to figure out your environment."; Count = "0"}
                 }
 
                 # Lateral Movement - The adversary is trying to move through your environment [TA0008]
                 $LateralMovement = ($Data | Where-Object { $_.tags -like "attack.lateral_movement" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($LateralMovement)
                 {
-                    $Array += @{ID = "TA0008"; Name = "Lateral Movement"; Description = "The adversary is trying to move through your environment."; Count = "$LateralMovement"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0008`",`"TA0008`")"; Name = "Lateral Movement"; Description = "The adversary is trying to move through your environment."; Count = "$LateralMovement"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0008"; Name = "Lateral Movement"; Description = "The adversary is trying to move through your environment."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0008`",`"TA0008`")"; Name = "Lateral Movement"; Description = "The adversary is trying to move through your environment."; Count = "0"}
                 }
 
                 # Collection - The adversary is trying to gather data of interest to their goal [TA0009]
                 $Collection = ($Data | Where-Object { $_.tags -like "attack.collection" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($Collection)
                 {
-                    $Array += @{ID = "TA0009"; Name = "Collection"; Description = "The adversary is trying to gather data of interest to their goal."; Count = "$Collection"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0009`",`"TA0009`")"; Name = "Collection"; Description = "The adversary is trying to gather data of interest to their goal."; Count = "$Collection"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0009"; Name = "Collection"; Description = "The adversary is trying to gather data of interest to their goal."; Count = "0"}
-                }
-
-                # Command and Control - The adversary is trying to communicate with compromised systems to control them [TA0011]
-                $CommandAndControl = ($Data | Where-Object { $_.tags -like "attack.commandandcontrol" } | Select-Object count | Measure-Object Count -Sum).Sum
-                if ($CommandAndControl)
-                {
-                    $Array += @{ID = "TA0011"; Name = "Command and Control"; Description = "The adversary is trying to communicate with compromised systems to control them."; Count = "$CommandAndControl"}
-                }
-                else
-                {
-                    $Array += @{ID = "TA0011"; Name = "Command and Control"; Description = "The adversary is trying to communicate with compromised systems to control them."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0009`",`"TA0009`")"; Name = "Collection"; Description = "The adversary is trying to gather data of interest to their goal."; Count = "0"}
                 }
 
                 # Exfiltration - The adversary is trying to steal data [TA0010]
                 $Exfiltration = ($Data | Where-Object { $_.tags -like "attack.exfiltration" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($Exfiltration)
                 {
-                    $Array += @{ID = "TA0010"; Name = "Exfiltration"; Description = "The adversary is trying to steal data."; Count = "$Exfiltration"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0010`",`"TA0010`")"; Name = "Exfiltration"; Description = "The adversary is trying to steal data."; Count = "$Exfiltration"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0010"; Name = "Exfiltration"; Description = "The adversary is trying to steal data."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0010`",`"TA0010`")"; Name = "Exfiltration"; Description = "The adversary is trying to steal data."; Count = "0"}
+                }
+
+                # Command and Control - The adversary is trying to communicate with compromised systems to control them [TA0011]
+                $CommandAndControl = ($Data | Where-Object { $_.tags -like "attack.commandandcontrol" } | Select-Object count | Measure-Object Count -Sum).Sum
+                if ($CommandAndControl)
+                {
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0011`",`"TA0011`")"; Name = "Command and Control"; Description = "The adversary is trying to communicate with compromised systems to control them."; Count = "$CommandAndControl"}
+                }
+                else
+                {
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0011`",`"TA0011`")"; Name = "Command and Control"; Description = "The adversary is trying to communicate with compromised systems to control them."; Count = "0"}
                 }
 
                 # Impact - The adversary is trying to manipulate, interrupt, or destroy your systems and data [TA0040]
                 $Impact = ($Data | Where-Object { $_.tags -like "attack.impact" } | Select-Object count | Measure-Object Count -Sum).Sum
                 if ($Impact)
                 {
-                    $Array += @{ID = "TA0040"; Name = "Impact"; Description = "The adversary is trying to manipulate, interrupt, or destroy your systems and data."; Count = "$Impact"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0043`",`"TA0040`")"; Name = "Impact"; Description = "The adversary is trying to manipulate, interrupt, or destroy your systems and data."; Count = "$Impact"}
                 }
                 else
                 {
-                    $Array += @{ID = "TA0040"; Name = "Impact"; Description = "The adversary is trying to manipulate, interrupt, or destroy your systems and data."; Count = "0"}
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0043`",`"TA0040`")"; Name = "Impact"; Description = "The adversary is trying to manipulate, interrupt, or destroy your systems and data."; Count = "0"}
+                }
+
+                # Resource Development - The adversary is trying to establish resources they can use to support operations [TA0042]
+                $ResourceDevelopment = ($Data | Where-Object { $_.tags -like "attack.resource_development" } | Select-Object count | Measure-Object Count -Sum).Sum
+                if ($ResourceDevelopment)
+                {
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0042`",`"TA0042`")"; Name = "Resource Development"; Description = "The adversary is trying to establish resources they can use to support operations."; Count = "$ResourceDevelopment"}
+                }
+                else
+                {
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0042`",`"TA0042`")"; Name = "Resource Development"; Description = "The adversary is trying to establish resources they can use to support operations."; Count = "0"}
+                }
+
+                # Reconnaissance - The adversary is trying to gather information they can use to plan future operations [TA0043]
+                $Reconnaissance = ($Data | Where-Object { $_.tags -like "attack.reconnaissance" } | Select-Object count | Measure-Object Count -Sum).Sum
+                if ($Reconnaissance)
+                {
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0043`",`"TA0043`")"; Name = "Reconnaissance"; Description = "The adversary is trying to gather information they can use to plan future operations."; Count = "$Reconnaissance"}
+                }
+                else
+                {
+                    $Array += @{ID = "=HYPERLINK(`"https://attack.mitre.org/tactics/TA0043`",`"TA0043`")"; Name = "Reconnaissance"; Description = "The adversary is trying to gather information they can use to plan future operations."; Count = "0"}
                 }
 
                 # Uncategorized
@@ -6983,59 +6965,67 @@ if (Test-Path "$($MemProcFS)")
                     $Array += @{ID = "Uncategorized"; Name = "Uncategorized"; Description = "Uncategorized"; Count = "0"}
                 }
 
-                # CSV
-                $Array | ForEach-Object { New-Object PSObject -Property $_ } |  Export-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Tactics.csv" -NoTypeInformation
+                $Alerts = $Array | ForEach-Object { New-Object PSObject -Property $_ }
 
                 # XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                $Total = ($Alerts | Select-Object Count | Measure-Object Count -Sum).Sum
+                if ($Total -ge "1")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Tactics.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Tactics.csv") -gt 0)
-                        {
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Tactics.csv" -Delimiter "," | Sort-Object { $_.FileKeyLastWriteTimestamp -as [datetime] } -Descending
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Tactics.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MITRE ATT&CK Tactics" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of column D
-                            $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
-                            }
-                        }
+                    $Tactics = $Alerts | Group-Object Name,ID,Count,Description | Select-Object @{Name='Name'; Expression={ $_.Values[0] }},@{Name='ID'; Expression={ $_.Values[1] }},@{Name='Count'; Expression={ $_.Values[2] }},@{Name='Description'; Expression={ $_.Values[3] }},@{Name='PercentUse'; Expression={"{0:p2}" -f ($_.Values[2] / $Total)}} | Sort-Object Count -Descending
+                    $Tactics | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Alerts-by-Sigma-Rule-Tactics.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MITRE ATT&CK Tactics" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    # HorizontalAlignment "Center" of columns A-C and E-E
+                    $WorkSheet.Cells["A:C"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["E:E"].Style.HorizontalAlignment="Center"
+                    # Font Style "Underline" of column B
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["B:B"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("TA",$B1)))' -Underline
                     }
                 }
 
                 # Alerts by Channel
-
-                # CSV
-                ($Data | Select-Object matches).matches | Group-Object Channel | Select-Object Name, Count | Sort-Object Name | Export-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Channel.csv" -NoTypeInformation
-
-                # XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                $Alerts = ($Data | Select-Object matches).matches | Group-Object Channel | Select-Object Name, Count | Sort-Object Name
+                $Total = ($Alerts | Select-Object Count | Measure-Object Count -Sum).Sum
+                if ($Total -ge "1")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Channel.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Channel.csv") -gt 0)
-                        {
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Channel.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Alerts-by-Channel.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Alerts by Channel" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:B1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of column B
-                            $WorkSheet.Cells["B:B"].Style.HorizontalAlignment="Center"
-                            }
-                        }
+                    $Channel = $Alerts | Select-Object Name,Count,@{Name='PercentUse'; Expression={"{0:p2}" -f ($_.Count / $Total)}} | Sort-Object Count -Descending
+                    $Channel | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Alerts-by-Channel.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Alerts by Channel" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
+                    Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor White
+                    # HorizontalAlignment "Center" of columns B-C
+                    $WorkSheet.Cells["B:C"].Style.HorizontalAlignment="Center"
+                    }
+                }
+
+                # Detections
+                $Total = ($Data | Select-Object count | Measure-Object count -Sum).Sum
+                if ($Total -ge "1")
+                {
+                    $Detections = $Data | Group-Object title,description,rule_level,count,tags | Select-Object @{Name='Title'; Expression={ $_.Values[0] }},@{Name='Description'; Expression={ $_.Values[1] }},@{Name=' Rule Level'; Expression={ ($_.Values[2]).Substring(0,1).ToUpper() + ($_.Values[2]).Substring(1)}},@{Name='Count'; Expression={ $_.Values[3] }},@{Name='ATT&CK Tactics'; Expression={ ($_.Values[4] | Select-String -Pattern "attack.t[0-9]{4}|attack.s[0-9]{4}" -NotMatch) -join ", " }},@{Name='ATT&CK Techniques'; Expression={ ($_.Values[4] | Select-String -Pattern "attack.t[0-9]{4}") -join ", " }},@{Name='ATT&CK Software'; Expression={ ($_.Values[4] | Select-String -Pattern "attack.s[0-9]{4}") -join ", " }},@{Name='PercentUse'; Expression={"{0:p2}" -f ($_.Values[3] / $Total)}} | Sort-Object Count -Descending
+                    $Detections | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Detections.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Detections" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    # HorizontalAlignment "Center" of columns C-H
+                    $WorkSheet.Cells["C:H"].Style.HorizontalAlignment="Center"
+                    # ConditionalFormatting - Level
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["C:C"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Critical",$C1)))' -BackgroundColor $CriticalColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["C:C"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("High",$C1)))' -BackgroundColor $HighColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["C:C"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Medium",$C1)))' -BackgroundColor $MediumColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["C:C"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Low",$C1)))' -BackgroundColor $LowColor
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["C:C"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Informational",$C1)))' -BackgroundColor $InformationalColor
                     }
                 }
             }
 
-        $EndTime_Zircolite = (Get-Date)
-        $Time_Zircolite = ($EndTime_Zircolite-$StartTime_Zircolite)
-        ('Zircolite Processing duration: {0} h {1} min {2} sec' -f $Time_Zircolite.Hours, $Time_Zircolite.Minutes, $Time_Zircolite.Seconds) >> "$OUTPUT_FOLDER\Stats.txt"
-
+            $EndTime_Zircolite = (Get-Date)
+            $Time_Zircolite = ($EndTime_Zircolite-$StartTime_Zircolite)
+            ('Zircolite Processing duration: {0} h {1} min {2} sec' -f $Time_Zircolite.Hours, $Time_Zircolite.Minutes, $Time_Zircolite.Seconds) >> "$OUTPUT_FOLDER\Stats.txt"
         }
 
         }
@@ -7044,148 +7034,36 @@ if (Test-Path "$($MemProcFS)")
 
 #############################################################################################################################################################################################
 
-        Function Get-EventLogOverview {
-
-        # Event Log Overview
-        if (Test-Path "$OUTPUT_FOLDER\EventLogs\JSONL\*.json")
-        {
-            Write-Output "[Info]  Parsing Event Record Information from JSON Files ..."
-            $EventLogs = (Get-ChildItem -Path "$OUTPUT_FOLDER\EventLogs\JSONL" -Filter "*.json").FullName
-
-            $StartTime_EventLogOverview = (Get-Date)
-
-            $EventArray = @()
-            ForEach($EventLog in $EventLogs)
-            {
-                $LogName = $EventLog | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.evtx-")[0]}
-                [int64]$LogSize = (Get-Item -Path $EventLog).Length
-                $Row = New-Object PSObject
-                $Row | Add-Member -Name Name -MemberType NoteProperty -Value ("$LogName" + ".evtx")
-                $Row | Add-Member -Name RecordCount -MemberType NoteProperty -Value ((& $jq -c '.Event.System.EventID' $EventLog | Measure-Object).Count)
-                if ($LogSize -ne "0")
-                {
-                    $Row | Add-Member -Name "Oldest [UTC]" -MemberType NoteProperty -Value (& $jq -r '.Event.System.TimeCreated | .[]?.SystemTime' $EventLog | Sort-Object | Select-Object -First 1 | ForEach-Object{($_ -replace "T"," ")} | ForEach-Object{($_ -split "\.")[0]})
-                    $Row | Add-Member -Name "Newest [UTC]" -MemberType NoteProperty -Value (& $jq -r '.Event.System.TimeCreated | .[]?.SystemTime' $EventLog | Sort-Object | Select-Object -Last 1 | ForEach-Object{($_ -replace "T"," ")} | ForEach-Object{($_ -split "\.")[0]})
-                    $Row | Add-Member -Name Bytes -MemberType NoteProperty -Value ((Get-Item -Path $EventLog).Length)
-                    $Row | Add-Member -Name FileSize -MemberType NoteProperty -Value (Get-FileSize (Get-Item -Path $EventLog).Length)
-                }
-                else
-                {
-                    $Row | Add-Member -Name Bytes -MemberType NoteProperty -Value ("0")
-                    $Row | Add-Member -Name FileSize -MemberType NoteProperty -Value ("0")
-                }
-                $Row | Add-Member -Name FilePath -MemberType NoteProperty -Value ($EventLog)
-                $EventArray  += $Row
-            }
-
-            # EventLogOverview.csv
-            $EventArray | Export-Csv "$OUTPUT_FOLDER\EventLogs\EventLogOverview.csv" -NoTypeInformation
-
-            # EventLogOverview.xlsx
-            if (Get-Module -ListAvailable -Name ImportExcel) 
-            {
-                if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogOverview.csv")
-                {
-                    if([int](& $xsv count "$OUTPUT_FOLDER\EventLogs\EventLogOverview.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\EventLogs\EventLogOverview.csv" -Delimiter ","
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\EventLogOverview.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "EventLogOverview" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns B-D
-                        $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
-                        # HorizontalAlignment "Right" of columns E-F
-                        $WorkSheet.Cells["E:F"].Style.HorizontalAlignment="Right"
-                        # HorizontalAlignment "Center" of header of columns E-F
-                        $WorkSheet.Cells["E1:F1"].Style.HorizontalAlignment="Center"
-                        }
-                    }
-                }
-            }
-
-        $EndTime_EventLogOverview = (Get-Date)
-        $Time_EventLogOverview = ($EndTime_EventLogOverview-$StartTime_EventLogOverview)
-        ('EventLogOverview duration:     {0} h {1} min {2} sec' -f $Time_EventLogOverview.Hours, $Time_EventLogOverview.Minutes, $Time_EventLogOverview.Seconds) >> "$OUTPUT_FOLDER\Stats.txt"
-
-        }
-
-        }
-
-        Get-EventLogOverview
-
-#############################################################################################################################################################################################
-
         Function Get-Timesketch {
 
         # Timesketch
-        if (Test-Path "$($Zircolite)")
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
         {
             Write-Output "[Info]  Creating Timesketch output ..."
             New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch" -ItemType Directory -Force | Out-Null
 
-            $script:MyLocation = $pwd
-            Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-
             $StartTime_Timesketch = (Get-Date)
 
             # Zircolite
-            $Ruleset = "rules\rules_windows_generic_full.json"
+            $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
+            $Ruleset = "rules\rules_windows_generic.json"
             $Template = "templates\exportForTimesketch.tmpl"
-            $TemplateOutput = "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Timesketch_MemProcFS-Analyzer.csv"
-            $OutFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\detected_events.json"
-            $LogFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\zircolite.log"
+            $TemplateOutput = "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Timesketch_MemProcFS-Analyzer.json"
+            $LogFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt"
 
-            # Check if JSONL Files already exist
-            if (Test-Path "$OUTPUT_FOLDER\EventLogs\JSONL\*.json")
+            if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogs\*.evtx") 
             {
-                # JSONL
-                $ScanPath = "$OUTPUT_FOLDER\EventLogs\JSONL"
-                & $Zircolite --evtx $ScanPath --ruleset $Ruleset --jsononly --template $Template --templateOutput $TemplateOutput --outfile $OutFile --logfile $LogFile 2>&1 | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite-draft.txt"
-            }
-            else
-            {
-                # EVTX
-                $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
-                & $Zircolite --evtx $ScanPath --ruleset $Ruleset --noexternal --template $Template --templateOutput $TemplateOutput --outfile $OutFile --logfile $LogFile 2>&1 | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite-draft.txt"
+                $script:MyLocation = $pwd
+                Set-Location "$SCRIPT_DIR\Tools\Zircolite"
+                python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --events $ScanPath --ruleset $Ruleset --template $Template --templateOutput $TemplateOutput --logfile $LogFile 2>&1 | Out-Null
+                Set-Location "$MyLocation"
             }
             
-            Set-Location "$MyLocation"
-
-            # zircolite.log
-            if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\zircolite.log")
+            # File Size (JSON)
+            if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Timesketch_MemProcFS-Analyzer.json")
             {
-                Remove-Item -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\zircolite.log" -Force
-            }
-
-            # Remove ANSI Control Characters
-            if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite-draft.txt")
-            {
-                Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite-draft.txt" | ForEach-Object { $_ -replace "\x1b\[[0-9;]*m" } | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt"
-                Remove-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite-draft.txt"
-            }
-
-            # Cleaning up
-            if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt")
-            {
-                $Filter = @("^zircolite_win10\.exe","MemProcFS-Analyzer-v0.*\.ps1","^\+","\+ CategoryInfo          : NotSpecified:","\+ FullyQualifiedErrorId : NativeCommandError","%\|")
-                $Clean = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt" | Select-String -Pattern $Filter -NotMatch 
-                $Clean | Set-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt"
-            }
-
-            # Remove empty lines and add line breaks where needed
-            if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt")
-            {
-                $Clean = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt" | Where-Object {$_.Trim()} | ForEach-Object {($_ -replace "Finished in", "`nFinished in")} | ForEach-Object {($_ -replace "Sysmon Linux =-", "Sysmon Linux =-`n")}
-                @("") + ($Clean) | Set-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Zircolite.txt"
-            }
-
-            # File Size (CSV)
-            if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Timesketch_MemProcFS-Analyzer.csv")
-            {
-                $FileSize = Get-FileSize((Get-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Timesketch_MemProcFS-Analyzer.csv").Length)
-                Write-Output "[Info]  File Size (CSV): $FileSize"
+                $FileSize = Get-FileSize((Get-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch\Timesketch_MemProcFS-Analyzer.json").Length)
+                Write-Output "[Info]  File Size (JSON): $FileSize"
             }
 
             $EndTime_Timesketch = (Get-Date)
@@ -7194,7 +7072,7 @@ if (Test-Path "$($MemProcFS)")
         }
         else
         {
-            Write-Host "[Error] zircolite_win10.exe NOT found." -ForegroundColor Red
+            Write-Host "[Error] zircolite.py NOT found." -ForegroundColor Red
         }
 
         }
@@ -9066,7 +8944,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
 
 Function DFIRBatch {
 
-# DFIR RECmd Batch File v2.11 (2025-03-31)
+# DFIR RECmd Batch File v2.22 (2026-03-17)
 # https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.md
 # https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.reb
 # https://github.com/AndrewRathbun

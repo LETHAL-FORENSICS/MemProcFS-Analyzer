@@ -14,7 +14,7 @@ Features:
 * Update-Info when there's a new version of ClamAV or a new Dokany File System Library Bundle available  
 * Pagefile Support
 * OS Fingerprinting  
-* Scan w/ Custom YARA rules (incl. 423 rules by e.g. [Chronicle](https://github.com/chronicle/GCTI/tree/main/YARA) and [Elastic Security](https://github.com/elastic/protections-artifacts))  
+* Scan w/ Custom YARA rules (incl. 447 rules by e.g. [Chronicle](https://github.com/chronicle/GCTI/tree/main/YARA) and [Elastic Security](https://github.com/elastic/protections-artifacts))  
 * Multi-Threaded scan w/ ClamAV for Windows  
 * Collection of infected files detected by ClamAV for further analysis (PW: infected)
 * Collection of injected modules detected by MemProcFS PE_INJECT for further analysis (PW: infected)
@@ -52,10 +52,10 @@ Download the latest version of **MemProcFS-Analyzer** from the [Releases](https:
 ## Usage  
 Launch Windows PowerShell (or Windows PowerShell ISE or Visual Studio Code w/ PSVersion: 5.1) as Administrator and open/run MemProcFS-Analyzer.ps1. 
 
-![File-Browser](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0780ec4a5fc62219e12791456f5f1e38d5b10b1a/Screenshots/01.png)  
+![File-Browser](https://github.com/user-attachments/assets/5c3859f8-c301-4f30-adf2-1bd0bd4e5529)  
 **Fig 1:** Select your Memory Snapshot and select your pagefile.sys (Optional)
 
-![Auto-Install](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0780ec4a5fc62219e12791456f5f1e38d5b10b1a/Screenshots/02.png)  
+![Auto-Install](https://github.com/user-attachments/assets/f47b3187-051a-44f6-b6f3-31526bff5063)  
 **Fig 2:** MemProcFS-Analyzer auto-installs dependencies (First Run)
 
 ![Microsoft-Internet-Symbol-Store](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0780ec4a5fc62219e12791456f5f1e38d5b10b1a/Screenshots/03.png)  
@@ -67,7 +67,7 @@ Launch Windows PowerShell (or Windows PowerShell ISE or Visual Studio Code w/ PS
 ![Mounted](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/05.png)  
 **Fig 5:** You can investigate the mounted memory dump by exploring drive letter
 
-![Auto-Update](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0780ec4a5fc62219e12791456f5f1e38d5b10b1a/Screenshots/06.png)  
+![Auto-Update](https://github.com/user-attachments/assets/0bc7be25-7cbd-4acf-9857-59bb8b7c63e3)  
 **Fig 6:** MemProcFS-Analyzer checks for updates (Second Run) 
 
 Note: It's recommended to uncomment/disable the "Updater" function after installation. Check out the "Main" in the bottom of the script.
@@ -162,16 +162,16 @@ Open "C:\Program Files\ClamAV\clamd.conf" with your text editor and search for: 
 https://ipinfo.io/signup?ref=cli  
 Open "MemProcFS-Analyzer.ps1" with your text editor, search for "Please insert your Access Token here" and copy/paste your access token.
 
-7. Install the NuGet package provider for PowerShell  
-Check if NuGet is available in the package providers by running the following command:  
-`Get-PackageProvider -ListAvailable`  
-If NuGet is not installed on your system yet, you have to install it.  
-`Install-PackageProvider -Name NuGet -Force`  
+7. Make sure to comment/uncomment (selectively enable or disable) the functions you want to play with (Elasticsearch and ELKImport are disabled by default). Check out the "Main" in the bottom of the script.  
 
-8. Make sure to comment/uncomment (selectively enable or disable) the functions you want to play with (Elasticsearch and ELKImport are disabled by default). Check out the "Main" in the bottom of the script.  
-
-9. Launch the Automated Installer/Updater for MemProcFS-Analyzer  
+8. Launch the Automated Installer/Updater for MemProcFS-Analyzer  
 `.\Updater.ps1`  
+
+9. Install Python 3.x (and check the box "Add Python 3.x to PATH").  
+
+Install dependencies for Zircolite: 
+`cd .\Tools\Zircolite`
+`pip3 install -r requirements.txt`  
 
 10.  Done! :smiley:   
 
@@ -180,7 +180,10 @@ Notes:
 - [Elasticsearch Tips](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/wiki/Elasticsearch)
 
 ## Dependencies
-7-Zip 25.00 Standalone Console (2025-07-05)  
+1768.py v.0.0.23 (2025-03-07)  
+https://blog.didierstevens.com/?s=1768.py  
+
+7-Zip 26.00 Standalone Console (2026-02-12)  
 https://www.7-zip.org/download.html  
 
 AmcacheParser v1.5.2.0 (.NET 9)  
@@ -189,13 +192,13 @@ https://ericzimmerman.github.io/
 AppCompatCacheParser v1.5.1.0 (.NET 9)  
 https://ericzimmerman.github.io/  
 
-ClamAV - Download --> Windows --> clamav-1.5.1.win.x64.msi (2025-10-15)  
+ClamAV - Download &#8594; Windows &#8594; clamav-1.5.2.win.x64.msi (2026-03-04)  
 https://www.clamav.net/downloads    
 
-Dokany File System Library v2.3.1.1000 (2025-09-28)  
+Dokany Library Bundle v2.3.1.1000 (2025-09-28)  
 https://github.com/dokan-dev/dokany/releases/latest &#8594; DokanSetup.exe  
 
-Elasticsearch 9.1.5 (2025-10-06)  
+Elasticsearch 9.3.3 (2026-04-08)  
 https://www.elastic.co/downloads/elasticsearch  
 
 entropy v1.1 (2023-07-28)  
@@ -210,16 +213,16 @@ https://github.com/dfinke/ImportExcel
 IPinfo CLI 3.3.1 (2024-03-01)    
 https://github.com/ipinfo/cli  
 
-jq v1.8.1 (2025-07-01)  
+jq v1.8.1 (2025-07-01)   
 https://github.com/stedolan/jq  
 
-Kibana 9.1.5 (2025-10-06)   
+Kibana 9.3.3 (2026-04-08)    
 https://www.elastic.co/downloads/kibana  
 
-llnk_parser v0.4.1 (2025-01-02)  
+lnk_parser v0.4.3 (2026-02-17)  
 https://github.com/AbdulRhmanAlfaifi/lnk_parser  
 
-MemProcFS v5.16.4 - The Memory Process File System (2025-10-21)    
+MemProcFS v5.17.6 - The Memory Process File System (2026-04-19)    
 https://github.com/ufrisk/MemProcFS  
 
 RECmd v2.1.0.0 (.NET 9)  
@@ -231,10 +234,10 @@ https://ericzimmerman.github.io/
 xsv v0.13.0 (2018-05-12)  
 https://github.com/BurntSushi/xsv  
 
-YARA v4.5.4 (2025-05-27)  
+YARA v4.5.5 (2025-10-30)  
 https://virustotal.github.io/yara/  
 
-Zircolite v2.40.0 (2025-04-06)  
+Zircolite v3.6.3 (2026-04-06)  
 https://github.com/wagga40/Zircolite  
 
 ## Links

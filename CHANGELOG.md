@@ -2,6 +2,15 @@
 
 All changes to MemProcFS-Analyzer will be documented in this file.  
 
+## [1.2.1] - 2026-04-20
+### Added
+- Zircolite v3
+- 447 YARA Custom Rules
+- Updater v0.5
+
+## Fixed
+- Minor fixes and improvements
+
 ## [1.2.0] - 2025-06-24
 ### Added
 - EZTools (.NET 9)
