@@ -61,7 +61,7 @@ Launch Windows PowerShell (or Windows PowerShell ISE or Visual Studio Code w/ PS
 ![Microsoft-Internet-Symbol-Store](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0780ec4a5fc62219e12791456f5f1e38d5b10b1a/Screenshots/03.png)  
 **Fig 3:** Accept Terms of Use (First Run)  
 
-![MemProcFS](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0780ec4a5fc62219e12791456f5f1e38d5b10b1a/Screenshots/04.png)  
+![MemProcFS](https://github.com/user-attachments/assets/c1dd9d39-1d76-4ad8-a0fc-8af73cf4f295)  
 **Fig 4:** If you find MemProcFS useful, please become a sponsor at: https://github.com/sponsors/ufrisk  
 
 ![Mounted](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/05.png)  
