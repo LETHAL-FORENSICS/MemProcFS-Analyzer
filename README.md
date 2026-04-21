@@ -99,7 +99,7 @@ Note: It's recommended to uncomment/disable the "Updater" function after install
 ![MapReport](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/15.png)  
 **Fig 15:** Map IPs w/ IPinfo.io
 
-![EVTX](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/16.png)  
+![EVTX](https://github.com/user-attachments/assets/ca17ac3d-dae4-42f1-ad7a-582d24d171d2)  
 **Fig 16:** Processing Windows Event Logs (EVTX)
 
 ![Zircolite](https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer/blob/0bb85b553644a29675e4116133e7346b080d07a2/Screenshots/17.png)  
