@@ -74,6 +74,9 @@
 $OriginalProgressPreference = $Global:ProgressPreference
 $Global:ProgressPreference = 'SilentlyContinue'
 
+# Set Invoke-WebRequest Preference to UseBasicParsing
+$PSDefaultParameterValues['Invoke-WebRequest:UseBasicParsing'] = $true
+
 #endregion Initialisations
 
 #############################################################################################################################################################################################
