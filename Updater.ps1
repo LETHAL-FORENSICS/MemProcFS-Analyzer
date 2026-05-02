@@ -208,7 +208,7 @@ Function Updater {
 Function InternetConnectivityCheck {
 
 # Internet Connectivity Check (Vista+)
-$NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]‘{DCB00C01-570F-4A9B-8D69-199FDBA5723B}’)).IsConnectedToInternet
+$NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]'{DCB00C01-570F-4A9B-8D69-199FDBA5723B}')).IsConnectedToInternet
 
 # Offline
 if (!($NetworkListManager -eq "True"))
@@ -453,7 +453,7 @@ if (!(Test-Path "C:\Program Files\ClamAV\clamd.conf"))
 if (Test-Path "$($freshclam)")
 {
     # Internet Connectivity Check (Vista+)
-    $NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]‘{DCB00C01-570F-4A9B-8D69-199FDBA5723B}’)).IsConnectedToInternet
+    $NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]'{DCB00C01-570F-4A9B-8D69-199FDBA5723B}')).IsConnectedToInternet
 
     if (!($NetworkListManager -eq "True"))
     {
