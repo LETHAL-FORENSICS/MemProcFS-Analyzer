@@ -4,7 +4,7 @@
 # @copyright: Copyright (c) 2021-2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-04-20
+# @date:      2026-05-02
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -23,10 +23,10 @@
 # 7-Zip 26.00 Standalone Console (2026-02-12)
 # https://www.7-zip.org/download.html --> 7za.exe (x64)
 #
-# AmcacheParser v1.5.2.0 (.NET 9)
+# AmcacheParser v2026.5.0.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
-# AppCompatCacheParser v1.5.1.0 (.NET 9)
+# AppCompatCacheParser v2026.5.0.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
 # ClamAV - Download --> Windows --> clamav-1.5.2.win.x64.msi (2026-03-04)
@@ -37,25 +37,25 @@
 # Dokany File System Library v2.3.1.1000 (2025-09-28)
 # https://github.com/dokan-dev/dokany/releases/latest --> DokanSetup.exe
 #
-# Elasticsearch 9.3.3 (2026-04-08)
+# Elasticsearch 9.3.4 (2026-04-30)
 # https://www.elastic.co/downloads/elasticsearch
 #
 # entropy v1.1 (2023-07-28)
 # https://github.com/merces/entropy
 #
-# EvtxECmd v1.5.2.0 (.NET 9)
+# EvtxECmd v2026.5.0.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
 # ImportExcel v7.8.10 (2024-10-21)
 # https://github.com/dfinke/ImportExcel
 #
-# IPinfo CLI 3.3.1 (2024-03-01)
+# IPinfo CLI 3.3.2 (2026-04-28)
 # https://github.com/ipinfo/cli
 #
 # jq v1.8.1 (2025-07-01)
 # https://github.com/stedolan/jq
 #
-# Kibana 9.3.3 (2026-04-08)
+# Kibana 9.3.4 (2026-04-30)
 # https://www.elastic.co/downloads/kibana
 #
 # lnk_parser v0.4.3 (2026-02-17)
@@ -64,11 +64,11 @@
 # MemProcFS v5.17.6 - The Memory Process File System (2026-04-19)
 # https://github.com/ufrisk/MemProcFS
 #
-# RECmd v2.1.0.0 (.NET 9)
+# RECmd v2026.5.0.0 (.NET 9)
 # https://ericzimmerman.github.io/
 # https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.md
 #
-# SBECmd v2.1.0.0 (.NET 9)
+# SBECmd v2026.5.0.0 (.NET 9)
 # https://ericzimmerman.github.io/
 #
 # xsv v0.13.0 (2018-05-12)

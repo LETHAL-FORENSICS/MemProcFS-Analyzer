@@ -1,10 +1,10 @@
-﻿# MemProcFS-Analyzer Updater v0.5
+﻿# MemProcFS-Analyzer Updater v0.6
 #
 # @author:    Martin Willing
 # @copyright: Copyright (c) 2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-04-20
+# @date:      2026-05-02
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -38,9 +38,14 @@
 # Release Date: 2026-04-20
 # Fixed: Minor fixes and improvements
 #
+# Version 0.6
+# Release Date: 2026-05-02
+# Fixed: Set Invoke-WebRequest Preference to UseBasicParsing (@digitalsleuth)
+# Fixed: Minor fixes and improvements
+#
 #
 # Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.6456) and PowerShell 5.1 (5.1.19041.6456)
-# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.6456) and PowerShell 7.6.0
+# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.6456) and PowerShell 7.6.1
 #
 #
 #############################################################################################################################################################################################
@@ -48,7 +53,7 @@
 
 <#
 .SYNOPSIS
-  MemProcFS-Analyzer Updater v0.5 - Automated Installer/Updater for MemProcFS-Analyzer
+  MemProcFS-Analyzer Updater v0.6 - Automated Installer/Updater for MemProcFS-Analyzer
 
 .DESCRIPTION
   Updater.ps1 is a PowerShell script utilized to automate the installation and the update process of MemProcFS-Analyzer (incl. all dependencies).
@@ -73,6 +78,9 @@
 # Set Progress Preference to Silently Continue
 $OriginalProgressPreference = $Global:ProgressPreference
 $Global:ProgressPreference = 'SilentlyContinue'
+
+# Set Invoke-WebRequest Preference to UseBasicParsing
+$PSDefaultParameterValues['Invoke-WebRequest:UseBasicParsing'] = $true
 
 #endregion Initialisations
 
@@ -157,7 +165,7 @@ $script:yara64 = "$SCRIPT_DIR\Tools\YARA\yara64.exe"
 
 # Windows Title
 $DefaultWindowsTitle = $Host.UI.RawUI.WindowTitle
-$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer Updater v0.5 - Automated Installer/Updater for MemProcFS-Analyzer"
+$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer Updater v0.6 - Automated Installer/Updater for MemProcFS-Analyzer"
 
 # Check if the PowerShell script is being run with admin rights
 if (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
@@ -187,7 +195,7 @@ Write-Output "$Logo"
 Write-Output ""
 
 # Header
-Write-Output "MemProcFS-Analyzer Updater v0.5 - Automated Installer/Updater for MemProcFS-Analyzer"
+Write-Output "MemProcFS-Analyzer Updater v0.6 - Automated Installer/Updater for MemProcFS-Analyzer"
 Write-Output "(c) 2026 Martin Willing at Lethal-Forensics (https://lethal-forensics.com/)"
 Write-Output ""
 
@@ -208,7 +216,7 @@ Function Updater {
 Function InternetConnectivityCheck {
 
 # Internet Connectivity Check (Vista+)
-$NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]‘{DCB00C01-570F-4A9B-8D69-199FDBA5723B}’)).IsConnectedToInternet
+$NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]'{DCB00C01-570F-4A9B-8D69-199FDBA5723B}')).IsConnectedToInternet
 
 # Offline
 if (!($NetworkListManager -eq "True"))
@@ -403,7 +411,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 if ($CurrentVersion)
@@ -453,7 +461,7 @@ if (!(Test-Path "C:\Program Files\ClamAV\clamd.conf"))
 if (Test-Path "$($freshclam)")
 {
     # Internet Connectivity Check (Vista+)
-    $NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]‘{DCB00C01-570F-4A9B-8D69-199FDBA5723B}’)).IsConnectedToInternet
+    $NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]'{DCB00C01-570F-4A9B-8D69-199FDBA5723B}')).IsConnectedToInternet
 
     if (!($NetworkListManager -eq "True"))
     {
@@ -553,7 +561,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 if ($CurrentVersion)
@@ -641,7 +649,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 if ($CurrentVersion)
@@ -730,7 +738,7 @@ if (Test-Path "$($AmcacheParser)")
 
     # Determining latest release of AmcacheParser
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"
+    $URL = "https://download.ericzimmermanstools.com/net9/AmcacheParser.zip" # https://download.ericzimmermanstools.com/net9/AmcacheParser.zip
     $Headers = (Invoke-WebRequest -Uri $URL -UseBasicParsing -Method Head).Headers
     $LatestETag = ($Headers["ETag"]).Replace('"','')
 }
@@ -892,7 +900,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 $LatestRelease = $Tag.Substring(1)
 
@@ -1087,7 +1095,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 $LatestRelease = $Tag.Substring(1)
 
@@ -1179,7 +1187,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 if ($CurrentVersion)
@@ -1264,7 +1272,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 if ($CurrentVersion)
@@ -1335,7 +1343,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 if ($CurrentVersion)
@@ -1582,7 +1590,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 if ($CurrentVersion)
 {
@@ -1661,7 +1669,7 @@ if ($Published -is [String])
 }
 else
 {
-    $ReleaseDate = $Published # PowerShell 7
+    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 if ($CurrentVersion)
@@ -1757,7 +1765,7 @@ if ($Published -is [String])
 }
 else
 {
-    $LatestRelease = $Published # PowerShell 7
+    $LatestRelease = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
 $Download = $Response.zipball_url
