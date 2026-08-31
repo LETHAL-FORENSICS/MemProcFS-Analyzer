@@ -1,10 +1,10 @@
-﻿# MemProcFS-Analyzer Updater v0.6
+﻿# MemProcFS-Analyzer Updater v0.7
 #
 # @author:    Martin Willing
 # @copyright: Copyright (c) 2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-05-02
+# @date:      2026-08-31
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -43,9 +43,16 @@
 # Fixed: Set Invoke-WebRequest Preference to UseBasicParsing (@digitalsleuth)
 # Fixed: Minor fixes and improvements
 #
+# Version 0.7
+# Release Date: 2026-08-31
+# Added: GitHub API Rate Limit Check
+# Fixed: Get-Yara --> Check if the release contains a compiled version for Windows (x64)
+# Fixed: Get-Zircolite --> Check if Python is installed
+# Fixed: Minor fixes and improvements 
 #
-# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.6456) and PowerShell 5.1 (5.1.19041.6456)
-# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.6456) and PowerShell 7.6.1
+#
+# Tested on Windows 11 Pro (x64) Version 25H2 (10.0.26100.9168) and PowerShell 5.1 (5.1.26100.9168)
+# Tested on Windows 11 Pro (x64) Version 25H2 (10.0.26100.9168) and PowerShell 7.6.5
 #
 #
 #############################################################################################################################################################################################
@@ -53,7 +60,7 @@
 
 <#
 .SYNOPSIS
-  MemProcFS-Analyzer Updater v0.6 - Automated Installer/Updater for MemProcFS-Analyzer
+  MemProcFS-Analyzer Updater v0.7 - Automated Installer/Updater for MemProcFS-Analyzer
 
 .DESCRIPTION
   Updater.ps1 is a PowerShell script utilized to automate the installation and the update process of MemProcFS-Analyzer (incl. all dependencies).
@@ -165,7 +172,7 @@ $script:yara64 = "$SCRIPT_DIR\Tools\YARA\yara64.exe"
 
 # Windows Title
 $DefaultWindowsTitle = $Host.UI.RawUI.WindowTitle
-$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer Updater v0.6 - Automated Installer/Updater for MemProcFS-Analyzer"
+$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer Updater v0.7 - Automated Installer/Updater for MemProcFS-Analyzer"
 
 # Check if the PowerShell script is being run with admin rights
 if (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
@@ -195,7 +202,7 @@ Write-Output "$Logo"
 Write-Output ""
 
 # Header
-Write-Output "MemProcFS-Analyzer Updater v0.6 - Automated Installer/Updater for MemProcFS-Analyzer"
+Write-Output "MemProcFS-Analyzer Updater v0.7 - Automated Installer/Updater for MemProcFS-Analyzer"
 Write-Output "(c) 2026 Martin Willing at Lethal-Forensics (https://lethal-forensics.com/)"
 Write-Output ""
 
@@ -244,6 +251,16 @@ if ($NetworkListManager -eq "True")
         $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
         Exit
     }
+}
+
+# GitHub API Rate Limit (60 requests/hour per IP address)
+$RateLimit = Invoke-RestMethod -Uri "https://api.github.com/rate_limit"
+if ($RateLimit.rate.remaining -eq 0)
+{
+    $ResetTime = [DateTimeOffset]::FromUnixTimeSeconds($RateLimit.rate.reset).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss")
+    Write-Host "[Info]  GitHub API Rate Limit reached ($($RateLimit.rate.remaining)/$($RateLimit.rate.limit)) — resets at $ResetTime (LocalDateTime)" -ForegroundColor Red
+    $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
+    Exit
 }
 
 }
@@ -1655,14 +1672,40 @@ else
     $CurrentVersion = ""
 }
 
-# Determining latest release on GitHub
+# Determining latest release on GitHub that ships a Win64 build
 $Repository = "VirusTotal/yara"
-$Latest = "https://api.github.com/repos/$Repository/releases/latest"
+$ReleasesUrl = "https://api.github.com/repos/$Repository/releases?per_page=100"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$Response = (Invoke-WebRequest -Uri $Latest -UseBasicParsing | ConvertFrom-Json)[0]
+ 
+$Releases = (Invoke-WebRequest -Uri $ReleasesUrl -UseBasicParsing | ConvertFrom-Json)
+ 
+$Response = $null
+$Download = $null
+
+# Releases are returned newest-first; walk them until one has a -win64 asset
+foreach ($Release in $Releases)
+{
+    if ($Release.prerelease) { continue } # skip pre-releases
+ 
+    $Asset = $Release.assets | Where-Object { $_.browser_download_url -match "-win64" } | Select-Object -First 1
+ 
+    if ($Asset)
+    {
+        $Response = $Release
+        $Download = $Asset.browser_download_url
+        break
+    }
+}
+
+if (-not $Response)
+{
+    Write-Output "[Error] No release with a -win64 build was found (checked $($Releases.Count) releases)."
+    return
+}
+
 $Tag = $Response.tag_name
 $Published = $Response.published_at
-$Download = ($Response.assets | Select-Object -ExpandProperty browser_download_url | Select-String -Pattern "-win64" | Out-String).Trim()
+ 
 if ($Published -is [String])
 {
     $ReleaseDate = $Published.split('T')[0] # Windows PowerShell
@@ -1720,25 +1763,47 @@ else
 
 Function Get-Zircolite {
 
-# Check Current Version of Zircolite
-if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
-{
-    $MyLocation = $pwd
-    Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-    $CurrentVersion = (python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --version 2>&1 | Select-String -Pattern "Zircolite -" | ForEach-Object{($_ -split "Zircolite - ")[-1]} | ForEach-Object{($_ -replace "v","")}).Trim()
-    Set-Location "$MyLocation"
-    Write-Output "[Info]  Current Version: Zircolite v$CurrentVersion"
+# Dependencies:
+# https://github.com/wagga40/Zircolite/blob/master/requirements.txt
+#
+# cd "$SCRIPT_DIR\Tools\Zircolite"
+# pip install -r requirements.txt
 
-    # zircolite.log
-    if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log")
+# Check if Python is installed
+if (Get-Command python -ErrorAction SilentlyContinue)
+{
+    $VersionOutput = (& python --version 2>&1)
+    if ($LASTEXITCODE -eq 0 -and $VersionOutput -match "Python \d+\.\d+\.\d+")
     {
-        Remove-Item -Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log" -Force
+        # Check Current Version of Zircolite
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
+        {
+            $MyLocation = $pwd
+            Set-Location "$SCRIPT_DIR\Tools\Zircolite"
+            $CurrentVersion = (python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --version 2>&1 | Select-String -Pattern "Zircolite -" | ForEach-Object{($_ -split "Zircolite - ")[-1]} | ForEach-Object{($_ -replace "v","")}).Trim()
+            Set-Location "$MyLocation"
+            Write-Output "[Info]  Current Version: Zircolite v$CurrentVersion"
+
+            # zircolite.log
+            if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log")
+            {
+                Remove-Item -Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log" -Force
+            }
+        }
+        else
+        {
+            Write-Output "[Info]  Zircolite NOT found."
+            $CurrentVersion = ""
+        }
+    }
+    else
+    {
+        Write-Host "[Info]  Python is NOT installed (Store alias stub detected)." -ForegroundColor Red
     }
 }
 else
 {
-    Write-Output "[Info]  Zircolite NOT found."
-    $CurrentVersion = ""
+    Write-Host "[Info]  Python is NOT installed." -ForegroundColor Red
 }
 
 # Determining latest stable release on GitHub
@@ -1952,3 +2017,217 @@ $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
 
 #############################################################################################################################################################################################
 #############################################################################################################################################################################################
+
+# SIG # Begin signature block
+# MIInawYJKoZIhvcNAQcCoIInXDCCJ1gCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
+# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUcYIOVVT/kZa/GdLjW3E3QyWN
+# bCCggiCkMIIGGjCCBAKgAwIBAgIQYh1tDFIBnjuQeRUgiSEcCjANBgkqhkiG9w0B
+# AQwFADBWMQswCQYDVQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMS0w
+# KwYDVQQDEyRTZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgUm9vdCBSNDYwHhcN
+# MjEwMzIyMDAwMDAwWhcNMzYwMzIxMjM1OTU5WjBUMQswCQYDVQQGEwJHQjEYMBYG
+# A1UEChMPU2VjdGlnbyBMaW1pdGVkMSswKQYDVQQDEyJTZWN0aWdvIFB1YmxpYyBD
+# b2RlIFNpZ25pbmcgQ0EgUjM2MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKC
+# AYEAmyudU/o1P45gBkNqwM/1f/bIU1MYyM7TbH78WAeVF3llMwsRHgBGRmxDeEDI
+# ArCS2VCoVk4Y/8j6stIkmYV5Gej4NgNjVQ4BYoDjGMwdjioXan1hlaGFt4Wk9vT0
+# k2oWJMJjL9G//N523hAm4jF4UjrW2pvv9+hdPX8tbbAfI3v0VdJiJPFy/7XwiunD
+# 7mBxNtecM6ytIdUlh08T2z7mJEXZD9OWcJkZk5wDuf2q52PN43jc4T9OkoXZ0arW
+# ZVeffvMr/iiIROSCzKoDmWABDRzV/UiQ5vqsaeFaqQdzFf4ed8peNWh1OaZXnYvZ
+# QgWx/SXiJDRSAolRzZEZquE6cbcH747FHncs/Kzcn0Ccv2jrOW+LPmnOyB+tAfiW
+# u01TPhCr9VrkxsHC5qFNxaThTG5j4/Kc+ODD2dX/fmBECELcvzUHf9shoFvrn35X
+# Gf2RPaNTO2uSZ6n9otv7jElspkfK9qEATHZcodp+R4q2OIypxR//YEb3fkDn3Uay
+# WW9bAgMBAAGjggFkMIIBYDAfBgNVHSMEGDAWgBQy65Ka/zWWSC8oQEJwIDaRXBeF
+# 5jAdBgNVHQ4EFgQUDyrLIIcouOxvSK4rVKYpqhekzQwwDgYDVR0PAQH/BAQDAgGG
+# MBIGA1UdEwEB/wQIMAYBAf8CAQAwEwYDVR0lBAwwCgYIKwYBBQUHAwMwGwYDVR0g
+# BBQwEjAGBgRVHSAAMAgGBmeBDAEEATBLBgNVHR8ERDBCMECgPqA8hjpodHRwOi8v
+# Y3JsLnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNDb2RlU2lnbmluZ1Jvb3RSNDYu
+# Y3JsMHsGCCsGAQUFBwEBBG8wbTBGBggrBgEFBQcwAoY6aHR0cDovL2NydC5zZWN0
+# aWdvLmNvbS9TZWN0aWdvUHVibGljQ29kZVNpZ25pbmdSb290UjQ2LnA3YzAjBggr
+# BgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wDQYJKoZIhvcNAQEMBQAD
+# ggIBAAb/guF3YzZue6EVIJsT/wT+mHVEYcNWlXHRkT+FoetAQLHI1uBy/YXKZDk8
+# +Y1LoNqHrp22AKMGxQtgCivnDHFyAQ9GXTmlk7MjcgQbDCx6mn7yIawsppWkvfPk
+# KaAQsiqaT9DnMWBHVNIabGqgQSGTrQWo43MOfsPynhbz2Hyxf5XWKZpRvr3dMapa
+# ndPfYgoZ8iDL2OR3sYztgJrbG6VZ9DoTXFm1g0Rf97Aaen1l4c+w3DC+IkwFkvjF
+# V3jS49ZSc4lShKK6BrPTJYs4NG1DGzmpToTnwoqZ8fAmi2XlZnuchC4NPSZaPATH
+# vNIzt+z1PHo35D/f7j2pO1S8BCysQDHCbM5Mnomnq5aYcKCsdbh0czchOm8bkinL
+# rYrKpii+Tk7pwL7TjRKLXkomm5D1Umds++pip8wH2cQpf93at3VDcOK4N7EwoIJB
+# 0kak6pSzEu4I64U6gZs7tS/dGNSljf2OSSnRr7KWzq03zl8l75jy+hOds9TWSenL
+# bjBQUGR96cFr6lEUfAIEHVC1L68Y1GGxx4/eRI82ut83axHMViw1+sVpbPxg51Tb
+# nio1lB93079WPFnYaOvfGAA0e0zcfF/M9gXr+korwQTh2Prqooq2bYNMvUoUKD85
+# gnJ+t0smrWrb8dee2CvYZXD5laGtaAxOfy/VKNmwuWuAh9kcMIIGazCCBNOgAwIB
+# AgIRAIxBnpO/K86siAYoO3YZvTwwDQYJKoZIhvcNAQEMBQAwVDELMAkGA1UEBhMC
+# R0IxGDAWBgNVBAoTD1NlY3RpZ28gTGltaXRlZDErMCkGA1UEAxMiU2VjdGlnbyBQ
+# dWJsaWMgQ29kZSBTaWduaW5nIENBIFIzNjAeFw0yNDExMTQwMDAwMDBaFw0yNzEx
+# MTQyMzU5NTlaMFcxCzAJBgNVBAYTAkRFMRYwFAYDVQQIDA1OaWVkZXJzYWNoc2Vu
+# MRcwFQYDVQQKDA5NYXJ0aW4gV2lsbGluZzEXMBUGA1UEAwwOTWFydGluIFdpbGxp
+# bmcwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDRn27mnIzB6dsJFLMe
+# xQQNRd8aMv73DTla68G6Q8u+V2TY1JQ/Z4j2oCI9ATW3K3P7NAPdlE0QmtdjC0F/
+# 74jsfil/i8LwxuyT034wabViZKUcodmKsEFhM9am8W5kUgLuC5FIK4wNOq5TfzYd
+# HTyJu1eR2XuSDoMp0wg45mOuFNBbYB8DVBtHxobvWq4eCs3lUxX07wR3Qr2Utb92
+# w8eU2vKr2Ss9xIh/YvM4UxgBpO1I6O+W2tAB5mmynIgoCfX7mu6iD3A+AhpQ9Gv2
+# 09G83y8FPrFJIWU77TTehErbPjZ074xXwrlEkhnGUCk1w+KiNtZHaSn0X+vnhqJ7
+# otBxQZQAESlhWXpDKCunnnVnVgwvVWtccAhxZO95eif6Vss/UhCaBZ26szlneGtF
+# eTClI4+k3mqfWuodtXjHc8ohAclWp7XVywliwhCFEsAcFkpkCyivey0sqEfrwiMn
+# Ry1elH1S37XcQaav5+bt4KxtIXuOVEx3vM9MHdlraW0y1on5E8i4tagdI45TH0LU
+# 080ubc2MKqq6ZXtplTu1wdF2Cgy3hfSSLkJscRWApvpvOO6Vtc4jTG/AO6iqN5M6
+# Swd+g40XtsxBD/gSk9kMqkgJ1pD1Gp5gkHnP1veut+YgJ9xWcRDJI7vcis9qsXwt
+# VybeOCh56rTQvC/Tf6BJtiieEQIDAQABo4IBszCCAa8wHwYDVR0jBBgwFoAUDyrL
+# IIcouOxvSK4rVKYpqhekzQwwHQYDVR0OBBYEFIxyZAmEHl7uAfEwbB4nzI8MCCLb
+# MA4GA1UdDwEB/wQEAwIHgDAMBgNVHRMBAf8EAjAAMBMGA1UdJQQMMAoGCCsGAQUF
+# BwMDMEoGA1UdIARDMEEwNQYMKwYBBAGyMQECAQMCMCUwIwYIKwYBBQUHAgEWF2h0
+# dHBzOi8vc2VjdGlnby5jb20vQ1BTMAgGBmeBDAEEATBJBgNVHR8EQjBAMD6gPKA6
+# hjhodHRwOi8vY3JsLnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNDb2RlU2lnbmlu
+# Z0NBUjM2LmNybDB5BggrBgEFBQcBAQRtMGswRAYIKwYBBQUHMAKGOGh0dHA6Ly9j
+# cnQuc2VjdGlnby5jb20vU2VjdGlnb1B1YmxpY0NvZGVTaWduaW5nQ0FSMzYuY3J0
+# MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdvLmNvbTAoBgNVHREEITAf
+# gR1td2lsbGluZ0BsZXRoYWwtZm9yZW5zaWNzLmNvbTANBgkqhkiG9w0BAQwFAAOC
+# AYEAZ0dBMMwluWGb+MD1rGWaPtaXrNZnlZqOZxgbdrMLBKAQr0QGcILCVIZ4SZYa
+# evT5yMR6jFGSAjgaFtnk8ZpbtGwig/ed/C/D1Ne8SZyffdtALns/5CHxMnU8ks7u
+# t7dsR6zFD4/bmljuoUoi55W6/XU/1pr+tqRaZGJvjSKJQCN9MhFAvXSpPPqRsj27
+# ze1+KYIBF1/L0BW0HS0d9ZhGSUoEwqMDLpQf2eqJFyyyzWt21VVhLF6mgZ1dE5tC
+# LZY7ERzx6/h5N7F0w361oigizMbCMdST29XOc5mB8q6Cye7OmEfM2jByRWa+cd4R
+# ycsN2p2wHRukpq48iX+tPVKmHwNKf+upuKPDQAeV4J7gUCtevIsOtoyiC2+amimu
+# 81o424Dl+NsAyCLz0SXvNAhVvtU73H61gtoPa/SWouem2S+bzp7oGvGPop/9mh4C
+# Xki6LVeDH3hDM8hZsJg/EToIWiDozTc2yWqwV4Ozyd4x5Ix8lckXMgWuyWcxmLK1
+# RmKpMIIGgjCCBGqgAwIBAgIQNsKwvXwbOuejs902y8l1aDANBgkqhkiG9w0BAQwF
+# ADCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcT
+# C0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAs
+# BgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcN
+# MjEwMzIyMDAwMDAwWhcNMzgwMTE4MjM1OTU5WjBXMQswCQYDVQQGEwJHQjEYMBYG
+# A1UEChMPU2VjdGlnbyBMaW1pdGVkMS4wLAYDVQQDEyVTZWN0aWdvIFB1YmxpYyBU
+# aW1lIFN0YW1waW5nIFJvb3QgUjQ2MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIIC
+# CgKCAgEAiJ3YuUVnnR3d6LkmgZpUVMB8SQWbzFoVD9mUEES0QUCBdxSZqdTkdizI
+# CFNeINCSJS+lV1ipnW5ihkQyC0cRLWXUJzodqpnMRs46npiJPHrfLBOifjfhpdXJ
+# 2aHHsPHggGsCi7uE0awqKggE/LkYw3sqaBia67h/3awoqNvGqiFRJ+OTWYmUCO2G
+# AXsePHi+/JUNAax3kpqstbl3vcTdOGhtKShvZIvjwulRH87rbukNyHGWX5tNK/WA
+# BKf+Gnoi4cmisS7oSimgHUI0Wn/4elNd40BFdSZ1EwpuddZ+Wr7+Dfo0lcHflm/F
+# DDrOJ3rWqauUP8hsokDoI7D/yUVI9DAE/WK3Jl3C4LKwIpn1mNzMyptRwsXKrop0
+# 6m7NUNHdlTDEMovXAIDGAvYynPt5lutv8lZeI5w3MOlCybAZDpK3Dy1MKo+6aEtE
+# 9vtiTMzz/o2dYfdP0KWZwZIXbYsTIlg1YIetCpi5s14qiXOpRsKqFKqav9R1R5vj
+# 3NgevsAsvxsAnI8Oa5s2oy25qhsoBIGo/zi6GpxFj+mOdh35Xn91y72J4RGOJEoq
+# zEIbW3q0b2iPuWLA911cRxgY5SJYubvjay3nSMbBPPFsyl6mY4/WYucmyS9lo3l7
+# jk27MAe145GWxK4O3m3gEFEIkv7kRmefDR7Oe2T1HxAnICQvr9sCAwEAAaOCARYw
+# ggESMB8GA1UdIwQYMBaAFFN5v1qqK0rPVIDh2JvAnfKyA2bLMB0GA1UdDgQWBBT2
+# d2rdP/0BE/8WoWyCAi/QCj0UJTAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUw
+# AwEB/zATBgNVHSUEDDAKBggrBgEFBQcDCDARBgNVHSAECjAIMAYGBFUdIAAwUAYD
+# VR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2VydHJ1c3QuY29tL1VTRVJUcnVz
+# dFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMDUGCCsGAQUFBwEBBCkwJzAl
+# BggrBgEFBQcwAYYZaHR0cDovL29jc3AudXNlcnRydXN0LmNvbTANBgkqhkiG9w0B
+# AQwFAAOCAgEADr5lQe1oRLjlocXUEYfktzsljOt+2sgXke3Y8UPEooU5y39rAARa
+# AdAxUeiX1ktLJ3+lgxtoLQhn5cFb3GF2SSZRX8ptQ6IvuD3wz/LNHKpQ5nX8hjsD
+# LRhsyeIiJsms9yAWnvdYOdEMq1W61KE9JlBkB20XBee6JaXx4UBErc+YuoSb1SxV
+# f7nkNtUjPfcxuFtrQdRMRi/fInV/AobE8Gw/8yBMQKKaHt5eia8ybT8Y/Ffa6HAJ
+# yz9gvEOcF1VWXG8OMeM7Vy7Bs6mSIkYeYtddU1ux1dQLbEGur18ut97wgGwDiGin
+# CwKPyFO7ApcmVJOtlw9FVJxw/mL1TbyBns4zOgkaXFnnfzg4qbSvnrwyj1NiurMp
+# 4pmAWjR+Pb/SIduPnmFzbSN/G8reZCL4fvGlvPFk4Uab/JVCSmj59+/mB2Gn6G/U
+# YOy8k60mKcmaAZsEVkhOFuoj4we8CYyaR9vd9PGZKSinaZIkvVjbH/3nlLb0a7SB
+# IkiRzfPfS9T+JesylbHa1LtRV9U/7m0q7Ma2CQ/t392ioOssXW7oKLdOmMBl14su
+# VFBmbzrt5V5cQPnwtd3UOTpS9oCG+ZZheiIvPgkDmA8FzPsnfXW5qHELB43ET7HH
+# FHeRPRYrMBKjkb8/IN7Po0d0hQoF4TeMM+zYAJzoKQnVKOLg8pZVPT8wgganMIIE
+# j6ADAgECAhEAkKwIciD9xafEa1zHDfc9BjANBgkqhkiG9w0BAQwFADBXMQswCQYD
+# VQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMS4wLAYDVQQDEyVTZWN0
+# aWdvIFB1YmxpYyBUaW1lIFN0YW1waW5nIFJvb3QgUjQ2MB4XDTI2MDMyNTAwMDAw
+# MFoXDTQxMDMyNDIzNTk1OVowVTELMAkGA1UEBhMCR0IxGDAWBgNVBAoTD1NlY3Rp
+# Z28gTGltaXRlZDEsMCoGA1UEAxMjU2VjdGlnbyBQdWJsaWMgVGltZSBTdGFtcGlu
+# ZyBDQSBSNDEwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCu5EqiAa2C
+# HGL5Zi1bmgPM8NUXwYZJ+BtQqHps43GLTC+sjVLypsBh+8uv+TLkgtVGD//vSmA0
+# qrzELf9YRCh2MTAA/aGaQZKGg0BRCmziR3pbCnvgWjtGXBDUyn3j3K2lZAO8KxgF
+# tlxwOYEAkL+CCqK4v9zzTl8ZwzDpPMiDIFa5THk8an1ieF5I09cXNrPQw+1ER1li
+# ThaG0z6FrOpqwxZWmPRZQBw2E32878UB1bL0Zp91vuWZgsMpNNiPCoBj0/1F+LE8
+# +NRokfqacFI0F2tftrRB2W7HQClLR9zjxFbWb5be2rceIfNyHUUfKGIvMI2NzoxS
+# lxXnFqUG887D8W1Cj8DFok688JKxWvHR/9aQykSbd+9Vutj36ij2sgq/125wTpUZ
+# /AgC0ph50bRs7gFrUyaXE9wSsOqMvCCC+sEm7vd/BemSG0TSHNXSmyCba+FCzeke
+# WX03TRIcF3Laqd0Rw24OH7jpei4zaGhcI7nfdhBA4c8RScxNY6jeHLHHmSMMTk9W
+# qn7H4dLhUBP5YEwbgbN4uv1i9ltTnHli8t1xHV0StX9BFgrnmunTX19kUXY1H5OR
+# JbRZyZDdvm1oZyteDj0SnMozr+YSmdIleDUTXdfoY7b2taz8s2+QbOxLxcahEIYG
+# Wzqu6h955tKwcANHcZ4gTmAhT3btuOiQsQIDAQABo4IBbjCCAWowHwYDVR0jBBgw
+# FoAU9ndq3T/9ARP/FqFsggIv0Ao9FCUwHQYDVR0OBBYEFDp0pQxnxkJQwv21/Me7
+# KTSC9Hq5MA4GA1UdDwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMBMGA1Ud
+# JQQMMAoGCCsGAQUFBwMIMCMGA1UdIAQcMBowCAYGZ4EMAQQCMA4GDCsGAQQBsjEB
+# AgEDCDBMBgNVHR8ERTBDMEGgP6A9hjtodHRwOi8vY3JsLnNlY3RpZ28uY29tL1Nl
+# Y3RpZ29QdWJsaWNUaW1lU3RhbXBpbmdSb290UjQ2LmNybDB8BggrBgEFBQcBAQRw
+# MG4wRwYIKwYBBQUHMAKGO2h0dHA6Ly9jcnQuc2VjdGlnby5jb20vU2VjdGlnb1B1
+# YmxpY1RpbWVTdGFtcGluZ1Jvb3RSNDYucDdjMCMGCCsGAQUFBzABhhdodHRwOi8v
+# b2NzcC5zZWN0aWdvLmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAMt5SR2bxngNm+N8o
+# c6Gq76Gx1c235fkX7jw8Ho9MAkJGADerHE7dhsBXttqmzgr/7ZZahZSykGRPhPY1
+# crj028kB8KzO0dKC2qQBAwtfgqMLKkkX/6bYq2uT33eD6ByAp2/XKD0LcmZh0kKe
+# cvSBr6ln9ajX6u1dnx2fA7xEKy1M3qBhfQSUWLtjs2nFt0ELVLptzTlX9ID0cL+i
+# OPfdboZ3CelT+JXKVKR2Sge0d4YiFAtPZkfSo8z1Z1x7y/Z9mwMIlBAnyuWXs4Ys
+# NuxdrYIt/QxE31PDOJ9DesS4Bc7H9OTORlEV/AvfiF/VepKZpira1MzLYuCw+uoL
+# Zn/pkpvd+CvNTS+mEHjBJNa6WK1j8qXFu+jIq+sG9QILHiyB6p/xpHrkJu8zkw39
+# 3+VqF9eKlTY2VjRxdycZLrVemZ4Yp3wi33b+W58CllH3HqjmowlZ7SOrgmx8YwYO
+# kgrHsXOQHyBp6O4FRb8In0+FzjT7ElGie9V7CfhL3IlVFZ4zjuKsZtH1iU3fGu4z
+# /JnOGT6sCb0BbTqe/uhvpFCQBdH5xPGIA/LrbQUXjU2tWJgHhTIqnN/HvHyOHi5t
+# M4zP3nhgh2rJ6Kqq2xsHBeNYs/R18xQ8DeIg+c90Eoaeh0YlN1KU8AyYol3K9M+q
+# Y5ez8syd/7ZlrRnoVewgH3P1pcswggbiMIIEyqADAgECAhEA507yVbBQT/rbpt/3
+# /IujFTANBgkqhkiG9w0BAQwFADBVMQswCQYDVQQGEwJHQjEYMBYGA1UEChMPU2Vj
+# dGlnbyBMaW1pdGVkMSwwKgYDVQQDEyNTZWN0aWdvIFB1YmxpYyBUaW1lIFN0YW1w
+# aW5nIENBIFI0MTAeFw0yNjAzMjUwMDAwMDBaFw0zNzA2MjQyMzU5NTlaMHIxCzAJ
+# BgNVBAYTAkdCMRcwFQYDVQQIEw5HcmVhdGVyIExvbmRvbjEYMBYGA1UEChMPU2Vj
+# dGlnbyBMaW1pdGVkMTAwLgYDVQQDEydTZWN0aWdvIFB1YmxpYyBUaW1lIFN0YW1w
+# aW5nIFNpZ25lciBSMzcwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCy
+# /8NtS9xQ2UUtBRF32bj7VK3n4m50Uqjk/zTciSziYV40H1LKah0/oEklYG42E4VC
+# P3DvsBUB6DmpCkDZ0jCnZBPIEevaH15ZJOQwFWP2ZXr5YjlJpb68Nlbs+ElNvKx3
+# 2/1YHde3qqUSLybjulxPLz6T85+HOIqK7M1Bep8LspyhEP/q6nw5kGxTSrGvufme
+# H+JF8CnVBcVMFA40FlIYh0cDJVFhhfTfdWgLy/vWuLMQoKkf3s/FvByf16r0rtby
+# Hm/iemwxSioJL9zyZDDKUNAbHXl0dhXo2VxUV2NcPXWXuoKsjL+6cfk6Vm2DHnxA
+# lFdFsaBDIF1JOkSnC6PeLlBznZn2buF3vIIYJcq6N/zeFRCk4/HXDz7zgRsRRMdU
+# B+rhyk5FoZaBjw0nLq3GZ3fClLUx5es5pUAxzNODMBn7JkFYip2BAGBPER5eV0RO
+# hk6tGTG+fUiMiV+vgjg1YnP5FvnYWyEtWeQD/B2hp3vz0RvtdkM0p3igyadzrfpO
+# Bq5ppVk/YsuhTQkP99ivneHAGfi5e7lmxJ+meoBPrRLuzMmb81rzzbESjJHMsn5R
+# Vtc6Ucs7rcMqQC13PUIO7BbGBETV2ufCmV6lPTp3P7XJOvmnUCRTPbVvMTpxP/z+
+# SOHg4/OCBhiqs4FA9+4oQvlkk9w32NGASli9GWrm5wIDAQABo4IBjjCCAYowHwYD
+# VR0jBBgwFoAUOnSlDGfGQlDC/bX8x7spNIL0erkwHQYDVR0OBBYEFGEQ6XoSr1HE
+# hdTyz6R0D1DNIK/4MA4GA1UdDwEB/wQEAwIGwDAMBgNVHRMBAf8EAjAAMBYGA1Ud
+# JQEB/wQMMAoGCCsGAQUFBwMIMEoGA1UdIARDMEEwCAYGZ4EMAQQCMDUGDCsGAQQB
+# sjEBAgEDCDAlMCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzBK
+# BgNVHR8EQzBBMD+gPaA7hjlodHRwOi8vY3JsLnNlY3RpZ28uY29tL1NlY3RpZ29Q
+# dWJsaWNUaW1lU3RhbXBpbmdDQVI0MS5jcmwwegYIKwYBBQUHAQEEbjBsMEUGCCsG
+# AQUFBzAChjlodHRwOi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNUaW1l
+# U3RhbXBpbmdDQVI0MS5jcnQwIwYIKwYBBQUHMAGGF2h0dHA6Ly9vY3NwLnNlY3Rp
+# Z28uY29tMA0GCSqGSIb3DQEBDAUAA4ICAQAD6j2N0azN+hl6k6bKB5/U6VuSOs93
+# ZBb3Pczy9VtBIKu4947Z5GwL0aFngIxl+GSuLFrJgPruBCRvKJEJsm7kv+LQ1COV
+# CEG9tZ+IRtr4ocUoa53lgdFaENlS0N4wgkZkbQEPv+x+1lSjYh+T4JeL9mUznT7E
+# rc6Sp5dWLka5sMP/m3GZi6oJPdPcsCKWagH7m2H2xDGIyHJC5PdH9phvi/Kmhkkt
+# iSVTNNqVeV5bWdX2zhRE6UTfz0IcMoCL996lFIydXxOCE4MNDHDM0as4lnTiT/KH
+# MccO6l8c9TnUVgmpci9ar1IABZ2U1XUkYjGGSn9MC3EHDP9V39VuBVvZ33/BEV/E
+# WSRrf07T7jFplKX+gQr/UOqPGMlE7ZJ72UaUkNJy7bVl3bcLKzdpjIHzLkf/4MVa
+# 1V7w8wqCv5W4gOnRGTlud5UMARbRM8BPxR/CXYXoMmIOD8pmTk2axgRL4LG8Xtuc
+# hISdCHRmtacAmLGq5XSYSVTHTXADlO48iDKh3HM2r98LSF6f0sG12d8V9Jn7C3wD
+# UieOxuKj4MdWrW+hiJU2kF87v6eH00HgCFFc2V0+CvfOCMn7juzS41jLaINcBlKW
+# Q/fKb/uDLfWOW73z1I2lFY7Xj8tQ1XYtK5eREjWItM8jpl1cbQOc88btR+0XS2Tm
+# boE/141+va2PWzGCBjEwggYtAgEBMGkwVDELMAkGA1UEBhMCR0IxGDAWBgNVBAoT
+# D1NlY3RpZ28gTGltaXRlZDErMCkGA1UEAxMiU2VjdGlnbyBQdWJsaWMgQ29kZSBT
+# aWduaW5nIENBIFIzNgIRAIxBnpO/K86siAYoO3YZvTwwCQYFKw4DAhoFAKB4MBgG
+# CisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcC
+# AQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYE
+# FBXBuOElvVpDsqWGS3gagprYnr9bMA0GCSqGSIb3DQEBAQUABIICAKNP8r9iaB2r
+# 1bQdL1eRB/4RYt5y1ymkPq4VL9sHEO/DGn1AlP2ljRa80G5cqe6jOIMAQymoWWR9
+# 5/SyAq53jiL/ISkFLUOhU48helLTm5iyGLKFVEdo/+lK1NHlEabYRP3/bPp7OjEk
+# rPUJPTCJrHT0nXzav6x529264ciL+pSC4tOC6oyhSDhPL9R05dJXtU+rFfInaaBt
+# PydAbuD45FRCJOVKika6LGzapR3m9xQfDuo9XIw4BXF1PMihEecDWC/Ic0gsQhmz
+# EZy4L2YGW0/GJsU/ObP+FUoVdkKFtqNhp2alh9G+Zd35b3WHxMSBnkI+F5Hv2GG6
+# 3bVq5Jf/C9dNNnEAf4rT4QHIOBsPBbVmcmL24WeCtXI8zCdJv5NDAlz8NIGTlWTM
+# 9OVpNeZnFvG2Tr0qGPcmhjNXb85oBiOci2WA040xQOw/acGmIjfSlW3ZfvV3ZGD4
+# z6WR3iQZNLO1XZxsgdHk+DzoRtNyN2ocl8qxiwCm+wtUurft5Ji11Ucb2fwWjmgd
+# pLft9UrRNFKbUzj4XQCOYzsPe7ROIzKUBy5XnxtXaXeVUJTteBGIRC/pPFthFGf1
+# CoYb77FRURcoTQH0HvTF94rH3nEtlPA3IKpGWo3tEmP7Zd9hfDyocea0skX+wBcG
+# 2espARnhZLQd9fZg9Jz4vAhM0m/K6MKqoYIDIzCCAx8GCSqGSIb3DQEJBjGCAxAw
+# ggMMAgEBMGowVTELMAkGA1UEBhMCR0IxGDAWBgNVBAoTD1NlY3RpZ28gTGltaXRl
+# ZDEsMCoGA1UEAxMjU2VjdGlnbyBQdWJsaWMgVGltZSBTdGFtcGluZyBDQSBSNDEC
+# EQDnTvJVsFBP+tum3/f8i6MVMA0GCWCGSAFlAwQCAgUAoHkwGAYJKoZIhvcNAQkD
+# MQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjYwODMxMTAzNzIzWjA/Bgkq
+# hkiG9w0BCQQxMgQwHW8D4/H8QBqcvjTEY90g/nJV5Jt4iHEk6Y6t6IqX0bFU5V0j
+# IcEo23hqCvlKqmitMA0GCSqGSIb3DQEBAQUABIICAEtkVp0Uy9y/xUZD/O3U7cf4
+# bQ0wugs+Y1KT8dyfM/WI3TMGe5yDLXtnCNs4O7fwaNUfWw0AYLSKLRkaQkZ1by9S
+# bqG0YkznOU7oWESlttb0uAsbHiacX29dfc97622OPpZWWuzE9bN1EiYyzvhQGRqz
+# S+CiIeJKChtIb3HshM1EUOfEtFZ/BJvIZIITVo4bLFyIfmCRYtzh6lBqwocNT+jY
+# 35DWVTGk4MUjeY6J+ZWqRrYWxoB11tI6hpg+kc/octYzdg458qfxg0g84JV7+YLH
+# ik2gm2Aw3Wq+vyYWGTG4D8b3PCcvyZfUXzU2yXinoq97OC0z2NdbfJvmjifPcJXi
+# 2aSwZLoNkKIEXqw6f733TbMP8yDJqVfWHYq+Txepf85+nXByw3xu54KYLYyL4gYj
+# 9NM74AaTN0bn2AtOsq78R/fPED0AcDZAxWDmRm+8hHNbYU0IEwYM6ULvtNEv/2Ye
+# rX6DZsCINNLw3eyhaA+IqZMMRdMVWWNL/K9C0me5JJU41j2nUApFgvEhWmjrX/04
+# 2bseYqlzk13hkCuW47RweCGY1HZagrGNv/bIs9hT1vjAlMRSYJA5XuzEhUI8TF6w
+# bCpeSBVT2Crijpgn8pJYgIyuQXgcUPt2WEBlVhDJnj+lXQNtUAceWZ4v1truZSaR
+# k+7fwO659TdjIfDScAMz
+# SIG # End signature block
