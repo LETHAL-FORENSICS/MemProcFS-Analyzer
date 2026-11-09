@@ -107,7 +107,7 @@ Launch Windows PowerShell 5.1 or PowerShell 7 (or Windows PowerShell ISE or Visu
 **Fig 16:** Zircolite - A standalone SIGMA-based detection tool for EVTX  
 
 ![Zircolite](Screenshots/17.png)  
-**Fig 17:** ZZircolite Viewer  
+**Fig 17:** Zircolite Viewer  
 
 ![Amcache](Screenshots/18.png)  
 **Fig 18:** Processing extracted Amcache.hve &#8594; XLSX  
