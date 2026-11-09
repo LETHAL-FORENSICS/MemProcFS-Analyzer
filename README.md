@@ -201,13 +201,14 @@ Open "Config.json" with your text editor, search for "AccessToken" and replace "
 9. Launch the Automated Installer/Updater for MemProcFS-Analyzer  
 `.\Updater.ps1`  
 
-10. Install Python 3.x (and check the box "Add Python 3.x to PATH").  
-Install dependencies for Zircolite:  
-`cd .\Tools\Zircolite`  
+10. Cobalt Strike Beacon Configuration Scan w/ 1768.py (Optional)  
+Install Python 3.x (and check the box "Add Python 3.x to PATH").  
+Install the required Python module:  
 `python -m pip install --upgrade pip`  
-`python -m pip install -r requirements.txt`  
+`python -m pip install pefile`  
+Set "Invoke-1768" to true in "Config.json" (Section: "Modules").  
 
-11. Done! :smiley:   
+11. Done! :smiley:    
 
 Notes: 
 - Turn off your antivirus protection temporarily or better exclude your MemProcFS-Analyzer directory from scanning (e.g. Zircolite).  
