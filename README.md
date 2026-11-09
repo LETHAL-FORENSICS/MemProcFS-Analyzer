@@ -6,7 +6,7 @@ MemProcFS-Analyzer.ps1 is a PowerShell script utilized to simplify the usage of 
 MemProcFS - The Memory Process File System by [Ulf Frisk](https://x.com/ulffrisk)  
 https://github.com/ufrisk/MemProcFS  
 
-**Features:**
+Features:
 * Fast and easy memory analysis!
 * Graphical User Interface (GUI) or Command-Line Interface (CLI)
 * Windows PowerShell 5.1 and PowerShell 7 Support
