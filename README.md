@@ -56,6 +56,7 @@ Download the latest version of **MemProcFS-Analyzer** from the [Releases](https:
 
 ## Usage  
 Launch Windows PowerShell 5.1 or PowerShell 7 (or Windows PowerShell ISE or Visual Studio Code) as Administrator and open/run MemProcFS-Analyzer.ps1.  
+
 ![File-Browser](Screenshots/01.png)  
 **Fig 1:** Select your Memory Dump (Raw or Crash Dump) and select your pagefile.sys (Optional)
 
@@ -72,11 +73,10 @@ Launch Windows PowerShell 5.1 or PowerShell 7 (or Windows PowerShell ISE or Visu
 **Fig 5:** You can investigate the mounted memory dump by exploring drive letter
 
 ![Auto-Update](Screenshots/06.png)  
-**Fig 6:** MemProcFS-Analyzer checks for updates (Second Run) 
-
-Note: It's recommended to uncomment/disable the "Updater" function after installation. Check out the "Main" in the bottom of the script.
+**Fig 6:** MemProcFS-Analyzer checks for updates (Second Run)  
 
 ![FindEvil](Screenshots/07.png)  
+![FindEvil](Screenshots/7a.png)
 **Fig 7:** FindEvil feature and additional analytics
 
 ![Processes](Screenshots/08.png)  
@@ -104,10 +104,10 @@ Note: It's recommended to uncomment/disable the "Updater" function after install
 **Fig 15:** Map IPs w/ IPinfo.io
 
 ![EVTX](Screenshots/16.png)  
-**Fig 16:** Processing Windows Event Logs (EVTX)
+**Fig 16:** Zircolite - A standalone SIGMA-based detection tool for EVTX  
 
 ![Zircolite](Screenshots/17.png)  
-**Fig 17:** Zircolite - A standalone SIGMA-based detection tool for EVTX (Mini-GUI)
+**Fig 17:** ZZircolite Viewer  
 
 ![Amcache](Screenshots/18.png)  
 **Fig 18:** Processing extracted Amcache.hve &#8594; XLSX  
