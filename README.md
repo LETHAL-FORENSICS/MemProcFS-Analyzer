@@ -56,6 +56,7 @@ Download the latest version of **MemProcFS-Analyzer** from the [Releases](https:
 
 ## Usage  
 Launch Windows PowerShell 5.1 or PowerShell 7 (or Windows PowerShell ISE or Visual Studio Code) as Administrator and open/run MemProcFS-Analyzer.ps1.  
+
 ![File-Browser](Screenshots/01.png)  
 **Fig 1:** Select your Memory Dump (Raw or Crash Dump) and select your pagefile.sys (Optional)
 
