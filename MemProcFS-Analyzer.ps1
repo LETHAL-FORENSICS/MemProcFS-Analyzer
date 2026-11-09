@@ -1,10 +1,10 @@
-﻿# MemProcFS-Analyzer v1.2.1
+﻿# MemProcFS-Analyzer v1.3.0
 #
 # @author:    Martin Willing
 # @copyright: Copyright (c) 2021-2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-05-02
+# @date:      2026-11-09
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -20,16 +20,16 @@
 # 1768.py v.0.0.23 (2025-03-07)
 # https://blog.didierstevens.com/?s=1768.py
 #
-# 7-Zip 26.00 Standalone Console (2026-02-12)
-# https://www.7-zip.org/download.html --> 7za.exe (x64)
+# 7-Zip 26.05 Standalone Console (2026-10-21)
+# https://www.7-zip.org/download.html
 #
-# AmcacheParser v2026.5.0.0 (.NET 9)
+# AmcacheParser v2026.10.1.0 (.NET 10)
 # https://ericzimmerman.github.io/
 #
-# AppCompatCacheParser v2026.5.0.0 (.NET 9)
+# AppCompatCacheParser v2026.10.1.0 (.NET 10)
 # https://ericzimmerman.github.io/
 #
-# ClamAV - Download --> Windows --> clamav-1.5.2.win.x64.msi (2026-03-04)
+# ClamAV - Download --> Windows --> clamav-1.5.4.win.x64.msi (2026-08-07)
 # https://www.clamav.net/downloads
 # https://docs.clamav.net/manual/Usage/Configuration.html#windows --> First Time Set-Up
 # https://blog.clamav.net/
@@ -37,51 +37,52 @@
 # Dokany File System Library v2.3.1.1000 (2025-09-28)
 # https://github.com/dokan-dev/dokany/releases/latest --> DokanSetup.exe
 #
-# Elasticsearch 9.3.4 (2026-04-30)
+# Elasticsearch 9.5.6 (2026-11-02)
 # https://www.elastic.co/downloads/elasticsearch
 #
 # entropy v1.1 (2023-07-28)
 # https://github.com/merces/entropy
 #
-# EvtxECmd v2026.5.0.0 (.NET 9)
+# EvtxECmd v2026.10.2.0 (.NET 10)
 # https://ericzimmerman.github.io/
 #
 # ImportExcel v7.8.10 (2024-10-21)
 # https://github.com/dfinke/ImportExcel
 #
-# IPinfo CLI 3.3.2 (2026-04-28)
+# IPinfo CLI 3.3.4 (2026-10-29)
 # https://github.com/ipinfo/cli
 #
-# jq v1.8.1 (2025-07-01)
+# jq v1.8.2 (2026-06-20)
 # https://github.com/stedolan/jq
 #
-# Kibana 9.3.4 (2026-04-30)
+# Kibana 9.5.6 (2026-11-02)
 # https://www.elastic.co/downloads/kibana
 #
 # lnk_parser v0.4.3 (2026-02-17)
 # https://github.com/AbdulRhmanAlfaifi/lnk_parser
 #
-# MemProcFS v5.17.6 - The Memory Process File System (2026-04-19)
+# MemProcFS v5.19.3 - The Memory Process File System (2026-11-07)
 # https://github.com/ufrisk/MemProcFS
 #
-# RECmd v2026.5.0.0 (.NET 9)
+# RECmd v2026.10.3.0 (.NET 10)
 # https://ericzimmerman.github.io/
 # https://github.com/EricZimmerman/RECmd/blob/master/BatchExamples/DFIRBatch.md
 #
-# SBECmd v2026.5.0.0 (.NET 9)
+# SBECmd v2026.10.3.0 (.NET 10)
 # https://ericzimmerman.github.io/
 #
 # xsv v0.13.0 (2018-05-12)
 # https://github.com/BurntSushi/xsv
 #
-# YARA v4.5.5 (2025-10-30)
+# YARA v4.6.0 (2026-10-27)
 # https://virustotal.github.io/yara/
 #
-# Zircolite v3.6.3 (2026-04-06)
+# Zircolite v4.7.1 (2026-11-02)
 # https://github.com/wagga40/Zircolite
 #
 #
-# Tested on Windows 10 Pro (x64) Version 22H2 (10.0.19045.6456) and PowerShell 5.1 (5.1.19041.6456)
+# Tested on Windows 11 Pro (x64) Version 26H2 (10.0.26300.9711) and PowerShell 7.6.9
+# Tested on Windows 11 Pro (x64) Version 26H2 (10.0.26300.9711) and PowerShell 5.1.26100.9711
 #
 #
 #############################################################################################################################################################################################
@@ -89,13 +90,45 @@
 
 <#
 .SYNOPSIS
-  MemProcFS-Analyzer v1.2.1 - Automated Forensic Analysis of Windows Memory Dumps for DFIR
+  MemProcFS-Analyzer v1.3.0 - Automated Forensic Analysis of Windows Memory Dumps for DFIR
 
 .DESCRIPTION
   MemProcFS-Analyzer.ps1 is a PowerShell script utilized to simplify the usage of MemProcFS and to assist with the memory analysis workflow.
 
+.PARAMETER Memory
+  Raw Physical Memory Dump or Microsoft Crash Dump (Alias: -MemoryDump, -m)
+
+  Note: If -Memory is not specified, the Graphical User Interface (GUI) will be launched.
+
+.PARAMETER Pagefile
+  pagefile.sys (Optional, Alias: -p)
+
+.PARAMETER Yara
+  Enable Custom YARA rules (yara\index.yar)
+
+.PARAMETER ClamAV
+  Enable ClamAV Scan
+
+.PARAMETER TimelineCSV
+  Enable Forensic Timeline (CSV)
+
+.PARAMETER TimelineXLSX
+  Enable Forensic Timeline (XLSX)
+
+.PARAMETER OfflineMode
+  Offline Mode
+
+.PARAMETER OutputDir
+  Output Directory (Optional, Alias: -o). Default: Script Directory. Will be created if it does not exist.
+
 .EXAMPLE
   PS> .\MemProcFS-Analyzer.ps1
+
+.EXAMPLE
+  PS> .\MemProcFS-Analyzer.ps1 -Memory "E:\MemoryDump.bin" -Pagefile "E:\pagefile.sys" -Yara -ClamAV -OfflineMode
+
+.EXAMPLE
+  PS> .\MemProcFS-Analyzer.ps1 -Memory "E:\MemoryDump.bin" -Yara -ClamAV -OutputDir "E:\MemProcFS-Analyzer"
 
 .NOTES
   Author - Martin Willing
@@ -103,6 +136,68 @@
 .LINK
   https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer
 #>
+
+#############################################################################################################################################################################################
+#############################################################################################################################################################################################
+
+#region CmdletBinding
+
+[CmdletBinding(DefaultParameterSetName = "GUI")]
+Param (
+    # Memory Dump (Raw Physical Memory Dump or Microsoft Crash Dump)
+    [Parameter(ParameterSetName = "CLI", Mandatory = $true, Position = 0)]
+    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
+    [Alias("MemoryDump", "m")]
+    [string]$Memory,
+
+    # pagefile.sys (Optional)
+    [Parameter(ParameterSetName = "CLI", Position = 1)]
+    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
+    [Alias("p")]
+    [string]$Pagefile,
+
+    # Enable Custom YARA rules
+    [Parameter(ParameterSetName = "CLI")]
+    [switch]$Yara,
+
+    # Enable ClamAV Scan
+    [Parameter(ParameterSetName = "CLI")]
+    [switch]$ClamAV,
+
+    # Enable Forensic Timeline (CSV)
+    [Parameter(ParameterSetName = "CLI")]
+    [switch]$TimelineCSV,
+
+    # Enable Forensic Timeline (XLSX)
+    [Parameter(ParameterSetName = "CLI")]
+    [switch]$TimelineXLSX,
+
+    # Offline Mode
+    [Parameter(ParameterSetName = "CLI")]
+    [switch]$OfflineMode,
+
+    # Output Directory (Optional, Default: Script Directory) - available in both modes (CLI and GUI)
+    [ValidateNotNullOrEmpty()]
+    [Alias("o")]
+    [string]$OutputDir
+)
+
+# Command-Line Parameters
+$script:CLI = @{
+    Mode         = $PSCmdlet.ParameterSetName
+    Memory       = $Memory
+    Pagefile     = $Pagefile
+    Yara         = $Yara.IsPresent
+    ClamAV       = $ClamAV.IsPresent
+    TimelineCSV  = $TimelineCSV.IsPresent
+    TimelineXLSX = $TimelineXLSX.IsPresent
+    OfflineMode  = $OfflineMode.IsPresent
+    OutputDir    = $OutputDir
+}
+
+Remove-Variable -Name Memory, Pagefile, Yara, ClamAV, TimelineCSV, TimelineXLSX, OfflineMode, OutputDir -Scope Script -ErrorAction SilentlyContinue
+
+#endregion CmdletBinding
 
 #############################################################################################################################################################################################
 #############################################################################################################################################################################################
@@ -123,17 +218,45 @@ else
     $script:SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Definition
 }
 
+# PowerShell 7.5+
+if ($PSVersionTable.PSVersion -ge [version]"7.5")
+{
+    $PSDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    $PSDefaultParameterValues["ConvertFrom-Json:DateKind"] = "String"
+}
+
+# PowerShell Executable (Windows PowerShell 5.1 or PowerShell 7)
+if ($PSVersionTable.PSEdition -eq "Core")
+{
+    $script:PowerShell = "$PSHOME\pwsh.exe"
+}
+else
+{
+    $script:PowerShell = "$PSHOME\powershell.exe"
+}
+
 # Analysis date (ISO 8601)
 $script:Date = [datetime]::Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") # YYYY-MM-DDThh:mm:ss
 $script:Timestamp = $Date -replace ":", "" # YYYY-MM-DDThhmmss
 
 # Version
-$Version = "v1.2.1"
+$Version = "v1.3.0"
 
 # Tools
 
 # 7-Zip
-$script:7za = "$SCRIPT_DIR\Tools\7-Zip\7za.exe"
+
+# x64
+if ($env:PROCESSOR_ARCHITECTURE -eq "AMD64" -or $env:PROCESSOR_ARCHITEW6432 -eq "AMD64")
+{
+    $script:7za = "$SCRIPT_DIR\Tools\7-Zip\x64\7za.exe"
+}
+
+# x86
+if ($env:PROCESSOR_ARCHITECTURE -eq "x86" -and -not $env:PROCESSOR_ARCHITEW6432)
+{
+    $script:7za = "$SCRIPT_DIR\Tools\7-Zip\x86\7za.exe"
+}
 
 # AmcacheParser
 $script:AmcacheParser = "$SCRIPT_DIR\Tools\AmcacheParser\AmcacheParser.exe"
@@ -159,9 +282,6 @@ $script:EvtxECmd = "$SCRIPT_DIR\Tools\EvtxECmd\EvtxECmd.exe"
 # IPinfo CLI
 $script:IPinfo = "$SCRIPT_DIR\Tools\IPinfo\ipinfo.exe"
 
-# IPinfo CLI - Access Token
-$script:IPInfoToken = "access_token" # Please insert your Access Token here (Default: access_token)
-
 # jq
 $script:jq = "$SCRIPT_DIR\Tools\jq\jq-win64.exe"
 
@@ -186,20 +306,12 @@ $script:xsv = "$SCRIPT_DIR\Tools\xsv\xsv.exe"
 # YARA
 $script:yara64 = "$SCRIPT_DIR\Tools\YARA\yara64.exe"
 
-# Archive Password
-$script:PASSWORD = "MemProcFS"
+# Zircolite
+$script:Zircolite = "$SCRIPT_DIR\Tools\Zircolite\Zircolite.exe"
 
 # MemProcFS Logfile
 New-Item "$SCRIPT_DIR\Logs" -ItemType Directory -Force | Out-Null
 $script:MemProcFSLogfile = "$SCRIPT_DIR\Logs\MemProcFS.log"
-
-# Process Whitelist (Forensic Mode)
-# https://github.com/ufrisk/MemProcFS/wiki/_CommandLine#-forensic-process-skip
-$script:ForensicProcessWhitelist = "cyserver.exe,MsMpEng.exe,tlaworker.exe"
-
-# MsMpEng.exe   = Microsoft Defender
-# cyserver.exe  = Palo Alto Cortex XDR
-# tlaworker.exe = Palo Alto Cortex XDR
 
 # Colors
 Add-Type -AssemblyName System.Drawing
@@ -208,6 +320,93 @@ $script:HighColor = [System.Drawing.Color]::FromArgb(255,0,0) # Red
 $script:MediumColor = [System.Drawing.Color]::FromArgb(255,192,0) # Orange
 $script:LowColor = [System.Drawing.Color]::FromArgb(255,255,0) # Yellow
 $script:InformationalColor = [System.Drawing.Color]::FromArgb(217,217,217) # LightGrey
+
+# Import Functions
+$FilePath = "$SCRIPT_DIR\Functions"
+if (Test-Path "$FilePath")
+{
+    if (Test-Path "$FilePath\*.ps1") 
+    {
+        Get-ChildItem -Path "$FilePath" -Filter *.ps1 | ForEach-Object { . $_.FullName }
+    }
+}
+
+# System.Drawing is required for the [System.Drawing.Color] cast below (Windows PowerShell does not load it by default)
+Add-Type -AssemblyName System.Drawing
+
+# Configuration File (JSON)
+if(!(Test-Path "$PSScriptRoot\Config.json"))
+{
+    Write-Host "[Error] Config.json NOT found." -ForegroundColor Red
+    Exit
+}
+else
+{
+    $Config = Get-Content "$PSScriptRoot\Config.json" | ConvertFrom-Json
+
+    # IPinfo CLI - Access Token
+    $script:Token = $Config.IPinfo.AccessToken
+
+    # BackgroundColor
+    if ($Config.ImportExcel.BackgroundColor)
+    {
+        if ($Config.ImportExcel.BackgroundColor -cnotmatch '^(([0-1]?[0-9]?[0-9])|([2][0-4][0-9])|(25[0-5])),(([0-1]?[0-9]?[0-9])|([2][0-4][0-9])|(25[0-5])),(([0-1]?[0-9]?[0-9])|([2][0-4][0-9])|(25[0-5]))$') # <0-255>,<0-255>,<0-255>
+        {
+            Write-Host "[Error] You must provide a valid RGB Color Code." -ForegroundColor Red
+            Exit
+        }
+    }
+
+    # Excel - Color Scheme
+    $script:BackgroundColor = [System.Drawing.Color]$Config.ImportExcel.BackgroundColor
+    $script:FontColor       = $Config.ImportExcel.FontColor
+
+    
+    # Process Whitelist (Forensic Mode)
+    $ProcessSkip = @($Config.MemProcFS.ForensicProcessSkip.Process | Where-Object { $_ -and $_.Trim() } | ForEach-Object { $_.Trim() })
+    if ($ProcessSkip.Count -gt 0)
+    {
+        $TooLong = $ProcessSkip | Where-Object { $_.Length -gt 15 }
+        if ($TooLong)
+        {
+            Write-Host "[Error] Process names in 'ForensicProcessSkip' must not exceed 15 characters: $($TooLong -join ', ')" -ForegroundColor Red
+            Exit
+        }
+        $script:ForensicProcessWhitelist = $ProcessSkip -join ","
+    }
+    else
+    {
+        $script:ForensicProcessWhitelist = $null
+    }
+
+    # Modules
+    if ($null -eq $Config.Modules)
+    {
+        Write-Host "[Error] Section 'Modules' is missing in Config.json." -ForegroundColor Red
+        Exit
+    }
+
+    $script:Module = $Config.Modules[0]
+
+    
+    # Archive Password
+    if ($Module.SecureArchive -eq $true)
+    {
+        if ([string]::IsNullOrWhiteSpace($Config.SecureArchive.Password))
+        {
+            Write-Host "[Error] Please provide an archive password in Config.json (SecureArchive)." -ForegroundColor Red
+            Exit
+        }
+
+        if ($Config.SecureArchive.Password -match '"')
+        {
+            Write-Host "[Error] The archive password must not contain double quotes." -ForegroundColor Red
+            Exit
+        }
+
+        $script:PASSWORD = $Config.SecureArchive.Password
+    }
+}
 
 #endregion Declarations
 
@@ -233,6 +432,14 @@ Function Header {
 $script:DefaultWindowsTitle = $Host.UI.RawUI.WindowTitle
 $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
 
+# Check if the PowerShell script is being run with admin rights
+if (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
+{
+    Write-Host "[Error] This PowerShell script must be run with admin rights." -ForegroundColor Red
+    $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
+    Exit
+}
+
 # Check if MemProcFS.exe exists
 if (!(Test-Path "$($MemProcFS)"))
 {
@@ -242,11 +449,12 @@ if (!(Test-Path "$($MemProcFS)"))
     Exit
 }
 
-# Check if the PowerShell script is being run with admin rights
-if (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
+# Check if PowerShell module 'ImportExcel' is installed
+if (!(Get-Module -ListAvailable -Name ImportExcel))
 {
-    Write-Host "[Error] This PowerShell script must be run with admin rights." -ForegroundColor Red
-    $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
+    Write-Host "[Error] Please install 'ImportExcel' PowerShell module." -ForegroundColor Red
+    Write-Host "[Info]  Check out: https://github.com/LETHAL-FORENSICS/Microsoft-Analyzer-Suite/wiki#setup"
+    Write-Host ""
     Exit
 }
 
@@ -257,8 +465,6 @@ if ("$Token" -eq "access_token")
     $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
     Exit
 }
-
-# Requirements
 
 # Dokany File System Library
 $Dokany = "$env:SystemDrive\Windows\System32\dokan2.dll"
@@ -274,32 +480,21 @@ if (!(Test-Path "$($Dokany)"))
 # EZTools
 if (Get-Command -CommandType Application dotnet -ErrorAction SilentlyContinue)
 {
-    # TargetFramework (.NET 9)
-    if (!(dotnet --list-runtimes | Select-String -Pattern "^Microsoft\.WindowsDesktop\.App 9" -Quiet))
+    # TargetFramework (.NET 10)
+    if (!(dotnet --list-runtimes | Select-String -Pattern "^Microsoft\.WindowsDesktop\.App 10\." -Quiet))
     {
-        Write-Host "[Error] Please download/install at least .NET 9.0 or newer manually:" -ForegroundColor Red
-        Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/9.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
+        Write-Host "[Error] Please download/install .NET 10.0 manually:" -ForegroundColor Red
+        Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/10.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
         $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
         Exit
     }
 }
 else
 {
-    Write-Host "[Error] Please download/install at least .NET 9.0 or newer manually:" -ForegroundColor Red
-    Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/9.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
+    Write-Host "[Error] Please download/install .NET 10.0 manually:" -ForegroundColor Red
+    Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/10.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
     $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
     Exit
-}
-
-# Function Get-FileSize
-Function script:Get-FileSize {
-    Param ([long]$Size)
-    If ($Size -gt 1TB) {[string]::Format("{0:0.00} TB", $Size / 1TB)}
-    ElseIf ($Size -gt 1GB) {[string]::Format("{0:0.00} GB", $Size / 1GB)}
-    ElseIf ($Size -gt 1MB) {[string]::Format("{0:0.00} MB", $Size / 1MB)}
-    ElseIf ($Size -gt 1KB) {[string]::Format("{0:0.00} KB", $Size / 1KB)}
-    ElseIf ($Size -gt 0) {[string]::Format("{0:0.00} Bytes", $Size)}
-    Else {""}
 }
 
 # Add the required MessageBox class (Windows PowerShell)
@@ -324,8 +519,8 @@ Function Show-UserInterface
     $Checkbox3 = New-Object 'System.Windows.Forms.CheckBox'
     $Checkbox4 = New-Object 'System.Windows.Forms.CheckBox'
     $CheckboxOfflineMode = New-Object 'System.Windows.Forms.CheckBox'
-    $StatusBar = New-Object 'System.Windows.Forms.StatusBar'
-    $StatusBarPanel1 = New-Object 'System.Windows.Forms.StatusBarPanel'
+    $StatusStrip = New-Object 'System.Windows.Forms.StatusStrip'
+    $StatusBar = New-Object 'System.Windows.Forms.ToolStripStatusLabel'
     $LabelMemoryDump = New-Object 'System.Windows.Forms.Label'
     $LabelPageFile = New-Object 'System.Windows.Forms.Label'
     $ButtonBrowse1 = New-Object 'System.Windows.Forms.Button'
@@ -373,6 +568,10 @@ Function Show-UserInterface
         Start-Process "https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer"
     }
 
+    $PictureBoxLogo_Click = {
+        Start-Process "https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer"
+    }
+
     $ButtonExit_Click={
 		$FormMemProcFSAnalyzer.Close()
 	}
@@ -383,7 +582,7 @@ Function Show-UserInterface
 
     $CheckForUpdatesToolStripMenuItem_Click={
 
-        $CurrentVersion = "1.2.1"
+        $CurrentVersion = "1.3.0"
 
         $StatusBar.Text = "Checking latest release on GitHub ..."
 
@@ -416,7 +615,7 @@ Function Show-UserInterface
             # Up-To-Date
             if ($CurrentVersion -eq $LatestRelease)
             {
-                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2025 Martin Willing`n`nYou are using the latest version of MemProcFS-Analyzer."
+                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2026 Martin Willing`n`nYou are using the latest version of MemProcFS-Analyzer."
                 $MessageTitle = "MemProcFS-Analyzer"
                 $ButtonType = "OK"
                 $MessageIcon = "Info"
@@ -427,7 +626,7 @@ Function Show-UserInterface
             # Beta-Tester
             if ($CurrentVersion -gt $LatestRelease)
             {
-                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2025 Martin Willing`n`nHello Beta-Tester. Happy Testing! ;-)"
+                $MessageBody = "MemProcFS-Analyzer v$CurrentVersion`nCopyright (c) 2021-2026 Martin Willing`n`nHello Beta-Tester. Happy Testing! ;-)"
                 $MessageTitle = "MemProcFS-Analyzer"
                 $ButtonType = "OK"
                 $MessageIcon = "Info"
@@ -467,7 +666,7 @@ Function Show-UserInterface
 	}
 
     $AboutToolStripMenuItem_Click = {
-        $MessageBody = "MemProcFS-Analyzer $Version`nCopyright (c) 2021-2025 Martin Willing"
+        $MessageBody = "MemProcFS-Analyzer $Version`nCopyright (c) 2021-2026 Martin Willing"
         $MessageTitle = "MemProcFS-Analyzer"
         $ButtonType = "OK"
         $MessageIcon = "Info"
@@ -574,6 +773,7 @@ Function Show-UserInterface
             $ButtonStart.remove_MouseClick($ButtonStart_Click)
             $ButtonExit.remove_MouseClick($ButtonExit_Click)
             $LinkLabel.remove_LinkClicked($LinkLabel_LinkClicked)
+            if ($PictureBoxLogo) { $PictureBoxLogo.remove_Click($PictureBoxLogo_Click) }
             $FormMemProcFSAnalyzer.remove_Load($FormMemProcFSAnalyzer_Load)
             $CheckForUpdatesToolStripMenuItem.remove_Click($checkForUpdatesToolStripMenuItem_Click)
             $ExitToolStripMenuItem.remove_Click($exitToolStripMenuItem_Click)
@@ -599,7 +799,7 @@ Function Show-UserInterface
     $FormMemProcFSAnalyzer.Controls.Add($Checkbox3)
     $FormMemProcFSAnalyzer.Controls.Add($Checkbox4)
     $FormMemProcFSAnalyzer.Controls.Add($CheckboxOfflineMode)
-    $FormMemProcFSAnalyzer.Controls.Add($StatusBar)
+    $FormMemProcFSAnalyzer.Controls.Add($StatusStrip)
     $FormMemProcFSAnalyzer.Controls.Add($LabelMemoryDump)
     $FormMemProcFSAnalyzer.Controls.Add($LabelPageFile)
     $FormMemProcFSAnalyzer.Controls.Add($ButtonBrowse1)
@@ -612,7 +812,7 @@ Function Show-UserInterface
     $FormMemProcFSAnalyzer.Controls.Add($MenuStrip1)
     $FormMemProcFSAnalyzer.AutoScaleDimensions = New-Object System.Drawing.SizeF(6, 13)
     $FormMemProcFSAnalyzer.AutoScaleMode = 'Font'
-    $FormMemProcFSAnalyzer.ClientSize = New-Object System.Drawing.Size(700, 262) # 626, 262
+    $FormMemProcFSAnalyzer.ClientSize = New-Object System.Drawing.Size(700, 270)
 	$FormMemProcFSAnalyzer.FormBorderStyle = 'FixedDialog'
     $FormMemProcFSAnalyzer.MainMenuStrip = $Menustrip1
     $FormMemProcFSAnalyzer.MaximizeBox = $False
@@ -661,7 +861,7 @@ Function Show-UserInterface
     $Checkbox4.add_CheckedChanged($Checkbox4_CheckedChanged)
 
     # CheckBoxOfflineMode
-    $CheckboxOfflineMode.Location = New-Object System.Drawing.Point(370, 200) # 339, 200
+    $CheckboxOfflineMode.Location = New-Object System.Drawing.Point(370, 208)
     $CheckboxOfflineMode.Name = 'CheckboxOfflineMode'
     $CheckboxOfflineMode.Size = New-Object System.Drawing.Size(92, 24)
     $CheckboxOfflineMode.TabIndex = 13
@@ -671,12 +871,12 @@ Function Show-UserInterface
     $ToolTip1.SetToolTip($CheckboxOfflineMode, 'Offline Mode')
     
     # Status Bar
-    $StatusBar.Location = New-Object System.Drawing.Point(0, 240)
-    $StatusBar.Name = 'StatusBar'
-    [void]$StatusBar.Panels.Add($StatusBarPanel1)
-    $StatusBar.Size = New-Object System.Drawing.Size(700, 22) # 626, 22
-    $StatusBar.SizingGrip = $False
-    $StatusBar.TabIndex = 0
+    $StatusStrip.Location = New-Object System.Drawing.Point(0, 248)
+    $StatusStrip.Name = 'StatusStrip'
+    [void]$StatusStrip.Items.Add($StatusBar)
+    $StatusStrip.Size = New-Object System.Drawing.Size(700, 22)
+    $StatusStrip.SizingGrip = $False
+    $StatusStrip.TabIndex = 0
 
     # LabelMemoryDump
     $LabelMemoryDump.AutoSize = $True
@@ -695,17 +895,17 @@ Function Show-UserInterface
     $LabelPageFile.Text = 'Page File:'
 
     # ButtonBrowse1
-    $ButtonBrowse1.Location = New-Object System.Drawing.Point(583, 33) # 539, 33
+    $ButtonBrowse1.Location = New-Object System.Drawing.Point(583, 33)
     $ButtonBrowse1.Name = 'ButtonBrowse1'
     $ButtonBrowse1.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonBrowse1.TabIndex = 0
     $ButtonBrowse1.Text = 'Browse'
     $ButtonBrowse1.UseVisualStyleBackColor = $True
     $ButtonBrowse1.add_Click($ButtonBrowseMemory_Click)
-    $ToolTip1.SetToolTip($ButtonBrowse1, 'Select your Raw Physical Memory Dump')
+    $ToolTip1.SetToolTip($ButtonBrowse1, 'Select your Memory Dump (Raw or Crash Dump)')
 
     # ButtonBrowse2
-    $ButtonBrowse2.Location = New-Object System.Drawing.Point(583, 83) # 539, 84
+    $ButtonBrowse2.Location = New-Object System.Drawing.Point(583, 83)
     $ButtonBrowse2.Name = 'ButtonBrowse2'
     $ButtonBrowse2.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonBrowse2.TabIndex = 1
@@ -725,11 +925,11 @@ Function Show-UserInterface
     $TextBoxFile1.Name = 'TextBoxFile'
     $TextBoxFile1.ReadOnly = $True
     $TextBoxFile1.ShortcutsEnabled = $False
-    $TextBoxFile1.Size = New-Object System.Drawing.Size(481, 20) # 437, 20
+    $TextBoxFile1.Size = New-Object System.Drawing.Size(481, 20)
     $TextBoxFile1.TabIndex = 4
     $TextBoxFile1.TabStop = $False
-    $TextBoxFile1.Text = 'Select your Raw Physical Memory Dump'
-    $ToolTip1.SetToolTip($TextBoxFile1, 'Select your Raw Physical Memory Dump')
+    $TextBoxFile1.Text = 'Select your Memory Dump (Raw or Crash Dump)'
+    $ToolTip1.SetToolTip($TextBoxFile1, 'Select your Memory Dump (Raw or Crash Dump)')
 
     # TextBoxFile2
     $TextBoxFile2.AccessibleRole = 'None'
@@ -741,7 +941,7 @@ Function Show-UserInterface
     $TextBoxFile2.Location = New-Object System.Drawing.Point(96, 84)
     $TextBoxFile2.Name = 'TextBoxFile2'
     $TextBoxFile2.ReadOnly = $True
-    $TextBoxFile2.Size = New-Object System.Drawing.Size(481, 20) # 437, 20
+    $TextBoxFile2.Size = New-Object System.Drawing.Size(481, 20)
     $TextBoxFile2.TabIndex = 5
     $TextBoxFile2.TabStop = $False
     $TextBoxFile2.Text = 'Select your pagefile.sys (Optional)'
@@ -751,7 +951,7 @@ Function Show-UserInterface
     $OpenFileDialog1.Filter = 'Memory Dump Files (*.001;*.bin;*.dmp;*.img;*.mem;*.raw;*.vmem)|*.001;*.bin;*.dmp;*.img;*.mem;*.raw;*.vmem|All Files (*.*)|*.*'
     $OpenFileDialog1.InitialDirectory = "::{20D04FE0-3AEA-1069-A2D8-08002B30309D}" # MyComputer
     $OpenFileDialog1.ReadOnlyChecked = $True
-    $OpenFileDialog1.Title = "MemProcFS-Analyzer $Version - Select your Raw Physical Memory Dump"
+    $OpenFileDialog1.Title = "MemProcFS-Analyzer $Version - Select your Memory Dump (Raw or Crash Dump)"
 
     # OpenFileDialog2
     $OpenFileDialog2.Filter = 'Page Files (*.sys)|*.sys|All Files (*.*)|*.*'
@@ -761,7 +961,7 @@ Function Show-UserInterface
     # ButtonStart
     $ButtonStart.DialogResult = 'OK'
     $ButtonStart.Enabled = $False
-    $ButtonStart.Location = New-Object System.Drawing.Point(490, 202) # 446, 202
+    $ButtonStart.Location = New-Object System.Drawing.Point(490, 208)
     $ButtonStart.Name = 'ButtonStart'
     $ButtonStart.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonStart.TabIndex = 2
@@ -773,7 +973,7 @@ Function Show-UserInterface
 
     # ButtonExit
     $ButtonExit.DialogResult = 'Cancel'
-    $ButtonExit.Location = New-Object System.Drawing.Point(583, 202) # 539, 202
+    $ButtonExit.Location = New-Object System.Drawing.Point(583, 208)
     $ButtonExit.Name = 'ButtonExit'
     $ButtonExit.Size = New-Object System.Drawing.Size(75, 23)
     $ButtonExit.TabIndex = 3
@@ -784,20 +984,39 @@ Function Show-UserInterface
     $ToolTip1.SetToolTip($ButtonExit, 'Exit')
 
     # LinkLabel
-    $LinkLabel.Location = New-Object System.Drawing.Point(12, 204)
+    $LinkLabel.Location = New-Object System.Drawing.Point(12, 212)
     $LinkLabel.Name = 'LinkLabel'
-    $LinkLabel.Size = New-Object System.Drawing.Size(330, 23) # 269, 23
+    $LinkLabel.Size = New-Object System.Drawing.Size(330, 23)
     $LinkLabel.TabIndex = 7
     $LinkLabel.TabStop = $True
     $LinkLabel.Text = 'https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer'
     $LinkLabel.Add_LinkClicked($linklabel_LinkClicked)
+
+    # Logo
+    $LogoPath = "$SCRIPT_DIR\Images\Logo.png"
+    if (Test-Path -LiteralPath "$LogoPath")
+    {
+        # Load via MemoryStream (Image.FromFile would lock the file until the GUI is closed)
+        $LogoStream = New-Object System.IO.MemoryStream(,[System.IO.File]::ReadAllBytes("$LogoPath"))
+        $PictureBoxLogo = New-Object System.Windows.Forms.PictureBox
+        $PictureBoxLogo.Image = [System.Drawing.Image]::FromStream($LogoStream)
+        $PictureBoxLogo.Size = New-Object System.Drawing.Size(102, 35)
+        $PictureBoxLogo.Location = New-Object System.Drawing.Point(39, 201)
+        $PictureBoxLogo.SizeMode = [System.Windows.Forms.PictureBoxSizeMode]::Zoom
+        $PictureBoxLogo.Cursor = [System.Windows.Forms.Cursors]::Hand
+        $PictureBoxLogo.Name = 'PictureBoxLogo'
+        $ToolTip1.SetToolTip($PictureBoxLogo, 'https://github.com/LETHAL-FORENSICS/MemProcFS-Analyzer')
+        $PictureBoxLogo.Add_Click($PictureBoxLogo_Click)
+        $FormMemProcFSAnalyzer.Controls.Add($PictureBoxLogo)
+        $LinkLabel.Visible = $false
+    }
 
     # MenuStrip1
     [void]$MenuStrip1.Items.Add($FileToolStripMenuItem)
     [void]$MenuStrip1.Items.Add($HelpToolStripMenuItem)
     $MenuStrip1.Location = New-Object System.Drawing.Point(0, 0)
     $MenuStrip1.Name = 'MenuStrip1'
-    $MenuStrip1.Size = New-Object System.Drawing.Size(700, 24) # 262, 24
+    $MenuStrip1.Size = New-Object System.Drawing.Size(700, 24)
     $MenuStrip1.TabIndex = 8
     $MenuStrip1.Text = 'MenuStrip1'
 
@@ -878,28 +1097,66 @@ Function Show-UserInterface
     return $FormMemProcFSAnalyzer.ShowDialog((New-Object System.Windows.Forms.Form -Property @{TopMost = $true}))
 }
 
-$Result = Show-UserInterface
-
-if($Result -eq "OK")
+# Command-Line Mode
+if ($CLI.Mode -eq "CLI")
 {
-    if ($Pagefile -eq "Select your pagefile.sys (Optional)")
-    {
-        $script:Pagefile = $null
-    }
+    $script:MemoryDump = (Resolve-Path -LiteralPath $CLI.Memory).Path
+    if ($CLI.Pagefile)     { $script:Pagefile = (Resolve-Path -LiteralPath $CLI.Pagefile).Path } else { $script:Pagefile = $null }
+    if ($CLI.Yara)         { $script:YaraRules = "$SCRIPT_DIR\yara\index.yar" } else { $script:YaraRules = $null }
+    if ($CLI.ClamAV)       { $script:ClamAV = "Enabled" } else { $script:ClamAV = $null }
+    if ($CLI.TimelineCSV)  { $script:ForensicTimelineCSV = "Enabled" } else { $script:ForensicTimelineCSV = $null }
+    if ($CLI.TimelineXLSX) { $script:ForensicTimelineXLSX = "Enabled" } else { $script:ForensicTimelineXLSX = $null }
+    if ($CLI.OfflineMode)  { $script:OfflineMode = "Enabled" } else { $script:OfflineMode = $null }
 }
 else
 {
-    $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
-    Exit
+    # Graphical User Interface
+    $Result = Show-UserInterface
+
+    if($Result -eq "OK")
+    {
+        if ($Pagefile -eq "Select your pagefile.sys (Optional)")
+        {
+            $script:Pagefile = $null
+        }
+    }
+    else
+    {
+        $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
+        Exit
+    }
 }
 
 #############################################################################################################################################################################################
+
+# Output Directory (Default: Script Directory)
+if ($CLI.OutputDir)
+{
+    if (!(Test-Path -LiteralPath $CLI.OutputDir -PathType Container))
+    {
+        try
+        {
+            New-Item -Path $CLI.OutputDir -ItemType Directory -Force -ErrorAction Stop | Out-Null
+        }
+        catch
+        {
+            Write-Host "[Error] Output directory could not be created: $($CLI.OutputDir)" -ForegroundColor Red
+            $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
+            Exit
+        }
+    }
+    $script:OUTPUT_DIR = (Resolve-Path -LiteralPath $CLI.OutputDir).Path.TrimEnd('\')
+}
+else
+{
+    $script:OUTPUT_DIR = $SCRIPT_DIR
+}
 
 # FileName
 $script:FileName = $MemoryDump.Split('\')[-1] | ForEach-Object{($_ -replace "\..*","")}
 
 # Output Directory
-$script:OUTPUT_FOLDER = "$SCRIPT_DIR\$Timestamp-$FileName"
+$script:OUTPUT_FOLDER = "$OUTPUT_DIR\$Timestamp-$FileName"
 
 # Drive Letter (Mount Point)
 [char[]]$Taken = (Get-PSDrive -Name [A-Z]).Name
@@ -912,7 +1169,7 @@ if (!$script:DriveLetter)
 }
 
 # Create a record of your PowerShell session to a text file
-Start-Transcript -Path "$SCRIPT_DIR\$Timestamp-$FileName.txt"
+Start-Transcript -Path "$OUTPUT_DIR\$Timestamp-$FileName.txt"
 
 # Get Start Times
 $script:StartTime_Processing = (Get-Date)
@@ -953,10 +1210,9 @@ Write-Output ""
 
 Function Elasticsearch {
 
-# Launch Elasticsearch (PowerShell.exe)
+# Launch Elasticsearch
 Write-Output "[Info]  Starting Elasticsearch ... "
-Start-Process pwsh.exe "& $Elasticsearch" -WindowStyle Minimized
-#$Elasticsearch_Process = Start-Process powershell.exe "& $Elasticsearch" -WindowStyle Minimized -PassThru
+$Elasticsearch_Process = Start-Process $PowerShell "& $Elasticsearch" -WindowStyle Minimized -PassThru
 $Elasticsearch_Id = $Elasticsearch_Process.Id
 $script:Elasticsearch_Termination = Get-Process | Where-Object {$_.Id -eq $Elasticsearch_Id}
 $ProgressPreference = 'SilentlyContinue'
@@ -965,11 +1221,9 @@ do {
   $ProgressPreference = 'SilentlyContinue'
 } until( Test-NetConnection 127.0.0.1 -Port 9200 -InformationLevel Quiet -ErrorAction SilentlyContinue -WarningAction SilentlyContinue)
 
-# $script:Elasticsearch = "$SCRIPT_DIR\Tools\Elasticsearch\bin\elasticsearch.bat"
-
-# Launch Kibana (PowerShell.exe)
+# Launch Kibana
 Write-Output "[Info]  Starting Kibana ... "
-$Kibana_Process = Start-Process powershell.exe "& $Kibana" -WindowStyle Minimized -PassThru
+$Kibana_Process = Start-Process $PowerShell "& $Kibana" -WindowStyle Minimized -PassThru
 $Kibana_Id = $Kibana_Process.Id
 $script:Kibana_Termination = Get-Process | Where-Object {$_.Id -eq $Kibana_Id}
 $ProgressPreference = 'SilentlyContinue'
@@ -1075,7 +1329,7 @@ if (Test-Path "$($MemProcFS)")
 
                             Write-Output "[Info]  YARA scan initialized with $Count_YaraRules rules ($Count_ProcessSkip Process Names will be skipped) ..."
                             Write-Output "[Info]  Processing $MemoryDump incl. Pagefile [approx. 10-45 min] ..."
-                            Start-Process -FilePath "$MemProcFS" -ArgumentList "-mount $Mount -device `"$MemoryDump`" -pagefile0 `"$Pagefile`" -disable-python -disable-yara-builtin -forensic-yara-rules `"$YaraRules`" -forensic 4 -loglevel forensic:5 -forensic-process-skip `"$ForensicProcessWhitelist`""
+                            Start-Process -FilePath "$MemProcFS" -ArgumentList "-mount $Mount -device `"$MemoryDump`" -pagefile0 `"$Pagefile`" -disable-python -disable-yara-builtin -forensic-yara-rules `"$YaraRules`" -forensic 4 -loglevel forensic:5 -v -logfile `"$MemProcFSLogfile`" -forensic-process-skip `"$ForensicProcessWhitelist`""
                         }
                     }
                 }
@@ -1123,7 +1377,16 @@ if (Test-Path "$($MemProcFS)")
             }
 
             Write-Output "[Info]  Processing $MemoryDump [approx. 1-10 min] ..."
-            Start-Process -FilePath "$MemProcFS" -ArgumentList "-mount $Mount -device `"$MemoryDump`" -disable-python -forensic 4 -loglevel forensic:5 -v -logfile `"$MemProcFSLogfile`" -forensic-process-skip `"$ForensicProcessWhitelist`""
+
+            # Check if Process Skiplist is inactive
+            if ($null -eq $ForensicProcessWhitelist)
+            {
+                Start-Process -FilePath "$MemProcFS" -ArgumentList "-mount $Mount -device `"$MemoryDump`" -disable-python -forensic 4 -loglevel forensic:5 -v -logfile `"$MemProcFSLogfile`""
+            }
+            else
+            {
+                Start-Process -FilePath "$MemProcFS" -ArgumentList "-mount $Mount -device `"$MemoryDump`" -disable-python -forensic 4 -loglevel forensic:5 -v -logfile `"$MemProcFSLogfile`" -forensic-process-skip `"$ForensicProcessWhitelist`""
+            }
         }
         else
         {
@@ -1188,214 +1451,176 @@ if (Test-Path "$($MemProcFS)")
     # Check if Mount Point exists
     if (Test-Path "$DriveLetter\forensic\*")
     {
-        # CurrentControlSet
-        $RegistryValue = "$DriveLetter\registry\HKLM\SYSTEM\Select\Current.txt"
+        # Note: Registry pages are often paged out (or not in memory at all) --> fall back to the kernel information in \sys
+        # Helper functions: Functions\Get-RegistryValue.ps1, Functions\Get-SysValue.ps1
 
-        if (Test-Path "$($RegistryValue)")
+        # Hardware Information (\sys\sysinfo\sysinfo.txt)
+        $SysInfo = @{}
+        if (Test-Path "$DriveLetter\sys\sysinfo\sysinfo.txt")
         {
-            $CurrentControlSet = Get-Content "$RegistryValue" | Select-Object -Skip 2 | ForEach-Object {$_ -replace "^0+", ""}
+            Get-Content "$DriveLetter\sys\sysinfo\sysinfo.txt" | ForEach-Object {
+                if ($_ -match '^\s{2}([A-Za-z ]+):\s+(.+?)\s*$' -and -not $SysInfo.ContainsKey($Matches[1])) { $SysInfo[$Matches[1]] = $Matches[2] }
+            }
         }
 
-        # ComputerName
-        $RegistryValue = "$DriveLetter\registry\HKLM\SYSTEM\ControlSet00$CurrentControlSet\Control\ComputerName\ComputerName\ComputerName.txt"
+        # CurrentControlSet
+        $Current = Get-RegistryValue "$DriveLetter\registry\HKLM\SYSTEM\Select\Current.txt"
+        if ($Current) { $CurrentControlSet = [Convert]::ToInt32($Current, 16) } else { $CurrentControlSet = 1 }
+        $ControlSet = "$DriveLetter\registry\HKLM\SYSTEM\ControlSet{0:D3}" -f $CurrentControlSet
+        $WindowsNT  = "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
 
-        if (Test-Path "$($RegistryValue)")
+        # ComputerName
+        $ComputerName = Get-RegistryValue "$ControlSet\Control\ComputerName\ComputerName\ComputerName.txt"
+        if (-not $ComputerName) { $ComputerName = Get-SysValue "$DriveLetter\sys\computername.txt" }
+        if ($ComputerName) { Write-Output "[Info]  Host Name: $ComputerName" } else { Write-Output "[Info]  Host Name: UNKNOWN" }
+
+        # Domain
+        $Domain = Get-RegistryValue "$ControlSet\Services\Tcpip\Parameters\Domain.txt"
+        if ($Domain) { Write-Output "[Info]  Domain: $Domain" }
+
+        # OSArchitecture
+        $PROCESSOR_ARCHITECTURE = Get-RegistryValue "$ControlSet\Control\Session Manager\Environment\PROCESSOR_ARCHITECTURE.txt"
+        if (-not $PROCESSOR_ARCHITECTURE) { $PROCESSOR_ARCHITECTURE = Get-SysValue "$DriveLetter\sys\architecture.txt" }
+        switch -Regex ($PROCESSOR_ARCHITECTURE)
         {
-            $ComputerName = Get-Content "$RegistryValue" | Select-Object -Skip 2
-            Write-Output "[Info]  Host Name: $ComputerName"
+            'AMD64|X64' { $OSArchitecture = "x64"; break }
+            'ARM64'     { $OSArchitecture = "ARM64"; break }
+            'x86'       { $OSArchitecture = "x86"; break }
+            default     { $OSArchitecture = "UNKNOWN" }
+        }
+
+        # ProductType (WinNT = Workstation, ServerNT = Server, LanmanNT = Domain Controller)
+        $ProductType = Get-RegistryValue "$ControlSet\Control\ProductOptions\ProductType.txt"
+
+        # Version (Major.Minor.Build)
+        $CurrentMajorVersionNumber = Get-RegistryValue "$WindowsNT\CurrentMajorVersionNumber.txt"
+        $CurrentMinorVersionNumber = Get-RegistryValue "$WindowsNT\CurrentMinorVersionNumber.txt"
+        $CurrentVersion            = Get-RegistryValue "$WindowsNT\CurrentVersion.txt"
+        if ($CurrentMajorVersionNumber)
+        {
+            $Major = [Convert]::ToInt64("$CurrentMajorVersionNumber", 16)
+            $Minor = [Convert]::ToInt64("$CurrentMinorVersionNumber", 16)
+        }
+        elseif ($CurrentVersion)
+        {
+            $Major = $CurrentVersion.Split('.')[0]
+            $Minor = $CurrentVersion.Split('.')[1]
+        }
+        else
+        {
+            $Major = Get-SysValue "$DriveLetter\sys\version-major.txt"
+            $Minor = Get-SysValue "$DriveLetter\sys\version-minor.txt"
+        }
+
+        [int]$CurrentBuildNumber = Get-RegistryValue "$WindowsNT\CurrentBuildNumber.txt"
+        if (-not $CurrentBuildNumber) { [int]$CurrentBuildNumber = Get-SysValue "$DriveLetter\sys\version-build.txt" }
+
+        # Update Build Revision (UBR) or Revision Number (BuildLabEx/BuildLab)
+        $Hex = Get-RegistryValue "$WindowsNT\UBR.txt"
+        if ($Hex)
+        {
+            $Revision = [uint32]"0x$Hex"
+        }
+        else
+        {
+            $BuildLabEx = Get-RegistryValue "$WindowsNT\BuildLabEx.txt"
+            $BuildLab   = Get-RegistryValue "$WindowsNT\BuildLab.txt"
+            if ($BuildLabEx) { $Revision = $BuildLabEx.Split('.')[1] } elseif ($BuildLab) { $Revision = $BuildLab.Split('-')[1] } else { $Revision = $null }
         }
 
         # ProductName
-        if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProductName.txt")
+        # Note: Windows 11 still reports "Windows 10" in ProductName --> corrected via CurrentBuildNumber (Build 21996 = first Windows 11 Developer Preview)
+        $ProductName    = Get-RegistryValue "$WindowsNT\ProductName.txt"
+        $DisplayVersion = Get-RegistryValue "$WindowsNT\DisplayVersion.txt"
+        $ReleaseID      = Get-RegistryValue "$WindowsNT\ReleaseId.txt"
+        $CSDVersion     = Get-RegistryValue "$WindowsNT\CSDVersion.txt"
+
+        if ($ProductName)
         {
-            $ProductName = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProductName.txt" | Select-Object -Skip 2
-        }
-
-        # OSArchitecture
-        if (Test-Path "$DriveLetter\registry\HKLM\SYSTEM\ControlSet00$CurrentControlSet\Control\Session Manager\Environment\PROCESSOR_ARCHITECTURE.txt")
-        {
-            $PROCESSOR_ARCHITECTURE = Get-Content "$DriveLetter\registry\HKLM\SYSTEM\ControlSet00$CurrentControlSet\Control\Session Manager\Environment\PROCESSOR_ARCHITECTURE.txt" | Select-Object -Skip 2
-
-            # AMD64 (x64)
-            if ($PROCESSOR_ARCHITECTURE -match "AMD64")
-            {
-                $OSArchitecture = "x64"
-            }
-
-            # x86
-            if ($PROCESSOR_ARCHITECTURE -match "x86")
-            {
-                $OSArchitecture = "x86"
-            }
-
-            # ARM64
-            if ($PROCESSOR_ARCHITECTURE -match "ARM64")
-            {
-                $OSArchitecture = "ARM64"
-            }
+            if ($ProductName -like "*Windows 10*" -and $CurrentBuildNumber -ge 21996) { $ProductName = $ProductName -replace "Windows 10", "Windows 11" }
         }
         else
         {
-            Write-Output "[Info]  Processor Architecture: UNKNOWN"
-        }
-
-        # CSDVersion
-        if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CSDVersion.txt")
-        {
-            $OSVersion = (Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CSDVersion.txt" | Select-Object -Skip 2) -creplace '(?s)^.*Service Pack ', ''
-        }
-
-        # Windows 10
-        if ($ProductName -like "*Windows 10*")
-        {
-            # Major
-            $CurrentMajorVersionNumber = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentMajorVersionNumber.txt" | Select-Object -Skip 2
-            $Major = [Convert]::ToInt64("$CurrentMajorVersionNumber",16)
-
-            # Minor
-            $CurrentMinorVersionNumber = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentMinorVersionNumber.txt" | Select-Object -Skip 2
-            $Minor = [Convert]::ToInt64("$CurrentMinorVersionNumber",16)
-        }
-        else 
-        {
-            # CurrentVersion
-            if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentVersion.txt")
+            # Derive the Windows version from the build number (Edition unknown)
+            $IsServer = $ProductType -match "ServerNT|LanmanNT"
+            $ProductName = switch ($CurrentBuildNumber)
             {
-                $CurrentVersion = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentVersion.txt" | Select-Object -Skip 2
-
-                # Major
-                $Major = $CurrentVersion.split('.')[0]
-
-                # Minor
-                $Minor = $CurrentVersion.split('.')[1]
+                { $IsServer -and $_ -eq 14393 } { "Windows Server 2016"; break }
+                { $IsServer -and $_ -eq 17763 } { "Windows Server 2019"; break }
+                { $IsServer -and $_ -eq 20348 } { "Windows Server 2022"; break }
+                { $IsServer -and $_ -eq 26100 } { "Windows Server 2025"; break }
+                { -not $ProductType -and $_ -in 14393, 17763, 20348 } { "Windows Server (Build $_)"; break }
+                { -not $ProductType -and $_ -eq 26100 } { "Windows 11 or Windows Server 2025"; break }
+                { $_ -ge 21996 } { "Windows 11"; break }
+                { $_ -ge 10240 } { "Windows 10"; break }
+                { $_ -eq 9600 }  { "Windows 8.1 / Server 2012 R2"; break }
+                { $_ -eq 9200 }  { "Windows 8 / Server 2012"; break }
+                { $_ -in 7600, 7601 } { "Windows 7 / Server 2008 R2"; break }
+                default { "UNKNOWN" }
             }
-            else
+
+            # DisplayVersion derived from the build number (Windows 10/11 only)
+            if (-not $IsServer)
             {
-                Write-Host "[Error] $DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentVersion.txt does NOT exist." -ForegroundColor Red
+                $DisplayVersion = @{ 19041 = "2004"; 19042 = "20H2"; 19043 = "21H1"; 19044 = "21H2"; 19045 = "22H2"; 22000 = "21H2"; 22621 = "22H2"; 22631 = "23H2"; 26100 = "24H2"; 26200 = "25H2"; 26300 = "26H2" }[$CurrentBuildNumber]
             }
         }
 
-        # Windows 10, Windows 11, Windows Server 2016, Windows Server 2019, and Windows Server 2022
-        if (($ProductName -like "*Windows 10*") -Or ($ProductName -like "*Windows Server 2016*") -Or ($ProductName -like "*Windows Server 2019*") -Or ($ProductName -like "*Windows Server 2022*"))
+        # Version String
+        $Build = (@($Major, $Minor, $(if ($CurrentBuildNumber) { $CurrentBuildNumber }), $Revision) | Where-Object { "$_" -ne "" }) -join "."
+        if (-not $Build) { $Build = "UNKNOWN" }
+        if ($CSDVersion)
         {
-            # DisplayVersion
-            if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\DisplayVersion.txt")
-            {
-                $DisplayVersion = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\DisplayVersion.txt" | Select-Object -Skip 2
-            }
-
-            # ReleaseID
-            $ReleaseID = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ReleaseId.txt" | Select-Object -Skip 2
-    
-            # CurrentBuildNumber
-            if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentBuildNumber.txt")
-            {
-                [int]$CurrentBuildNumber = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentBuildNumber.txt" | Select-Object -Skip 2
-            }
-            else
-            {
-                Write-Host "[Error] $DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentBuildNumber.txt does NOT exist." -ForegroundColor Red
-            }
-
-            # UBR
-            if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UBR.txt")
-            {
-                $Hex = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UBR.txt" | Select-Object -Skip 2
-                $UBR = [uint32]"0x$Hex"
-            }
-
-            # Windows 11 (CurrentBuildNumber + Update Build Revision)
-            # Windows 11 Build 21996 --> First Developer Preview
-            # Windows 11 Build 22000 --> First Public Preview
-            if ($CurrentBuildNumber -ge "21996")
-            {
-                $ProductName = $ProductName | ForEach-Object{($_ -replace "10","11")}
-                $Hex = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UBR.txt" | Select-Object -Skip 2
-                $UBR = [uint32]"0x$Hex"
-                Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Version: $DisplayVersion ($Major.$Minor.$CurrentBuildNumber.$UBR)"
-            }
-            else
-            {
-                if ($DisplayVersion)
-                {
-                    Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Version: $ReleaseID / $DisplayVersion ($Major.$Minor.$CurrentBuildNumber.$UBR)"
-                }
-                else
-                {
-                    Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Version: $ReleaseID ($Major.$Minor.$CurrentBuildNumber.$UBR)"
-                }
-            }
+            Write-Output "[Info]  OS: $ProductName ($OSArchitecture), $CSDVersion ($Build)"
+        }
+        elseif ($DisplayVersion -and $ReleaseID -and ($ReleaseID -ne $DisplayVersion) -and $CurrentBuildNumber -lt 21996)
+        {
+            Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Version: $ReleaseID / $DisplayVersion ($Build)"
+        }
+        elseif ($DisplayVersion -or $ReleaseID)
+        {
+            Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Version: $(if ($DisplayVersion) { $DisplayVersion } else { $ReleaseID }) ($Build)"
         }
         else
         {
-            # CurrentBuildNumber
-            $CurrentBuildNumber = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentBuildNumber.txt" | Select-Object -Skip 2
-
-            # Revision Number
-            if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\BuildLabEx.txt")
-            {
-                # BuildLabEx
-                $BuildLabEx = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\BuildLabEx.txt" | Select-Object -Skip 2
-                $RevisionNumber = $BuildLabEx.split('.')[1]
-            }
-            else
-            {
-                if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\BuildLab.txt")
-                {
-                    # BuildLab
-                    $BuildLab = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\BuildLab.txt" | Select-Object -Skip 2
-                    $RevisionNumber = $BuildLab.split('-')[1]
-                }
-            }
-
-            if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CSDVersion.txt")
-            {
-                Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Service Pack $OSVersion ($Major.$Minor.$CurrentBuildNumber.$RevisionNumber)"
-            }
-            else
-            {
-                Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Version: $Major.$Minor (Build: $CurrentBuildNumber.$RevisionNumber)"
-            }
+            Write-Output "[Info]  OS: $ProductName ($OSArchitecture), Version: $Build"
         }
 
         # InstallDate (ISO 8601)
-        $RegistryValue = "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\InstallDate.txt"
-
-        if (Test-Path "$($RegistryValue)")
+        $HexadecimalBigEndian = Get-RegistryValue "$WindowsNT\InstallDate.txt"
+        if ($HexadecimalBigEndian)
         {
-            $HexadecimalBigEndian = Get-Content "$RegistryValue" | Select-Object -Skip 2
-            $UnixSeconds = [Convert]::ToInt64("$HexadecimalBigEndian",16)
-            $InstallDate = ((Get-Date 01.01.1970).AddSeconds($UnixSeconds)).ToString("yyyy-MM-dd HH:mm:ss")
+            $UnixSeconds = [Convert]::ToInt64("$HexadecimalBigEndian", 16)
+            $InstallDate = ([DateTime]::new(1970, 1, 1, 0, 0, 0, [DateTimeKind]::Utc).AddSeconds($UnixSeconds)).ToString("yyyy-MM-dd HH:mm:ss")
             Write-Output "[Info]  InstallDate: $InstallDate UTC"
         }
 
-        # RegisteredOrganization
-        $RegisteredOrganization = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\RegisteredOrganization.txt" -ErrorAction SilentlyContinue | Select-Object -Skip 2
-        if ($null -ne $RegisteredOrganization)
-        {
-            Write-Output "[Info]  RegisteredOrganization: $RegisteredOrganization"
-        } 
-        else 
-        {
-            Write-Output "[Info]  RegisteredOrganization: --"
-        }
+        # RegisteredOrganization / RegisteredOwner
+        $RegisteredOrganization = Get-RegistryValue "$WindowsNT\RegisteredOrganization.txt"
+        $RegisteredOwner        = Get-RegistryValue "$WindowsNT\RegisteredOwner.txt"
+        Write-Output "[Info]  RegisteredOrganization: $(if ($RegisteredOrganization) { $RegisteredOrganization } else { '--' })"
+        Write-Output "[Info]  RegisteredOwner: $(if ($RegisteredOwner) { $RegisteredOwner } else { '--' })"
 
-        # RegisteredOwner
-        if (Test-Path "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\RegisteredOwner.txt")
+        # Hardware (sysinfo)
+        if ($SysInfo["CPU"]) { Write-Output "[Info]  CPU: $($SysInfo['CPU'])" }
+        $Vendor = (@($SysInfo["System Vendor"], $SysInfo["MB Product"]) | Where-Object { $_ }) -join " "
+        if ($Vendor) { Write-Output "[Info]  System: $Vendor" }
+        if ($SysInfo["Physical Memory"]) { Write-Output "[Info]  Physical Memory: $($SysInfo['Physical Memory'])" }
+
+        # Boot Time / Acquisition Time (Kernel)
+        $BootTime    = Get-SysValue "$DriveLetter\sys\time-boot.txt"
+        $CurrentTime = Get-SysValue "$DriveLetter\sys\time-current.txt"
+        if ($BootTime) { Write-Output "[Info]  Boot Time: $BootTime" }
+        if ($CurrentTime)
         {
-            $RegisteredOwner = Get-Content "$DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\RegisteredOwner.txt" | Select-Object -Skip 2
-            if ($null -ne $RegisteredOwner)
+            $Uptime = ""
+            try
             {
-                Write-Output "[Info]  RegisteredOwner: $RegisteredOwner"
+                $Span = [DateTime]::ParseExact(($CurrentTime -replace ' UTC$',''), "yyyy-MM-dd HH:mm:ss", $null) - [DateTime]::ParseExact(($BootTime -replace ' UTC$',''), "yyyy-MM-dd HH:mm:ss", $null)
+                $Uptime = " (Uptime: {0} d {1} h {2} min)" -f $Span.Days, $Span.Hours, $Span.Minutes
             }
-            else
-            {
-                Write-Output "[Info]  RegisteredOwner: --"
-            }
-        }
-        else
-        {
-            Write-Host "[Error] $DriveLetter\registry\HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\RegisteredOwner.txt does NOT exist." -ForegroundColor Red
+            catch {}
+            Write-Output "[Info]  Acquisition Time: $CurrentTime$Uptime"
         }
 
         # Check if it's a Domain Controller (Active Directory)
@@ -1479,20 +1704,6 @@ if (Test-Path "$($MemProcFS)")
             Write-Output "[Info]  Last Logged On User: $LastLoggedOnUser"
         }
 
-        # Last Boot Up Time (ISO 8601)
-        if (Test-Path "$DriveLetter\sys\time-boot.txt")
-        {
-            $LastBoot = Get-Content -Path "$DriveLetter\sys\time-boot.txt"
-            Write-Output "[Info]  Last Boot: $LastBoot"
-        }
-
-        # Memory Acquisition Time (ISO 8601)
-        if (Test-Path "$DriveLetter\sys\time-current.txt")
-        {
-            $Current = Get-Content -Path "$DriveLetter\sys\time-current.txt"
-            Write-Output "[Info]  Memory Acquisition Time: $Current"
-        }
-
         # Collecting Evidence Files
         Write-Output "[Info]  Collecting Evidence Files ..."
 
@@ -1535,7 +1746,7 @@ if (Test-Path "$($MemProcFS)")
             # CSV
             if (Test-Path "$DriveLetter\forensic\json\general.json")
             {
-                $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "evil" }
+                $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "evil"
 
                 $Data | Foreach-Object {
 
@@ -1568,21 +1779,17 @@ if (Test-Path "$($MemProcFS)")
             }
 
             # XLSX
-            if (Get-Module -ListAvailable -Name ImportExcel)
+            if (Test-Path "$OUTPUT_FOLDER\forensic\findevil\findevil.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\forensic\findevil\findevil.csv")
+                if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\forensic\findevil\findevil.csv") -gt 0)
                 {
-                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\forensic\findevil\findevil.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\findevil\findevil.csv" -Delimiter "`t"
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\findevil\findevil.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "FindEvil" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns B-D
-                        $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
-                        }
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\findevil\findevil.csv" -Delimiter "`t"
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\findevil\findevil.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "FindEvil" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns B-D
+                    $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -1641,6 +1848,31 @@ if (Test-Path "$($MemProcFS)")
                 Write-Host "[Alert] PEB_MASQ found ($Count)" -ForegroundColor Red
                 (Get-Content "$OUTPUT_FOLDER\forensic\findevil\PEB_MASQ\PEB_MASQ.txt") -replace "^", "        "  | Write-Host -ForegroundColor Red
             }
+
+            # PRIVATE_RX + HIGH_ENTROPY (Encrypted Executable Memory --> possible Sleep Obfuscation)
+            $Records = Import-Csv "$OUTPUT_FOLDER\forensic\findevil\findevil.csv" -Delimiter "`t"
+            $PrivateRX = @{}
+            $Records | Where-Object { $_.Type -eq "PRIVATE_RX" } | ForEach-Object { $PrivateRX["$($_.PID)|$($_.Address)"] = $true }
+            $Data = $Records | Where-Object { $_.Type -eq "HIGH_ENTROPY" -and $PrivateRX.ContainsKey("$($_.PID)|$($_.Address)") }
+            $Count = ($Data | Measure-Object).Count
+            if ($Count -gt 0)
+            {
+                New-Item "$OUTPUT_FOLDER\forensic\findevil\HIGH_ENTROPY_RX" -ItemType Directory -Force | Out-Null
+                ($Data | Select-Object PID,"Process Name",Type,Address,Description | Format-Table -HideTableHeaders | Out-String).Trim() | Out-File "$OUTPUT_FOLDER\forensic\findevil\HIGH_ENTROPY_RX\HIGH_ENTROPY_RX.txt"
+                Write-Host "[Alert] PRIVATE_RX + HIGH_ENTROPY found ($Count) --> Possible Injected Encrypted Payload" -ForegroundColor Red
+                (Get-Content "$OUTPUT_FOLDER\forensic\findevil\HIGH_ENTROPY_RX\HIGH_ENTROPY_RX.txt") -replace "^", "        "  | Write-Host -ForegroundColor Red
+            }
+
+            # THREAD + BAD_MODULE (Thread Start Address outside of a valid Module --> possible Injected Code)
+            $Data = Import-Csv "$OUTPUT_FOLDER\forensic\findevil\findevil.csv" -Delimiter "`t" | Where-Object { $_.Type -eq "THREAD" -and $_.Description -match "BAD_MODULE" }
+            $Count = ($Data | Measure-Object).Count
+            if ($Count -gt 0)
+            {
+                New-Item "$OUTPUT_FOLDER\forensic\findevil\THREAD_BAD_MODULE" -ItemType Directory -Force | Out-Null
+                ($Data | Select-Object PID,"Process Name",Type,Address,Description | Format-Table -HideTableHeaders | Out-String).Trim() | Out-File "$OUTPUT_FOLDER\forensic\findevil\THREAD_BAD_MODULE\THREAD_BAD_MODULE.txt"
+                Write-Host "[Alert] THREAD + BAD_MODULE found ($Count) --> Possible Injected Code" -ForegroundColor Red
+                (Get-Content "$OUTPUT_FOLDER\forensic\findevil\THREAD_BAD_MODULE\THREAD_BAD_MODULE.txt") -replace "^", "        "  | Write-Host -ForegroundColor Red
+            }
         }
         else
         {
@@ -1665,7 +1897,7 @@ if (Test-Path "$($MemProcFS)")
             New-Item "$OUTPUT_FOLDER\forensic\yara" -ItemType Directory -Force | Out-Null
             Copy-Item "$DriveLetter\forensic\yara\*.txt" -Destination "$OUTPUT_FOLDER\forensic\yara"
 
-            # Match Count
+            # Yara Hits
             if (!($null -eq $YaraRules))
             {
                 if (Test-Path "$DriveLetter\forensic\yara\match-count.txt")
@@ -1673,8 +1905,6 @@ if (Test-Path "$($MemProcFS)")
                     [int]$Total = Get-Content -Path "$DriveLetter\forensic\yara\match-count.txt"
                     if ($Total -gt 0)
                     {
-                        Write-Host "[Alert] $Total YARA rule matches" -ForegroundColor Red
-                
                         # Result
                         if (Test-Path "$DriveLetter\forensic\yara\result.txt")
                         {
@@ -1682,6 +1912,9 @@ if (Test-Path "$($MemProcFS)")
                             (Get-Content -Path "$DriveLetter\forensic\yara\result.txt" | Select-String -Pattern "threat_name" | ForEach-Object{($_ -split "threat_name:")[1]}).Trim() | Sort-Object | Out-File "$OUTPUT_FOLDER\forensic\yara\threat_name_all.txt"
                             
                             $Threats = Get-Content "$OUTPUT_FOLDER\forensic\yara\threat_name.txt"
+                            $Unique  = ($Threats | Measure-Object).Count
+
+                            Write-Host "[Alert] $Unique YARA hit(s) detected ($Total)" -ForegroundColor Red
 
                             foreach ($ThreatName in $Threats)
                             {
@@ -1692,7 +1925,7 @@ if (Test-Path "$($MemProcFS)")
                     }
                     else
                     {
-                        Write-Output "[Info]  0 YARA rule matches"
+                        Write-Output "[Info]  0 YARA hits detected"
                     }
                 }
             }
@@ -1736,7 +1969,8 @@ if (Test-Path "$($MemProcFS)")
                 ForEach( $MPLog in $MPLogs )
                 {
                     $FileName = $MPLog.Split('\')[-1]
-                    Get-Content "$MPLog" -Encoding Byte | Where-Object {$_ -ne 0x00} | Set-Content "$OUTPUT_FOLDER\MPLogs\Clean\$FileName" -Encoding Byte
+                    $Bytes = [System.IO.File]::ReadAllBytes("$MPLog")
+                    [System.IO.File]::WriteAllBytes("$OUTPUT_FOLDER\MPLogs\Clean\$FileName", [byte[]]$Bytes.Where({$_ -ne 0x00}))
                 }
             }
 
@@ -1750,7 +1984,8 @@ if (Test-Path "$($MemProcFS)")
                 ForEach( $MPDetectionLog in $MPDetectionLogs )
                 {
                     $FileName = $MPDetectionLog.Split('\')[-1]
-                    Get-Content "$MPDetectionLog" -Encoding Byte | Where-Object {$_ -ne 0x00} | Set-Content "$OUTPUT_FOLDER\MPLogs\Clean\$FileName" -Encoding Byte
+                    $Bytes = [System.IO.File]::ReadAllBytes("$MPDetectionLog")
+                    [System.IO.File]::WriteAllBytes("$OUTPUT_FOLDER\MPLogs\Clean\$FileName", [byte[]]$Bytes.Where({$_ -ne 0x00}))
                 }
             }
 
@@ -1816,8 +2051,7 @@ if (Test-Path "$($MemProcFS)")
                         $Import | Export-Excel -Path "$OUTPUT_FOLDER\MPLogs\XLSX\$BaseName.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MPLogs" -CellStyleSB {
                         param($WorkSheet)
                         # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor White
+                        Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                         # HorizontalAlignment "Center" of columns A-B
                         $WorkSheet.Cells["A:B"].Style.HorizontalAlignment="Center"
                         }
@@ -1829,6 +2063,27 @@ if (Test-Path "$($MemProcFS)")
         }
 
         Get-MPLogs
+
+        # FS_Forensic_Amcache
+        # https://github.com/ufrisk/MemProcFS/wiki/FS_Forensic_Amcache
+        # Note: Only available if an Amcache.hve registry hive was found in memory. The CSV files (amcache_*.csv) are collected via \forensic\csv.
+        if (Test-Path "$DriveLetter\forensic\amcache\*.txt")
+        {
+            New-Item "$OUTPUT_FOLDER\forensic\amcache" -ItemType Directory -Force | Out-Null
+            Copy-Item "$DriveLetter\forensic\amcache\*.txt" -Destination "$OUTPUT_FOLDER\forensic\amcache"
+
+            # Summary
+            if (Test-Path "$OUTPUT_FOLDER\forensic\amcache\summary.txt")
+            {
+                $Summary = @{}
+                Get-Content "$OUTPUT_FOLDER\forensic\amcache\summary.txt" | ForEach-Object { if ($_ -match '^\s*(.+?)\s+:\s+(\d+)\s*$') { $Summary[$Matches[1]] = [int]$Matches[2] } }
+
+                if ($Summary.Count -gt 0)
+                {
+                    Write-Output "[Info]  Amcache Inventory (MemProcFS): $($Summary['Applications']) Applications, $($Summary['Files']) Files ($($Summary['Files unassociated']) unassociated), $($Summary['Shortcuts']) Shortcuts, $($Summary['Driver binaries']) Driver Binaries, $($Summary['Driver packages']) Driver Packages, $($Summary['Device containers']) Device Containers, $($Summary['PnP devices']) PnP Devices"
+                }
+            }
+        }
 
         # FS_Process_Console
         # https://github.com/ufrisk/MemProcFS/wiki/FS_Process_Console
@@ -1869,6 +2124,132 @@ if (Test-Path "$($MemProcFS)")
         {
             New-Item "$OUTPUT_FOLDER\forensic\xlsx" -ItemType Directory -Force | Out-Null
 
+            # FS_Forensic_Amcache
+
+            # amcache_applications.csv --> Application Inventory
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\amcache_applications.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\amcache_applications.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\amcache_applications.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.KeyLastWrite -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\amcache_applications.xlsx" -NoNumberConversion * -FreezePane 2,2 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Applications" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:X1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-F, I-I, M-Q, S-T and V-X
+                    $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["I:I"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["M:Q"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["S:T"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["V:X"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
+            # amcache_device_containers.csv --> Device Container Inventory
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\amcache_device_containers.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\amcache_device_containers.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\amcache_device_containers.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.KeyLastWrite -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\amcache_device_containers.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Device Containers" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:S1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-S
+                    $WorkSheet.Cells["A:S"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
+            # amcache_devices_pnp.csv --> PnP Device Inventory
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\amcache_devices_pnp.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\amcache_devices_pnp.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\amcache_devices_pnp.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.KeyLastWrite -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\amcache_devices_pnp.xlsx" -NoNumberConversion * -FreezePane 2,2 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "PnP Devices" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:AD1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-AD
+                    $WorkSheet.Cells["A:AD"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
+            # amcache_driver_binaries.csv --> Driver Binary Inventory
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\amcache_driver_binaries.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\amcache_driver_binaries.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\amcache_driver_binaries.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.KeyLastWrite -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\amcache_driver_binaries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Driver Binaries" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:Y1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-Y
+                    $WorkSheet.Cells["A:Y"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
+            # amcache_driver_packages.csv --> Driver Package and INF Inventory
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\amcache_driver_packages.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\amcache_driver_packages.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\amcache_driver_packages.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.KeyLastWrite -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\amcache_driver_packages.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Driver Packages" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:R1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-R
+                    $WorkSheet.Cells["A:R"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
+            # amcache_files.csv --> File Inventory
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\amcache_files.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\amcache_files.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\amcache_files.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.KeyLastWrite -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\amcache_files.xlsx" -NoNumberConversion * -FreezePane 2,2 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Files" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:X1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-X
+                    $WorkSheet.Cells["A:X"].Style.HorizontalAlignment="Center"
+                    }
+
+                    # SHA1 (FileId = "0000" + SHA1)
+                    $SHA1 = $IMPORT | ForEach-Object { if ($_.FileId -match '^0000([0-9a-fA-F]{40})$') { $Matches[1].ToLower() } } | Sort-Object -Unique
+                    if ($SHA1)
+                    {
+                        New-Item "$OUTPUT_FOLDER\forensic\amcache" -ItemType Directory -Force | Out-Null
+                        $SHA1 | Out-File "$OUTPUT_FOLDER\forensic\amcache\SHA1.txt" -Encoding ascii
+                    }
+                }
+            }
+
+            # amcache_shortcuts.csv --> Shortcut Inventory
+            if (Test-Path "$OUTPUT_FOLDER\forensic\csv\amcache_shortcuts.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\amcache_shortcuts.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\amcache_shortcuts.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.KeyLastWrite -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\amcache_shortcuts.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Shortcuts" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-H
+                    $WorkSheet.Cells["A:H"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
             # devices.csv --> Device Drivers
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\devices.csv")
             {
@@ -1878,8 +2259,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\devices.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Device Drivers" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Left" of column A
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Left"
                     # HorizontalAlignment "Center" of columns B-E and G
@@ -1898,8 +2278,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\drivers.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Kernel Drivers" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Left" of column A
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Left"
                     # HorizontalAlignment "Center" of columns B-E
@@ -1917,8 +2296,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\files.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Files" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-C
                     $WorkSheet.Cells["A:C"].Style.HorizontalAlignment="Center"
                     }
@@ -1934,8 +2312,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\findevil.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "FindEvil" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-D
                     $WorkSheet.Cells["A:D"].Style.HorizontalAlignment="Center"
                     }
@@ -1951,8 +2328,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\handles.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Handles" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-H
                     $WorkSheet.Cells["A:H"].Style.HorizontalAlignment="Center"
                     }
@@ -1968,8 +2344,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\modules.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Modules" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:X1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:X1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-J and M-W
                     $WorkSheet.Cells["A:J"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["M:W"].Style.HorizontalAlignment="Center"
@@ -1986,8 +2361,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\net.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Network" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-J
                     $WorkSheet.Cells["A:J"].Style.HorizontalAlignment="Center"
                     }
@@ -2003,8 +2377,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\netdns.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DNS" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-D
                     $WorkSheet.Cells["A:D"].Style.HorizontalAlignment="Center"
                     }
@@ -2020,8 +2393,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\prefetch.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Prefetch" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-C and E-M
                     $WorkSheet.Cells["B:C"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["E:M"].Style.HorizontalAlignment="Center"
@@ -2038,8 +2410,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\process.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Processes" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:R1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:R1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-C and F-O
                     $WorkSheet.Cells["A:C"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["F:O"].Style.HorizontalAlignment="Center"
@@ -2056,11 +2427,75 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\services.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Services" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-B and E-J
                     $WorkSheet.Cells["A:B"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["E:J"].Style.HorizontalAlignment="Center"
+
+                    # Suspicious Services
+
+                    # Masqueraded Services (Legitimate Binary Name, Wrong Install Path)
+                    # https://attack.mitre.org/techniques/T1036/005/
+
+                    # javac.exe (Java Compiler, e.g. C:\ProgramData\Paessler\javac.exe)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'AND(NOT(ISERROR(SEARCH("javac.exe",$K1))),ISERROR(SEARCH("\Java\",$K1)))' -BackgroundColor Red
+
+                    # Vmwarese.exe (e.g. "C:\ProgramData\VMware\Vmwarese.exe")
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'AND(NOT(ISERROR(SEARCH("VMware",$K1))),ISERROR(SEARCH("\Program Files\VMware\",$K1)),ISERROR(SEARCH("\Program Files (x86)\VMware\",$K1)))' -BackgroundColor Red
+
+                    # Non-Service Binaries (No Legitimate Reason to Run as a Service or Binary Has No Service Capability)
+                    # https://attack.mitre.org/techniques/T1543/003/
+
+                    # systeminfo.exe (signed Windows binary that dumps system configuration info, legitimate home is "C:\Windows\System32\")
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'NOT(ISERROR(SEARCH("systeminfo.exe",$K1)))' -BackgroundColor Red
+
+                    # Generic Service Names
+                    # https://attack.mitre.org/techniques/T1036/004/
+
+                    # svc.exe
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'NOT(ISERROR(SEARCH("\svc.exe",$K1)))' -BackgroundColor Red
+
+                    # Suspicious Image Paths (Common Malware Locations)
+
+                    # ALLUSERSPROFILE (\ProgramData\ or %ProgramData%)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'OR(NOT(ISERROR(SEARCH("\ProgramData\",$K1))),NOT(ISERROR(SEARCH("%ProgramData%",$K1))))' -BackgroundColor $MediumColor
+
+                    # APPDATA (\AppData\Roaming\ or %APPDATA%)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'OR(NOT(ISERROR(SEARCH("\AppData\Roaming\",$K1))),NOT(ISERROR(SEARCH("%APPDATA%",$K1))))' -BackgroundColor Red
+
+                    # Desktop (\Users\*\Desktop\)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(SEARCH("\Users\*\Desktop\",$K1)))' -BackgroundColor Red
+
+                    # Documents (\Users\*\Documents\)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(SEARCH("\Users\*\Documents\",$K1)))' -BackgroundColor Red
+
+                    # Downloads (\Users\*\Downloads)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(SEARCH("\Users\*\Downloads\",$K1)))' -BackgroundColor Red
+
+                    # LOCALAPPDATA  (\AppData\Local\ or %LOCALAPPDATA% )
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'OR(NOT(ISERROR(SEARCH("\AppData\Local\",$K1))),NOT(ISERROR(SEARCH("%LOCALAPPDATA%",$K1))))' -BackgroundColor Red
+
+                    # LocalLow (\Users\*\AppData\LocalLow)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(SEARCH("\Users\*\AppData\LocalLow",$K1)))' -BackgroundColor Red
+
+                    # PerfLogs (\PerfLogs\)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'NOT(ISERROR(SEARCH("\PerfLogs\",$K1)))' -BackgroundColor Red
+
+                    # Public (\Users\Public\ or %PUBLIC%)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'OR(NOT(ISERROR(SEARCH("\Users\Public\",$K1))),NOT(ISERROR(SEARCH("%PUBLIC%",$K1))))' -BackgroundColor Red
+
+                    # Recycle Bin (\$Recycle.Bin\)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'NOT(ISERROR(SEARCH("\$Recycle.Bin\",$K1)))' -BackgroundColor Red
+
+                    # Root Directory ("C:\update.exe" or "C:\update.exe" -service)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'AND(MID(SUBSTITUTE($K1,"""",""),2,1)=":",(LEN(SUBSTITUTE($K1,"""",""))-LEN(SUBSTITUTE(SUBSTITUTE($K1,"""",""),"\","")))=1)' -BackgroundColor Red
+
+                    # TEMP (\AppData\Local\Temp\ or %TEMP% or %TMP%)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'OR(NOT(ISERROR(SEARCH("\AppData\Local\Temp\",$K1))),NOT(ISERROR(SEARCH("%TEMP%",$K1))),NOT(ISERROR(SEARCH("%TMP%",$K1))))' -BackgroundColor Red
+
+                    # Windows Temp (\Windows\Temp\ or %SystemRoot%\Temp)
+                    Add-ConditionalFormatting -Address $WorkSheet.Cells["K:K"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue 'OR(NOT(ISERROR(SEARCH("\Windows\Temp\",$K1))),NOT(ISERROR(SEARCH("%WINDIR%\Temp",$K1))),NOT(ISERROR(SEARCH("%SystemRoot%\Temp",$K1))))' -BackgroundColor Red                   
+
                     }
                 }
             }
@@ -2074,8 +2509,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\tasks.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Tasks" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, D-E and H-K
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
@@ -2093,8 +2527,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\threads.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Threads" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:V1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:V1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-V
                     $WorkSheet.Cells["A:V"].Style.HorizontalAlignment="Center"
                     }
@@ -2106,14 +2539,13 @@ if (Test-Path "$($MemProcFS)")
             # timeline_kernelobject.csv --> Kernel Object Manager Objects
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\timeline_kernelobject.csv")
             {
-                if((Get-Item "$OUTPUT_FOLDER\forensic\csv\timeline_kernelobject.csv").length -gt 0kb)
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\timeline_kernelobject.csv") -gt 0)
                 {
                     $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\timeline_kernelobject.csv" -Delimiter "," | Select-Object Time, Type, Action, PID, Value32, Value64, Text | Sort-Object { $_.Time -as [datetime] } -Descending
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_kernelobject.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_kernelobject" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2123,14 +2555,13 @@ if (Test-Path "$($MemProcFS)")
             # timeline_net.csv --> Network Timeline
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\timeline_net.csv")
             {
-                if((Get-Item "$OUTPUT_FOLDER\forensic\csv\timeline_net.csv").length -gt 0kb)
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\timeline_net.csv") -gt 0)
                 {
                     $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\timeline_net.csv" -Delimiter "," | Select-Object Time, Type, Action, PID, Value32, Value64, Text | Sort-Object { $_.Time -as [datetime] } -Descending
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_net.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_net" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2142,14 +2573,13 @@ if (Test-Path "$($MemProcFS)")
             # timeline_prefetch.csv --> Prefetch Timeline
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\timeline_prefetch.csv")
             {
-                if((Get-Item "$OUTPUT_FOLDER\forensic\csv\timeline_prefetch.csv").length -gt 0kb)
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\timeline_prefetch.csv") -gt 0)
                 {
                     $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\timeline_prefetch.csv" -Delimiter "," | Select-Object Time, Type, Action, PID, Value32, Value64, Text | Sort-Object { $_.Time -as [datetime] } -Descending
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_prefetch.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_prefetch" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2159,14 +2589,13 @@ if (Test-Path "$($MemProcFS)")
             # timeline_process.csv --> Process Timeline
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\timeline_process.csv")
             {
-                if((Get-Item "$OUTPUT_FOLDER\forensic\csv\timeline_process.csv").length -gt 0kb)
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\timeline_process.csv") -gt 0)
                 {
                     $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\timeline_process.csv" -Delimiter "," | Select-Object Time, Type, Action, PID, Value32, Value64, Text | Sort-Object { $_.Time -as [datetime] } -Descending
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_process.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_process" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2176,14 +2605,13 @@ if (Test-Path "$($MemProcFS)")
             # timeline_registry.csv --> Registry Timeline
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\timeline_registry.csv")
             {
-                if((Get-Item "$OUTPUT_FOLDER\forensic\csv\timeline_registry.csv").length -gt 0kb)
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\timeline_registry.csv") -gt 0)
                 {
                     $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\timeline_registry.csv" -Delimiter "," | Select-Object Time, Type, Action, PID, Value32, Value64, Text | Sort-Object { $_.Time -as [datetime] } -Descending
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_registry.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_registry" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2193,14 +2621,13 @@ if (Test-Path "$($MemProcFS)")
             # timeline_task.csv --> Scheduled Tasks Timeline
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\timeline_task.csv")
             {
-                if((Get-Item "$OUTPUT_FOLDER\forensic\csv\timeline_task.csv").length -gt 0kb)
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\timeline_task.csv") -gt 0)
                 {
                     $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\timeline_task.csv" -Delimiter "," | Select-Object Time, Type, Action, PID, Value32, Value64, Text | Sort-Object { $_.Time -as [datetime] } -Descending
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_task.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_task" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2210,14 +2637,13 @@ if (Test-Path "$($MemProcFS)")
             # timeline_thread.csv --> Threading Timeline
             if (Test-Path "$OUTPUT_FOLDER\forensic\csv\timeline_thread.csv")
             {
-                if((Get-Item "$OUTPUT_FOLDER\forensic\csv\timeline_thread.csv").length -gt 0kb)
+                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\csv\timeline_thread.csv") -gt 0)
                 {
                     $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\csv\timeline_thread.csv" -Delimiter "," | Select-Object Time, Type, Action, PID, Value32, Value64, Text | Sort-Object { $_.Time -as [datetime] } -Descending
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_thread.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_thread" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2233,8 +2659,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\timeline_web.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "timeline_web" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     }
@@ -2250,8 +2675,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\unloaded_modules.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "unloaded_modules" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-H
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:H"].Style.HorizontalAlignment="Center"
@@ -2268,8 +2692,7 @@ if (Test-Path "$($MemProcFS)")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\xlsx\yara.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "YARA" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:Y1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:Y1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-B, D-J, L-O, Q, S, U, W and Y
                     $WorkSheet.Cells["A:B"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:J"].Style.HorizontalAlignment="Center"
@@ -2290,6 +2713,16 @@ if (Test-Path "$($MemProcFS)")
         {
             New-Item "$OUTPUT_FOLDER\forensic\json" -ItemType Directory -Force | Out-Null
             Copy-Item "$DriveLetter\forensic\json\*.json" -Destination "$OUTPUT_FOLDER\forensic\json"
+
+            # Check JSON files for malformed lines
+            foreach ($JsonFile in Get-ChildItem "$OUTPUT_FOLDER\forensic\json\*.json")
+            {
+                $Count = Test-JsonLines -Path $JsonFile.FullName -OutputDir "$OUTPUT_FOLDER\forensic\json\malformed"
+                if ($Count -gt 0)
+                {
+                    Write-Host "[Info]  $Count malformed line(s) in $($JsonFile.Name) found --> forensic\json\malformed\" -ForegroundColor Yellow
+                }
+            }
         }
 
         # FS_Forensic_Ntfs
@@ -2342,7 +2775,7 @@ if (Test-Path "$($MemProcFS)")
             # CSV
             if (Test-Path "$DriveLetter\forensic\json\general.json")
             {
-                $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "certificate" }
+                $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "certificate"
 
                 $Data | Foreach-Object {
 
@@ -2361,21 +2794,17 @@ if (Test-Path "$($MemProcFS)")
             }
 
             # XLSX
-            if (Get-Module -ListAvailable -Name ImportExcel)
+            if (Test-Path "$OUTPUT_FOLDER\sys\certificates\certificates.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\sys\certificates\certificates.csv")
+                if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\certificates\certificates.csv") -gt 0)
                 {
-                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\certificates\certificates.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\certificates\certificates.csv" -Delimiter "`t"
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\certificates\certificates.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Certificates" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns B-C
-                        $WorkSheet.Cells["B:C"].Style.HorizontalAlignment="Center"
-                        }
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\certificates\certificates.csv" -Delimiter "`t"
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\certificates\certificates.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Certificates" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns B-C
+                    $WorkSheet.Cells["B:C"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -2391,7 +2820,7 @@ if (Test-Path "$($MemProcFS)")
             # CSV
             if (Test-Path "$DriveLetter\forensic\json\general.json")
             {
-                $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "driver" }
+                $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "driver"
 
                 $Data | Foreach-Object {
 
@@ -2416,26 +2845,22 @@ if (Test-Path "$($MemProcFS)")
             }
 
             # XLSX
-            if (Get-Module -ListAvailable -Name ImportExcel)
+            if (Test-Path "$OUTPUT_FOLDER\sys\drivers\drivers.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\sys\drivers\drivers.csv")
+                if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\drivers\drivers.csv") -gt 0)
                 {
-                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\drivers\drivers.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\drivers\drivers.csv" -Delimiter "`t"
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\drivers\drivers.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Drivers" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A, D-E
-                        $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                        # HorizontalAlignment "Right" of column C
-                        $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Right"
-                        # HorizontalAlignment "Center" of header of column C
-                        $WorkSheet.Cells["C1:C1"].Style.HorizontalAlignment="Center"
-                        }
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\drivers\drivers.csv" -Delimiter "`t"
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\drivers\drivers.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Drivers" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A, D-E
+                    $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                    # HorizontalAlignment "Right" of column C
+                    $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Right"
+                    # HorizontalAlignment "Center" of header of column C
+                    $WorkSheet.Cells["C1:C1"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -2457,7 +2882,7 @@ if (Test-Path "$($MemProcFS)")
                 {
                     New-Item "$OUTPUT_FOLDER\sys\net\CSV" -ItemType Directory -Force | Out-Null
                     
-                    $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "net" }
+                    $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "net"
 
                     $Data | Foreach-Object {
 
@@ -2487,7 +2912,7 @@ if (Test-Path "$($MemProcFS)")
                 {
                     New-Item "$OUTPUT_FOLDER\sys\net\CSV" -ItemType Directory -Force | Out-Null
                     
-                    $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "net" }
+                    $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "net"
 
                     $Data | Foreach-Object {
 
@@ -2515,43 +2940,35 @@ if (Test-Path "$($MemProcFS)")
                 }
 
                 # XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                if (Test-Path "$OUTPUT_FOLDER\sys\net\CSV\net.csv")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\sys\net\CSV\net.csv")
+                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\net\CSV\net.csv") -gt 0)
                     {
-                        if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\net\CSV\net.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\sys\net\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\CSV\net.csv" -Delimiter "`t"
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\XLSX\net.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Network" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns B-H
-                            $WorkSheet.Cells["B:H"].Style.HorizontalAlignment="Center"
-                            }
+                        New-Item "$OUTPUT_FOLDER\sys\net\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\CSV\net.csv" -Delimiter "`t"
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\XLSX\net.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Network" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns B-H
+                        $WorkSheet.Cells["B:H"].Style.HorizontalAlignment="Center"
                         }
                     }
                 }
 
                 # Custom XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                if (Test-Path "$OUTPUT_FOLDER\sys\net\CSV\net-custom.csv")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\sys\net\CSV\net-custom.csv")
+                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\net\CSV\net-custom.csv") -gt 0)
                     {
-                        if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\net\CSV\net-custom.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\sys\net\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\CSV\net-custom.csv" -Delimiter "`t"
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\XLSX\net-custom.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Network" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns B-J
-                            $WorkSheet.Cells["B:J"].Style.HorizontalAlignment="Center"
-                            }
+                        New-Item "$OUTPUT_FOLDER\sys\net\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\CSV\net-custom.csv" -Delimiter "`t"
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\XLSX\net-custom.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Network" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns B-J
+                        $WorkSheet.Cells["B:J"].Style.HorizontalAlignment="Center"
                         }
                     }
                 }
@@ -2636,21 +3053,47 @@ if (Test-Path "$($MemProcFS)")
                                     {
                                         # Map IPs
                                         # https://ipinfo.io/map
+                                        # Note: 'ipinfo map' uploads the IP addresses to IPinfo.io and returns a shareable link (unauthenticated --> daily quota = 5 maps per day)
                                         New-Item "$OUTPUT_FOLDER\sys\net\IPinfo" -ItemType Directory -Force | Out-Null
-                                        Get-Content "$OUTPUT_FOLDER\sys\net\IP.txt" | & $IPinfo map | Out-File "$OUTPUT_FOLDER\sys\net\IPinfo\Map.txt"
+                                        $Map = Get-Content "$OUTPUT_FOLDER\sys\net\IP.txt" | Select-Object -Skip 1 | & $IPinfo map 2>&1
+                                        $URL = "$Map" | Select-String -Pattern 'https://ipinfo\.io/tools/map/[0-9a-f-]{36}' | ForEach-Object { $_.Matches[0].Value }
+
+                                        if ($URL -and ("$Map" -notmatch 'err:'))
+                                        {
+                                            $URL | Out-File "$OUTPUT_FOLDER\sys\net\IPinfo\Map.txt" -Encoding UTF8
+                                            Write-Output "[Info]  IPinfo Map: $URL"
+                                        }
+                                        elseif ("$Map" -match '\b429\b')
+                                        {
+                                            Write-Host "[Error] IPinfo Map: Daily limit for unauthenticated map requests reached." -ForegroundColor Red
+                                            Write-Host "[Info]  Create the map manually: https://ipinfo.io/tools/summarize-ips --> Import from a text file ($OUTPUT_FOLDER\sys\net\IP.txt)"
+                                        }
+                                        else
+                                        {
+                                            Write-Host "[Info]  IPinfo Map could not be created: $Map"
+                                        }
 
                                         # Access Token
                                         # https://ipinfo.io/signup?ref=cli
-                                        if (!("$IPInfoToken" -eq "access_token"))
+                                        if (!("$Token" -eq "access_token"))
                                         {
                                             # Summarize IPs
                                             # https://ipinfo.io/summarize-ips
 
-                                            # TXT --> lists VPNs
-                                            Get-Content "$OUTPUT_FOLDER\sys\net\IP.txt" | & $IPinfo summarize -t $IPInfoToken | Out-File "$OUTPUT_FOLDER\sys\net\IPinfo\Summary.txt"
+                                            # TXT
+                                            # Note: IPinfo Summarize requires at least 10 unique IP addresses.
+                                            $UniqueIPs = (Get-Content "$OUTPUT_FOLDER\sys\net\IP.txt" | Select-Object -Skip 1 | Where-Object { $_.Trim() } | Sort-Object -Unique | Measure-Object).Count
+                                            if ($UniqueIPs -ge 10)
+                                            {
+                                                Get-Content "$OUTPUT_FOLDER\sys\net\IP.txt" | & $IPinfo summarize -t $Token | Out-File "$OUTPUT_FOLDER\sys\net\IPinfo\Summary.txt"
+                                            }
+                                            else
+                                            {
+                                                Write-Output "[Info]  IPinfo Summarize will be skipped (requires at least 10 unique IP addresses, found: $UniqueIPs) ..."
+                                            }
 
                                             # CSV
-                                            Get-Content "$OUTPUT_FOLDER\sys\net\IP.txt" | & $IPinfo --csv -t $IPInfoToken | Out-File "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv"
+                                            Get-Content "$OUTPUT_FOLDER\sys\net\IP.txt" | & $IPinfo --csv -t $Token | Out-File "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv"
 
                                             # Custom CSV (Free)
                                             if (Test-Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv")
@@ -2685,41 +3128,33 @@ if (Test-Path "$($MemProcFS)")
                                             }
 
                                             # Custom XLSX (Free)
-                                            if (Get-Module -ListAvailable -Name ImportExcel)
+                                            if (Test-Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.csv")
                                             {
-                                                if (Test-Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.csv")
+                                                if([int](& $xsv count "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.csv") -gt 0)
                                                 {
-                                                    if([int](& $xsv count "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.csv") -gt 0)
-                                                    {
-                                                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.csv" -Delimiter "," | Sort-Object {$_.IP -as [Version]}
-                                                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -IncludePivotTable -PivotTableName "PivotTable" -PivotRows "Country Name" -PivotData @{"IP"="Count"} -WorkSheetname "IPinfo (Free)" -CellStyleSB {
-                                                        param($WorkSheet)
-                                                        # BackgroundColor and FontColor for specific cells of TopRow
-                                                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                                        Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                                        # HorizontalAlignment "Center" of columns A-K
-                                                        $WorkSheet.Cells["A:K"].Style.HorizontalAlignment="Center"
-                                                        }
+                                                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.csv" -Delimiter "," | Sort-Object {$_.IP -as [Version]}
+                                                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo-Custom.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -IncludePivotTable -PivotTableName "PivotTable" -PivotRows "Country Name" -PivotData @{"IP"="Count"} -WorkSheetname "IPinfo (Free)" -CellStyleSB {
+                                                    param($WorkSheet)
+                                                    # BackgroundColor and FontColor for specific cells of TopRow
+                                                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                                                    # HorizontalAlignment "Center" of columns A-K
+                                                    $WorkSheet.Cells["A:K"].Style.HorizontalAlignment="Center"
                                                     }
                                                 }
                                             }
 
                                             # XLSX (Free)
-                                            if (Get-Module -ListAvailable -Name ImportExcel)
+                                            if (Test-Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv")
                                             {
-                                                if (Test-Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv")
+                                                if([int](& $xsv count "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv") -gt 0)
                                                 {
-                                                    if([int](& $xsv count "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv") -gt 0)
-                                                    {
-                                                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv" -Delimiter "," -Encoding UTF8 | Select-Object ip,city,region,country,country_name,isEU,loc,org,postal,timezone | Sort-Object {$_.ip -as [Version]}
-                                                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "IPinfo" -CellStyleSB {
-                                                        param($WorkSheet)
-                                                        # BackgroundColor and FontColor for specific cells of TopRow
-                                                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                                        Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor White
-                                                        # HorizontalAlignment "Center" of columns A-J
-                                                        $WorkSheet.Cells["A:J"].Style.HorizontalAlignment="Center"
-                                                        }
+                                                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.csv" -Delimiter "," -Encoding UTF8 | Select-Object ip,city,region,country,country_name,isEU,loc,org,postal,timezone | Sort-Object {$_.ip -as [Version]}
+                                                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\IPinfo\IPinfo.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "IPinfo" -CellStyleSB {
+                                                    param($WorkSheet)
+                                                    # BackgroundColor and FontColor for specific cells of TopRow
+                                                    Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                                                    # HorizontalAlignment "Center" of columns A-J
+                                                    $WorkSheet.Cells["A:J"].Style.HorizontalAlignment="Center"
                                                     }
                                                 }
                                             }
@@ -2808,21 +3243,17 @@ if (Test-Path "$($MemProcFS)")
                                             }
 
                                             # XLSX
-                                            if (Get-Module -ListAvailable -Name ImportExcel)
+                                            if (Test-Path "$OUTPUT_FOLDER\sys\net\CSV\net-enriched.csv")
                                             {
-                                                if (Test-Path "$OUTPUT_FOLDER\sys\net\CSV\net-enriched.csv")
+                                                if([int](& $xsv count "$OUTPUT_FOLDER\sys\net\CSV\net-enriched.csv") -gt 0)
                                                 {
-                                                    if([int](& $xsv count "$OUTPUT_FOLDER\sys\net\CSV\net-enriched.csv") -gt 0)
-                                                    {
-                                                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\CSV\net-enriched.csv" -Delimiter "," | Sort-Object { $_.CreationDate -as [datetime] } -Descending
-                                                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\XLSX\net-enriched.xlsx" -NoHyperLinkConversion * -NoNumberConversion * -FreezePane 2,5 -BoldTopRow -AutoSize -AutoFilter -IncludePivotTable -PivotTableName "PivotTable" -WorkSheetname "IP Data Enrichment" -CellStyleSB {
-                                                        param($WorkSheet)
-                                                        # BackgroundColor and FontColor for specific cells of TopRow
-                                                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                                        Set-Format -Address $WorkSheet.Cells["A1:Q1"] -BackgroundColor $BackgroundColor -FontColor White
-                                                        # HorizontalAlignment "Center" of columns A-Q
-                                                        $WorkSheet.Cells["A:Q"].Style.HorizontalAlignment="Center"
-                                                        }
+                                                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\net\CSV\net-enriched.csv" -Delimiter "," | Sort-Object { $_.CreationDate -as [datetime] } -Descending
+                                                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\net\XLSX\net-enriched.xlsx" -NoHyperLinkConversion * -NoNumberConversion * -FreezePane 2,5 -BoldTopRow -AutoSize -AutoFilter -IncludePivotTable -PivotTableName "PivotTable" -WorkSheetname "IP Data Enrichment" -CellStyleSB {
+                                                    param($WorkSheet)
+                                                    # BackgroundColor and FontColor for specific cells of TopRow
+                                                    Set-Format -Address $WorkSheet.Cells["A1:Q1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                                                    # HorizontalAlignment "Center" of columns A-Q
+                                                    $WorkSheet.Cells["A:Q"].Style.HorizontalAlignment="Center"
                                                     }
                                                 }
                                             }
@@ -2865,7 +3296,7 @@ if (Test-Path "$($MemProcFS)")
                 Write-Output "CLOSE_WAIT  : $CLOSE_WAIT" | Out-File "$OUTPUT_FOLDER\sys\net\State.txt" -Append
                 Write-Output "ESTABLISHED : $ESTABLISHED" | Out-File "$OUTPUT_FOLDER\sys\net\State.txt" -Append
                 Write-Output "FIN_WAIT_1  : $FIN_WAIT_1" | Out-File "$OUTPUT_FOLDER\sys\net\State.txt" -Append
-                Write-Output "FIN_WAIT_2  : $FIN_WAIT_2" | Out-File "$OUTPUT_FOLDER\sys\net\Stats.txt" -Append
+                Write-Output "FIN_WAIT_2  : $FIN_WAIT_2" | Out-File "$OUTPUT_FOLDER\sys\net\State.txt" -Append
                 Write-Output "LAST_ACK    : $LAST_ACK" | Out-File "$OUTPUT_FOLDER\sys\net\State.txt" -Append
                 Write-Output "LISTENING   : $LISTENING" | Out-File "$OUTPUT_FOLDER\sys\net\State.txt" -Append
                 Write-Output "SYN_RCVD    : $SYN_RCVD" | Out-File "$OUTPUT_FOLDER\sys\net\State.txt" -Append
@@ -2876,7 +3307,10 @@ if (Test-Path "$($MemProcFS)")
             # Stats
             if ((Test-Path "$OUTPUT_FOLDER\sys\net\State.txt") -And ((Get-Item "$OUTPUT_FOLDER\sys\net\State.txt").length -gt 0kb))
             {
-                $Stats = Get-Content "$OUTPUT_FOLDER\sys\net\State.txt" | ForEach-Object{($_ -replace ":","")} | ConvertFrom-String -PropertyNames State, Count | Sort-Object Count -Descending
+                $Stats = Get-Content "$OUTPUT_FOLDER\sys\net\State.txt" | ForEach-Object {
+                    $State, $Count = ($_ -replace ":","").Trim() -split "\s+"
+                    [PSCustomObject]@{ State = $State; Count = [int]$Count }
+                } | Sort-Object Count -Descending
                 ($Stats | Out-String).Trim() | Out-File "$OUTPUT_FOLDER\sys\net\Stats.txt"
             }
 
@@ -3090,7 +3524,7 @@ if (Test-Path "$($MemProcFS)")
             {
                 New-Item "$OUTPUT_FOLDER\sys\proc\CSV" -ItemType Directory -Force | Out-Null
 
-                $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "process" }
+                $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "process"
 
                 $Data | Foreach-Object {
 
@@ -3142,24 +3576,20 @@ if (Test-Path "$($MemProcFS)")
             # XLSX
 
             # Default
-            if (Get-Module -ListAvailable -Name ImportExcel)
+            if (Test-Path "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv")
+                if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv") -gt 0)
                 {
-                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv") -gt 0)
-                    {
-                        New-Item "$OUTPUT_FOLDER\sys\proc\XLSX" -ItemType Directory -Force | Out-Null
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t" | Sort-Object { $_."Create Time" -as [datetime] } -Descending
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\XLSX\Processes.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Processes" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A-F, H-I and L-M
-                        $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
-                        }
+                    New-Item "$OUTPUT_FOLDER\sys\proc\XLSX" -ItemType Directory -Force | Out-Null
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t" | Sort-Object { $_."Create Time" -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\XLSX\Processes.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Processes" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-F, H-I and L-M
+                    $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -3173,7 +3603,7 @@ if (Test-Path "$($MemProcFS)")
                     {
                         Write-Output "[Info]  Launching Process Tree (TreeView) ... "
                         Unblock-File -Path "$SCRIPT_DIR\Scripts\Get-ProcessTree\Get-ProcessTree.ps1"
-                        Start-Process -FilePath "powershell" -NoNewWindow -ArgumentList "-NoProfile", "-File", "$SCRIPT_DIR\Scripts\Get-ProcessTree\Get-ProcessTree.ps1", "-CSVPath", "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv"
+                        Start-Process -FilePath $PowerShell -NoNewWindow -ArgumentList "-NoProfile", "-File", "$SCRIPT_DIR\Scripts\Get-ProcessTree\Get-ProcessTree.ps1", "-CSVPath", "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv"
                         Start-Sleep -Seconds 3
                         $Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer $Version - Automated Forensic Analysis of Windows Memory Dumps for DFIR"
                     }
@@ -3181,32 +3611,28 @@ if (Test-Path "$($MemProcFS)")
             }
 
             # Running and Exited Processes
-            if (Get-Module -ListAvailable -Name ImportExcel)
+            if (Test-Path "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv")
+                if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv") -gt 0)
                 {
-                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv") -gt 0)
-                    {
-                        New-Item "$OUTPUT_FOLDER\sys\proc\XLSX" -ItemType Directory -Force | Out-Null
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t" | Sort-Object { $_."Create Time" -as [datetime] }
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\XLSX\RunningAndExited.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Processes" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A-F, H-I and L-M
-                        $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
+                    New-Item "$OUTPUT_FOLDER\sys\proc\XLSX" -ItemType Directory -Force | Out-Null
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t" | Sort-Object { $_."Create Time" -as [datetime] }
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\XLSX\RunningAndExited.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Processes" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-F, H-I and L-M
+                    $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
 
-                        # Exited Processes
-                        $ExitedColor = [System.Drawing.Color]::FromArgb(255,0,0) # Red
-                        Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=NOT(OR($M1="", $M1="Exit Time"))' -BackgroundColor $ExitedColor
+                    # Exited Processes
+                    $ExitedColor = [System.Drawing.Color]::FromArgb(255,0,0) # Red
+                    Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=NOT(OR($M1="", $M1="Exit Time"))' -BackgroundColor $ExitedColor
 
-                        # Running Processes
-                        $RunningColor = [System.Drawing.Color]::FromArgb(0,176,80) # Green
-                        Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=($M1="")' -BackgroundColor $RunningColor
-                        }
+                    # Running Processes
+                    $RunningColor = [System.Drawing.Color]::FromArgb(0,176,80) # Green
+                    Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=($M1="")' -BackgroundColor $RunningColor
                     }
                 }
             }
@@ -3338,6 +3764,46 @@ if (Test-Path "$($MemProcFS)")
                 Write-Host "[Alert] Unusual Parent-Child Relationship found: winlogon.exe ($Count)" -ForegroundColor Red
                 New-Item "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships" -ItemType Directory -Force | Out-Null
                 Get-Content "$OUTPUT_FOLDER\sys\proc\TXT\proc.txt" | Select-String -Pattern "winlogon.exe" | Where-Object{($_ -notmatch "$Pid_smss")} | Out-File "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships\winlogon.exe.txt"
+            }
+
+            # 13. Unusual Parent-Child Relationship (WmiPrvSE.exe)
+            # Note: The standard parent process of a legitimate WmiPrvSE.exe (WMI Provider Host) is svchost.exe running the DcomLaunch service group.
+            $Findings = Find-WmiPrvSEParentAnomaly -Path "$OUTPUT_FOLDER\sys\proc\TXT\proc-v.txt"
+            $Count = @($Findings).Count
+            if ($Count -gt 0)
+            {
+                Write-Host "[Alert] Unusual Parent-Child Relationship found: WmiPrvSE.exe ($Count)" -ForegroundColor Red
+                New-Item "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships" -ItemType Directory -Force | Out-Null
+                $Findings | Export-Csv "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships\WmiPrvSE-ParentAnomaly.csv" -NoTypeInformation -Encoding UTF8
+
+                # XLSX
+                if (Test-Path "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships\WmiPrvSE-ParentAnomaly.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships\WmiPrvSE-ParentAnomaly.csv") -gt 0)
+                    {
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships\WmiPrvSE-ParentAnomaly.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Unusual_Parent-Child_Relationships\WmiPrvSE-ParentAnomaly.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "WmiPrvSE-ParentAnomaly" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of column A-E and G-J
+                        $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["G:J"].Style.HorizontalAlignment="Center"
+
+                        $LastRow = $WorkSheet.Dimension.End.Row
+
+                        # ConditionalFormatting - User
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["C2:C$LastRow"] -WorkSheet $WorkSheet -RuleType 'Expression' 'LEN($C2)=0' -BackgroundColor Red # Token not readable / no user context
+
+                        # ConditionalFormatting - Integrity
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["D2:D$LastRow"] -WorkSheet $WorkSheet -RuleType 'Expression' 'LEN($D2)=0' -BackgroundColor Red # Integrity Level not readable (legit WmiPrvSE.exe runs at System)
+
+                        # ConditionalFormatting - Parent Name
+                        Add-ConditionalFormatting -Address $WorkSheet.Cells["H2:H$LastRow"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("<not found>",$H2)))' -BackgroundColor Red # Parent process not found (orphan)
+
+                        }
+                    }
+                }
             }
 
             # Unusual Number of Process Instances
@@ -3704,8 +4170,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\Desktop.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Desktop" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3729,8 +4194,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\Downloads.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Downloads" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3754,8 +4218,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\Documents.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Documents" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3779,8 +4242,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\PUBLIC.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "PUBLIC" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3804,8 +4266,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\TEMP.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "TEMP" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3829,8 +4290,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\Temp-Root.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Temp" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3854,8 +4314,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\ALLUSERSPROFILE.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ALLUSERSPROFILE" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3879,8 +4338,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\SystemDrive.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SystemDrive" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3904,8 +4362,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\LOCALAPPDATA.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "LOCALAPPDATA" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3929,8 +4386,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\LocalLow.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "LocalLow" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -3954,8 +4410,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Folder-Locations\APPDATA.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "APPDATA" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4004,8 +4459,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Parent-Processes\rundll32.exe_spawns_conhost.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "conhost.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4029,8 +4483,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Parent-Processes\svchost.exe_spawns_cmd.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "cmd.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4056,8 +4509,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Child-Processes\winword.exe_spawns_cmd.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "cmd.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4081,8 +4533,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Child-Processes\winword.exe_spawns_powershell.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "powershell.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4106,8 +4557,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Child-Processes\winword.exe_spawns_mshta.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "mshta.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4131,8 +4581,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Child-Processes\winword.exe_spawns_regsvr32.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "regsvr32.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4175,8 +4624,7 @@ if (Test-Path "$($MemProcFS)")
                     $EncodedCommand | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\Encoded-Command.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Encoded Command" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4201,8 +4649,7 @@ if (Test-Path "$($MemProcFS)")
                     $Base64Encoding | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\Base64-Encoding.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Base64 Encoding" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4227,8 +4674,7 @@ if (Test-Path "$($MemProcFS)")
                     $WindowStyleHidden | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\WindowStyle-Hidden.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "WindowStyle Hidden" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4253,8 +4699,7 @@ if (Test-Path "$($MemProcFS)")
                     $ExecutionPolicyBypass | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\Execution-Policy-Bypass.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Execution Policy Bypass" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4278,8 +4723,7 @@ if (Test-Path "$($MemProcFS)")
                     $ProfileBypass | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\Profile-Bypass.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Profile Bypass" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4303,8 +4747,7 @@ if (Test-Path "$($MemProcFS)")
                     $NonInteractive | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\NonInteractive-Mode.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "NonInteractive" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4329,8 +4772,7 @@ if (Test-Path "$($MemProcFS)")
                     $Download | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\Download-and-Execution.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Download" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4355,8 +4797,7 @@ if (Test-Path "$($MemProcFS)")
                     $Invoke | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\Invoke-Expression.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Invoke-Expression" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4381,8 +4822,7 @@ if (Test-Path "$($MemProcFS)")
                     $Execute | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\powershell.exe\Start-Process.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Start-Process" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4410,8 +4850,7 @@ if (Test-Path "$($MemProcFS)")
                     $CommandLineFlags | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\cmd.exe\CommandLine-Flags.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "CommandLine Flags" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4440,8 +4879,7 @@ if (Test-Path "$($MemProcFS)")
                     $CommandShellBatchScript | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\cmd.exe\Execution-of-Batch-Script.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Batch Script" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4470,8 +4908,7 @@ if (Test-Path "$($MemProcFS)")
                     $MshtaExecution | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Processes-With-Suspicious-CommandLine-Arguments\mshta.exe\Suspicious-Execution.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Suspicious Execution" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4517,8 +4954,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Processes-Without-CommandLine-Arguments\T1055_svchost.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "svchost.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4545,8 +4981,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Processes-Without-CommandLine-Arguments\T1218.011_rundll32.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "rundll32.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4578,25 +5013,23 @@ if (Test-Path "$($MemProcFS)")
             {
                 Write-Output "[Info]  Checking for Processes with Suspicious Double File Extension ..."
 
-                # Whitelist
-                $Whitelist = "(Microsoft.Photos.exe|WinStore.App.exe)"
+                # Decoy Extension (Document, Image, Media or Archive) directly in front of an executable extension (e.g. Invoice.pdf.exe)
+                $Pattern = '\.(doc|docx|docm|dot|xls|xlsx|xlsm|ppt|pptx|pptm|pdf|rtf|odt|ods|txt|csv|log|jpg|jpeg|png|gif|bmp|svg|tif|tiff|mp3|mp4|avi|mov|wav|zip|rar|7z|iso|img|htm|html|xml|json|eml|msg)\s*\.(exe|scr|com|pif)$'
 
-                $Processes = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t" | Where-Object {$_."Process Name" -notmatch "$Whitelist"}
+                $Processes = Import-Csv "$OUTPUT_FOLDER\sys\proc\CSV\proc.csv" -Delimiter "`t"
 
                 foreach ($Process in $Processes)
                 {
                     $ProcessName = $Process | Select-Object -ExpandProperty "Process Name"
 
-                    $DotCount = ($ProcessName.ToCharArray() | Where-Object {$_ -eq "."} | Measure-Object).Count
-                    if($DotCount -gt 1)
+                    if($ProcessName -match $Pattern)
                     {
                         Write-Host "[Alert] Suspicious Double File Extension detected: $ProcessName [T1036.007]" -ForegroundColor Red
                         New-Item "$OUTPUT_FOLDER\sys\proc\Suspicious-Double-File-Extension" -ItemType Directory -Force | Out-Null
                         $Process | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Suspicious-Double-File-Extension\Double-File-Extension_$ProcessName.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Double File Extension" -CellStyleSB {
                         param($WorkSheet)
                         # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                        Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                         # HorizontalAlignment "Center" of columns A-F, H-I and L-M
                         $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                         $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
@@ -4642,8 +5075,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Command-and-Scripting-Interpreter\cmd.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "cmd.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
@@ -4666,8 +5098,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Command-and-Scripting-Interpreter\cscript.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "cscript.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
@@ -4690,8 +5121,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Command-and-Scripting-Interpreter\mshta.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "mshta.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
@@ -4714,8 +5144,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Command-and-Scripting-Interpreter\powershell.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "powershell.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
@@ -4738,8 +5167,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Command-and-Scripting-Interpreter\pwsh.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "pwsh.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
@@ -4762,8 +5190,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Command-and-Scripting-Interpreter\python.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "python.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
@@ -4786,8 +5213,7 @@ if (Test-Path "$($MemProcFS)")
                     $Data | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\Command-and-Scripting-Interpreter\wscript.exe.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "wscript.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["H:I"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["L:M"].Style.HorizontalAlignment="Center"
@@ -4853,25 +5279,21 @@ if (Test-Path "$($MemProcFS)")
                 } | Select-Object "ProcessName","PID","FilePath","Bytes","FileSize" | Export-Csv -Path "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.csv" -Delimiter "," -NoTypeInformation
 
                 # XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                if (Test-Path "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.csv")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.csv")
+                    if([int](& $xsv count "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.csv") -gt 0)
                     {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.csv") -gt 0)
-                        {
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MiniDumps" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of column B
-                            $WorkSheet.Cells["B:B"].Style.HorizontalAlignment="Center"
-                            # HorizontalAlignment "Right" of columns D-E
-                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Right"
-                            # HorizontalAlignment "Center" of header of columns D-E
-                            $WorkSheet.Cells["D1:E1"].Style.HorizontalAlignment="Center"
-                            }
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\proc\MiniDumps\MiniDumps.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MiniDumps" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of column B
+                        $WorkSheet.Cells["B:B"].Style.HorizontalAlignment="Center"
+                        # HorizontalAlignment "Right" of columns D-E
+                        $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Right"
+                        # HorizontalAlignment "Center" of header of columns D-E
+                        $WorkSheet.Cells["D1:E1"].Style.HorizontalAlignment="Center"
                         }
                     }
                 }
@@ -4911,7 +5333,7 @@ if (Test-Path "$($MemProcFS)")
             # CSV
             if (Test-Path "$DriveLetter\forensic\json\general.json")
             {
-                $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "service" }
+                $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "service"
 
                 $Data | Foreach-Object {
 
@@ -4940,22 +5362,18 @@ if (Test-Path "$($MemProcFS)")
             }
 
             # XLSX
-            if (Get-Module -ListAvailable -Name ImportExcel)
+            if (Test-Path "$OUTPUT_FOLDER\sys\services\services.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\sys\services\services.csv")
+                if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\services\services.csv") -gt 0)
                 {
-                    if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\services\services.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\services\services.csv" -Delimiter "`t"
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\services\services.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Services" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A-E and G
-                        $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["G:G"].Style.HorizontalAlignment="Center"
-                        }
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\services\services.csv" -Delimiter "`t"
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\services\services.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Services" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-E and G
+                    $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["G:G"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -5013,26 +5431,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Users.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Users.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Users.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Users.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Users.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Users.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\Users.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Users" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\Users\",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Users.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\Users.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Users" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\Users\",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5048,26 +5462,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\ProgramData.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\ProgramData.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\ProgramData.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\ProgramData.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\ProgramData.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\ProgramData.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\ProgramData.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ProgramData" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\ProgramData\",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\ProgramData.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\ProgramData.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ProgramData" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\ProgramData\",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5083,26 +5493,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Temp.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Temp.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Temp.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Temp.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Temp.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Temp.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\Temp.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Temp" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\Windows\Temp\",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\Temp.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\Temp.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Temp" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\Windows\Temp\",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5118,26 +5524,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\TMP.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\TMP.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\TMP.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\TMP.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\TMP.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\TMP.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\TMP.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "TMP" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\TMP\",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\TMP.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\XLSX\TMP.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "TMP" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("\TMP\",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5157,26 +5559,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\certutil.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\certutil.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\certutil.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\certutil.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\certutil.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\certutil.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\certutil.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "certutil.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("certutil",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\certutil.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\certutil.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "certutil.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("certutil",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5192,26 +5590,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\cmd.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\cmd.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\cmd.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\cmd.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\cmd.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\cmd.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\cmd.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "cmd.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("cmd.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\cmd.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\cmd.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "cmd.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("cmd.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5227,26 +5621,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\csript.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\csript.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\csript.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\csript.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\csript.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\csript.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\csript.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "csript.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("csript.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\csript.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\csript.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "csript.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("csript.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5262,26 +5652,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\mshta.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\mshta.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\mshta.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\mshta.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\mshta.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\mshta.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\mshta.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "mshta.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("mshta.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\mshta.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\mshta.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "mshta.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("mshta.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5297,26 +5683,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\msiexec.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\msiexec.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\msiexec.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\msiexec.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\msiexec.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\msiexec.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\msiexec.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "msiexec.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("msiexec",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\msiexec.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\msiexec.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "msiexec.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("msiexec",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5332,26 +5714,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\powershell.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\powershell.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\powershell.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\powershell.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\powershell.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\powershell.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\powershell.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "powershell.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("powershell.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\powershell.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\powershell.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "powershell.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("powershell.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5367,26 +5745,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\regsvr32.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\regsvr32.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\regsvr32.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\regsvr32.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\regsvr32.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\regsvr32.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\regsvr32.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "regsvr32.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("regsvr32.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\regsvr32.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\regsvr32.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "regsvr32.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("regsvr32.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5402,26 +5776,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\rundll32.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\rundll32.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\rundll32.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\rundll32.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\rundll32.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\rundll32.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\rundll32.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "rundll32.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("rundll32.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\rundll32.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\rundll32.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "rundll32.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("rundll32.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5437,26 +5807,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wmic.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wmic.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wmic.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wmic.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wmic.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wmic.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\wmic.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "wmic.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("wmic.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wmic.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\wmic.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "wmic.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("wmic.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5472,26 +5838,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wscript.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wscript.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wscript.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wscript.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wscript.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wscript.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\wscript.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "wscript.exe" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("wscript.exe",$F1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\CSV\wscript.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Scripting-Utilities\XLSX\wscript.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "wscript.exe" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["F:F"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("wscript.exe",$F1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5509,26 +5871,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\bitsadmin.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\bitsadmin.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\bitsadmin.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\bitsadmin.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\bitsadmin.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\bitsadmin.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\bitsadmin.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "bitsadmin" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("bitsadmin",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\bitsadmin.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\bitsadmin.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "bitsadmin" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("bitsadmin",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5544,26 +5902,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\sekurlsa_LogonPasswords.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\sekurlsa_LogonPasswords.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\sekurlsa_LogonPasswords.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\sekurlsa_LogonPasswords.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\sekurlsa_LogonPasswords.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\sekurlsa_LogonPasswords.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\sekurlsa_LogonPasswords.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Mimikatz" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("sekurlsa::LogonPasswords",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\sekurlsa_LogonPasswords.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\sekurlsa_LogonPasswords.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Mimikatz" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("sekurlsa::LogonPasswords",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5579,26 +5933,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\WindowStyle_Hidden.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\WindowStyle_Hidden.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\WindowStyle_Hidden.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\WindowStyle_Hidden.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\WindowStyle_Hidden.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\WindowStyle_Hidden.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\WindowStyle_Hidden.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "-WindowStyle Hidden" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("-WindowStyle Hidden",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\WindowStyle_Hidden.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\WindowStyle_Hidden.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "-WindowStyle Hidden" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("-WindowStyle Hidden",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5614,26 +5964,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\nop.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\nop.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\nop.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\nop.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\nop.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\nop.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\nop.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "-nop" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("-nop",$G1)))' -BackgroundColor Red
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\nop.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\nop.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "-nop" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("-nop",$G1)))' -BackgroundColor Red
                             }
                         }
                     }
@@ -5649,26 +5995,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\Remote-Scheduled-Task.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\Remote-Scheduled-Task.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\Remote-Scheduled-Task.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\Remote-Scheduled-Task.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\Remote-Scheduled-Task.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\Remote-Scheduled-Task.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\Remote-Scheduled-Task.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Remote Scheduled Task" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("/s",$G1)))' -BackgroundColor Red
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\Remote-Scheduled-Task.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\Remote-Scheduled-Task.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Remote Scheduled Task" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("/s",$G1)))' -BackgroundColor Red
                             }
                         }
                     }
@@ -5687,26 +6029,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv4.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv4.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv4.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv4.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv4.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv4.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\IPv4.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "IPv4" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND(".",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv4.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\IPv4.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "IPv4" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND(".",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5723,26 +6061,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv6.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv6.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv6.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv6.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv6.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv6.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\IPv6.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "IPv6" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND(".",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\IPv6.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\IPv6.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "IPv6" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND(".",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5758,26 +6092,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\http.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\http.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\http.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\http.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\http.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\http.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\http.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "http" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("http://",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\http.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\http.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "http" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("http://",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5793,26 +6123,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\https.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\https.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\https.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\https.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\https.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\https.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\https.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "https" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("https://",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\https.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\https.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "https" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("https://",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5830,26 +6156,22 @@ if (Test-Path "$($MemProcFS)")
                     $Import | Export-Csv -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Location\CSV\APPDATA-EXE.csv" -NoTypeInformation -Encoding UTF8
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\APPDATA-EXE.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\APPDATA-EXE.csv")
+                        if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\APPDATA-EXE.csv") -gt 0)
                         {
-                            if([int](& $xsv count -d "," "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\APPDATA-EXE.csv") -gt 0)
-                            {
-                                New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
-                                $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\APPDATA-EXE.csv" -Delimiter ","
-                                $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\APPDATA-EXE.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "APPDATA-EXE" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of columns A, D-E and H-K
-                                $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
-                                $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
-                                # ConditionalFormatting
-                                Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND(".exe",$G1)))' -BackgroundColor Yellow
-                                }
+                            New-Item "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX" -ItemType Directory -Force | Out-Null
+                            $Import = Import-Csv "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\CSV\APPDATA-EXE.csv" -Delimiter ","
+                            $Import | Export-Excel -Path "$OUTPUT_FOLDER\sys\tasks\Suspicious-Tasks\Parameters\XLSX\APPDATA-EXE.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "APPDATA-EXE" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of columns A, D-E and H-K
+                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
+                            $WorkSheet.Cells["H:K"].Style.HorizontalAlignment="Center"
+                            # ConditionalFormatting
+                            Add-ConditionalFormatting -Address $WorkSheet.Cells["G:G"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND(".exe",$G1)))' -BackgroundColor Yellow
                             }
                         }
                     }
@@ -5866,7 +6188,7 @@ if (Test-Path "$($MemProcFS)")
         # CSV
         if (Test-Path "$DriveLetter\forensic\json\general.json")
         {
-            $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "handle" }
+            $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "handle"
 
             $Data | Foreach-Object {
 
@@ -5892,21 +6214,17 @@ if (Test-Path "$($MemProcFS)")
         }
 
         # XLSX
-        if (Get-Module -ListAvailable -Name ImportExcel)
+        if (Test-Path "$OUTPUT_FOLDER\sys\handles\handles.csv")
         {
-            if (Test-Path "$OUTPUT_FOLDER\sys\handles\handles.csv")
+            if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\handles\handles.csv") -gt 0)
             {
-                if([int](& $xsv count -d "`t" "$OUTPUT_FOLDER\sys\handles\handles.csv") -gt 0)
-                {
-                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\handles\handles.csv" -Delimiter "`t"
-                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\handles\handles.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Handles" -CellStyleSB {
-                    param($WorkSheet)
-                    # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
-                    # HorizontalAlignment "Center" of columns B-F
-                    $WorkSheet.Cells["B:F"].Style.HorizontalAlignment="Center"
-                    }
+                $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\handles\handles.csv" -Delimiter "`t"
+                $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\handles\handles.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Handles" -CellStyleSB {
+                param($WorkSheet)
+                # BackgroundColor and FontColor for specific cells of TopRow
+                Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                # HorizontalAlignment "Center" of columns B-F
+                $WorkSheet.Cells["B:F"].Style.HorizontalAlignment="Center"
                 }
             }
         }
@@ -5932,7 +6250,7 @@ if (Test-Path "$($MemProcFS)")
                 # CSV
                 if (Test-Path "$DriveLetter\forensic\json\general.json")
                 {
-                    $Data = Get-Content "$DriveLetter\forensic\json\general.json" | ConvertFrom-Json | Where-Object { $_.type -eq "web" }
+                    $Data = Get-GeneralJson -Path "$DriveLetter\forensic\json\general.json" -Type "web"
 
                     $Data | Foreach-Object {
 
@@ -5958,21 +6276,17 @@ if (Test-Path "$($MemProcFS)")
                 }
 
                 # XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                if (Test-Path "$OUTPUT_FOLDER\forensic\web\web.csv")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\forensic\web\web.csv")
+                    if([int](& $xsv count "$OUTPUT_FOLDER\forensic\web\web.csv") -gt 0)
                     {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\forensic\web\web.csv") -gt 0)
-                        {
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\web\web.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\web\web.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Web History" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A-E
-                            $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
-                            }
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\web\web.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\web\web.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Web History" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns A-E
+                        $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
                         }
                     }
                 }
@@ -6010,7 +6324,11 @@ if (Test-Path "$($MemProcFS)")
 
             # CSV --> Timeline Explorer (TLE)
             New-Item "$OUTPUT_FOLDER\forensic\timeline\CSV" -ItemType Directory -Force | Out-Null
-            Get-Content "$DriveLetter\forensic\json\timeline.json" | ConvertFrom-Json | Export-Csv -Path "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" -Delimiter "," -NoTypeInformation -Encoding UTF8
+            # Note: timeline.json may contain malformed lines (MemProcFS) --> jq skips them (fromjson?) instead of aborting like ConvertFrom-Json
+            $TimelineCSV = "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv"
+            [System.IO.File]::WriteAllText($TimelineCSV, "`"class`",`"ver`",`"sys`",`"date`",`"type`",`"action`",`"pid`",`"num`",`"hex`",`"desc`"`r`n")
+            $Filter = 'fromjson? | [.class,.ver,.sys,.date,.type,.action,.pid,.num,.hex,.desc] | @csv'
+            Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"`"$jq`" -R -r `"$Filter`" `"$OUTPUT_FOLDER\forensic\json\timeline.json`" >> `"$TimelineCSV`"`"" -NoNewWindow -Wait
 
             # File Size (CSV)
             if (Test-Path "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv")
@@ -6054,7 +6372,11 @@ if (Test-Path "$($MemProcFS)")
 
                 # CSV --> Timeline Explorer (TLE)
                 New-Item "$OUTPUT_FOLDER\forensic\timeline\CSV" -ItemType Directory -Force | Out-Null
-                Get-Content "$DriveLetter\forensic\json\timeline.json" | ConvertFrom-Json | Export-Csv -Path "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" -Delimiter "," -NoTypeInformation -Encoding UTF8
+                # Note: timeline.json may contain malformed lines (MemProcFS) --> jq skips them (fromjson?) instead of aborting like ConvertFrom-Json
+                $TimelineCSV = "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv"
+                [System.IO.File]::WriteAllText($TimelineCSV, "`"class`",`"ver`",`"sys`",`"date`",`"type`",`"action`",`"pid`",`"num`",`"hex`",`"desc`"`r`n")
+                $Filter = 'fromjson? | [.class,.ver,.sys,.date,.type,.action,.pid,.num,.hex,.desc] | @csv'
+                Start-Process -FilePath "cmd.exe" -ArgumentList "/c `"`"$jq`" -R -r `"$Filter`" `"$OUTPUT_FOLDER\forensic\json\timeline.json`" >> `"$TimelineCSV`"`"" -NoNewWindow -Wait
 
                 # File Size (CSV)
                 if (Test-Path "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv")
@@ -6078,61 +6400,56 @@ if (Test-Path "$($MemProcFS)")
         }
 
         # XLSX
-        if (Get-Module -ListAvailable -Name ImportExcel) 
+        if (Test-Path "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv")
         {
-            if (Test-Path "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv")
+            if([int](& $xsv count "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv") -gt 0)
             {
-                if([int](& $xsv count "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv") -gt 0)
+                New-Item "$OUTPUT_FOLDER\forensic\timeline\XLSX" -ItemType Directory -Force | Out-Null
+
+                [int]$Count = & $xsv count "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv"
+
+                # Get Start Time
+                $script:StartTime_XLSXCreation = (Get-Date)
+
+                if ($Count -gt "1048576")
                 {
-                    New-Item "$OUTPUT_FOLDER\forensic\timeline\XLSX" -ItemType Directory -Force | Out-Null
+                    Write-Output "[Info]  ImportExcel: timeline.csv will be splitted [time-consuming task] ..."
+                    & $xsv sort -R -s "date" "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" --delimiter "," -o "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline-reverse.csv"
+                    & $xsv split -s 1000000 "$OUTPUT_FOLDER\forensic\timeline\CSV" --filename "timeline-{}.csv" --delimiter "," "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline-reverse.csv"
 
-                    [int]$Count = & $xsv count "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv"
+                    [array]$Files = (Get-ChildItem -Path "$OUTPUT_FOLDER\forensic\timeline\CSV" | Where-Object {$_.Name -match "timeline-[0-9].*\.csv"}).FullName
 
-                    # Get Start Time
-                    $script:StartTime_XLSXCreation = (Get-Date)
-
-                    if ($Count -gt "1048576")
+                    ForEach( $File in $Files )
                     {
-                        Write-Output "[Info]  ImportExcel: timeline.csv will be splitted [time-consuming task] ..."
-                        & $xsv sort -R -s "date" "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" --delimiter "," -o "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline-reverse.csv"
-                        & $xsv split -s 1000000 "$OUTPUT_FOLDER\forensic\timeline\CSV" --filename "timeline-{}.csv" --delimiter "," "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline-reverse.csv"
-
-                        [array]$Files = (Get-ChildItem -Path "$OUTPUT_FOLDER\forensic\timeline\CSV" | Where-Object {$_.Name -match "timeline-[0-9].*\.csv"}).FullName
-
-                        ForEach( $File in $Files )
-                        {
-                            $FileName = $File | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.")[0]}
-                            $IMPORT = Import-Csv "$File" -Delimiter "," | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='PID';Expression={$_.pid}},@{Name='Number';Expression={$_.num}},@{Name='Description';Expression={$_.desc}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\timeline\XLSX\$FileName.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Timeline" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A-E
-                            $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-                    else
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" -Delimiter "," | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='PID';Expression={$_.pid}},@{Name='Number';Expression={$_.num}},@{Name='Description';Expression={$_.desc}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\timeline\XLSX\timeline.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Timeline" -CellStyleSB {
+                        $FileName = $File | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.")[0]}
+                        $IMPORT = Import-Csv "$File" -Delimiter "," | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='PID';Expression={$_.pid}},@{Name='Number';Expression={$_.num}},@{Name='Description';Expression={$_.desc}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\timeline\XLSX\$FileName.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Timeline" -CellStyleSB {
                         param($WorkSheet)
                         # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                        Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                         # HorizontalAlignment "Center" of columns A-E
                         $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
                         }
                     }
-
-                    # Get End Time
-                    $EndTime_XLSXCreation = (Get-Date)
-
-                    # Duration XLSX Creation
-                    $Time_XLSXCreation = ($EndTime_XLSXCreation-$StartTime_XLSXCreation)
-                    ('Duration XLSX Creation:        {0} h {1} min {2} sec' -f $Time_XLSXCreation.Hours, $Time_XLSXCreation.Minutes, $Time_XLSXCreation.Seconds) >> "$OUTPUT_FOLDER\Stats.txt"
                 }
+                else
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" -Delimiter "," | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='PID';Expression={$_.pid}},@{Name='Number';Expression={$_.num}},@{Name='Description';Expression={$_.desc}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\forensic\timeline\XLSX\timeline.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Timeline" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A-E
+                    $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
+                    }
+                }
+
+                # Get End Time
+                $EndTime_XLSXCreation = (Get-Date)
+
+                # Duration XLSX Creation
+                $Time_XLSXCreation = ($EndTime_XLSXCreation-$StartTime_XLSXCreation)
+                ('Duration XLSX Creation:        {0} h {1} min {2} sec' -f $Time_XLSXCreation.Hours, $Time_XLSXCreation.Minutes, $Time_XLSXCreation.Seconds) >> "$OUTPUT_FOLDER\Stats.txt"
             }
         }
 
@@ -6159,7 +6476,7 @@ if (Test-Path "$($MemProcFS)")
             # Count recovered Prefetch File(s)
             if (Test-Path "$OUTPUT_FOLDER\forensic\prefetch\00-prefetch-summary.txt")
             {
-                [int]$Count = (Get-Content -Path "$OUTPUT_FOLDER\forensic\prefetch\00-prefetch-summary.txt" | Select-String -Pattern "\.pf" | Measure-Object).Count -2
+                [int]$Count = (Get-ChildItem -Path "$OUTPUT_FOLDER\forensic\prefetch" -Filter "*.pf" | Measure-Object).Count
                 $Files = '{0:N0}' -f $Count
                 Write-Output "[Info]  $Files Prefetch File(s) recovered"
             }
@@ -6172,7 +6489,7 @@ if (Test-Path "$($MemProcFS)")
             New-Item "$OUTPUT_FOLDER\Prefetch" -ItemType Directory -Force | Out-Null
 
             # CSV
-            Import-Csv "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" -Delimiter "," | Where-Object { $_.desc -match "\.pf$" } | Export-Csv "$OUTPUT_FOLDER\Prefetch\Prefetch.csv" -NoTypeInformation -Encoding UTF8
+            & $xsv search -i -s desc '\.pf$' "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" -o "$OUTPUT_FOLDER\Prefetch\Prefetch.csv"
 
             # File Size (CSV)
             if (Test-Path "$OUTPUT_FOLDER\Prefetch\Prefetch.csv")
@@ -6191,22 +6508,18 @@ if (Test-Path "$($MemProcFS)")
             # RD  - Last Access Time
 
             # XLSX
-            if (Get-Module -ListAvailable -Name ImportExcel) 
+            if (Test-Path "$OUTPUT_FOLDER\Prefetch\Prefetch.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\Prefetch\Prefetch.csv")
+                if([int](& $xsv count "$OUTPUT_FOLDER\Prefetch\Prefetch.csv") -gt 0)
                 {
-                    if([int](& $xsv count "$OUTPUT_FOLDER\Prefetch\Prefetch.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Prefetch\Prefetch.csv" -Delimiter "," | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Name';Expression={$_.desc | ForEach-Object{($_ -split "\\")[-1]} }},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='File Path';Expression={$_.desc}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Prefetch\Prefetch.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Prefetch" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A and C-D
-                        $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
-                        }
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Prefetch\Prefetch.csv" -Delimiter "," -Encoding UTF8 | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Name';Expression={$_.desc | ForEach-Object{($_ -split "\\")[-1]} }},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='File Path';Expression={$_.desc}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Prefetch\Prefetch.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Prefetch" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A and C-D
+                    $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -6252,23 +6565,19 @@ if (Test-Path "$($MemProcFS)")
             # RD  - Last Access Time
 
             # XLSX
-            if (Get-Module -ListAvailable -Name ImportExcel) 
+            if (Test-Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv")
+                if([int](& $xsv count "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv") -gt 0)
                 {
-                    if([int](& $xsv count "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv" -Delimiter "," -Encoding UTF8 | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Name';Expression={$_.desc | ForEach-Object{($_ -split "\\")[-1]}}},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='File Path';Expression={$_.desc}},@{Name='Bytes';Expression={$_.num}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "RecentFiles" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A, C-D and F
-                        $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["F:F"].Style.HorizontalAlignment="Center"
-                        }
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv" -Delimiter "," -Encoding UTF8 | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Name';Expression={$_.desc | ForEach-Object{($_ -split "\\")[-1]}}},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='File Path';Expression={$_.desc}},@{Name='Bytes';Expression={$_.num}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "RecentFiles" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A, C-D and F
+                    $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["F:F"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -6286,23 +6595,19 @@ if (Test-Path "$($MemProcFS)")
             Import-Csv "$OUTPUT_FOLDER\forensic\timeline\CSV\timeline.csv" -Delimiter "," | Where-Object { $_.desc -match "\\Microsoft\\Windows\\Recent\\(AutomaticDestinations|CustomDestinations)\\" } | Export-Csv "$OUTPUT_FOLDER\JumpLists\JumpLists.csv" -NoTypeInformation -Encoding UTF8
 
             # XLSX
-            if (Get-Module -ListAvailable -Name ImportExcel) 
+            if (Test-Path "$OUTPUT_FOLDER\JumpLists\JumpLists.csv")
             {
-                if (Test-Path "$OUTPUT_FOLDER\JumpLists\JumpLists.csv")
+                if([int](& $xsv count "$OUTPUT_FOLDER\JumpLists\JumpLists.csv") -gt 0)
                 {
-                    if([int](& $xsv count "$OUTPUT_FOLDER\JumpLists\JumpLists.csv") -gt 0)
-                    {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\JumpLists\JumpLists.csv" -Delimiter "," | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Name';Expression={$_.desc | ForEach-Object{($_ -split "\\")[-1]} }},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='File Path';Expression={$_.desc}},@{Name='Bytes';Expression={$_.num}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\JumpLists\JumpLists.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "JumpLists" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A, C-D and F
-                        $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["F:F"].Style.HorizontalAlignment="Center"
-                        }
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\JumpLists\JumpLists.csv" -Delimiter "," | Select-Object @{Name='Timestamp [UTC]';Expression={([datetime]$_.date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='Name';Expression={$_.desc | ForEach-Object{($_ -split "\\")[-1]} }},@{Name='Type';Expression={$_.type}},@{Name='Action';Expression={$_.action}},@{Name='File Path';Expression={$_.desc}},@{Name='Bytes';Expression={$_.num}} | Sort-Object { $_."Timestamp [UTC]" -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\JumpLists\JumpLists.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "JumpLists" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns A, C-D and F
+                    $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["F:F"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -6429,7 +6734,7 @@ if (Test-Path "$($MemProcFS)")
         Function Update-ZircoliteRules {
 
         # Zircolite
-        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Zircolite.exe")
         {
             # Offline Mode
             if ($OfflineMode -eq "Enabled")
@@ -6441,16 +6746,21 @@ if (Test-Path "$($MemProcFS)")
                 # Update
                 Write-Output "[Info]  Updating SIGMA Rulesets ..."
                 $MyLocation = $pwd
+                $ConsoleEncoding = [Console]::OutputEncoding
+                [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 # Zircolite v4 writes UTF-8
+                $env:COLUMNS = 250 # Prevent line wrapping at 80 characters
                 Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-                python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --update-rules 2>&1 | Out-File "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log"
+                & $Zircolite --update-rules 2>&1 | Out-File "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log"
                 Set-Location "$MyLocation"
+                Remove-Item Env:\COLUMNS
+                [Console]::OutputEncoding = $ConsoleEncoding
 
                 # No newer rulesets found
                 if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log")
                 {
-                    if (Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log" | Select-String -Pattern "No newer rulesets found" -Quiet)
+                    if (Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log" | Select-String -Pattern "No newer rulesets" -Quiet)
                     {
-                        Write-Output "[Info]  No newer rulesets found"
+                        Write-Host "[Info]  No newer rulesets found" -ForegroundColor Green
                     }
                 }
 
@@ -6472,14 +6782,14 @@ if (Test-Path "$($MemProcFS)")
 
                 # Remove empty lines and add line breaks where needed
                 $Clean = Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" | ForEach-Object{($_ -replace "^   ","")} | Where-Object {$_.Trim()} | ForEach-Object {($_ -replace "Finished in", "`nFinished in")} | ForEach-Object {($_ -replace "Sysmon Linux =-", "Sysmon Linux =-`n")}
-                @("") + ($Clean) | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log"
+                @("") + ($Clean) | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" -Encoding UTF8
 
                 # Cleaning up
                 if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Update.log")
                 {
                     $Filter = @("^zircolite\.exe","MemProcFS-Analyzer-v.*\.ps1","^\+","\+ CategoryInfo          : NotSpecified:","\+ FullyQualifiedErrorId : NativeCommandError","^tmp-rules-")
-                    $Clean = Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" | Select-String -Pattern $Filter -NotMatch 
-                    $Clean | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log"
+                    $Clean = Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" | Select-String -Pattern $Filter -NotMatch
+                    $Clean | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" -Encoding UTF8
                 }
 
                 # zircolite.log
@@ -6498,8 +6808,8 @@ if (Test-Path "$($MemProcFS)")
 
         Function Invoke-Zircolite {
 
-        # Zircolite v3.x
-        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
+        # Zircolite v4.x
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Zircolite.exe")
         {
             if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogs\*.evtx") 
             {
@@ -6508,45 +6818,28 @@ if (Test-Path "$($MemProcFS)")
 
                 $StartTime_Zircolite = (Get-Date)
 
-                # Check if InputSize is greater than 500 MB
-                $Bytes = ((Get-ChildItem -Path "$OUTPUT_FOLDER\EventLogs\EventLogs" -Filter "*.evtx" | Measure-Object Length -Sum).Sum)
+                # Console Settings
+                $ConsoleEncoding = [Console]::OutputEncoding
+                [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 # Zircolite v4 writes UTF-8
+                $env:COLUMNS = 250 # Prevent line wrapping at 80 characters (Screenlog.txt is parsed below)
 
-                if ($Bytes -gt 524288000)
-                {
-                    # JSON
-                    Write-Output "[Info]  Creating JSON output ..."
-                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON" -ItemType Directory -Force | Out-Null
+                # JSON + ATT&CK Navigator + Zircolite Viewer
+                Write-Output "[Info]  Creating JSON output, ATT&CK Navigator layer and Zircolite Viewer package ..."
+                New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON" -ItemType Directory -Force | Out-Null
+                New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Navigator" -ItemType Directory -Force | Out-Null # https://mitre-attack.github.io/attack-navigator/
+                New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer" -ItemType Directory -Force | Out-Null
 
-                    $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
-                    $Ruleset = "rules\rules_windows_generic.json"
-                    $LogFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
-                    $OutputFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json"
-                    $MyLocation = $pwd
+                $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
+                $Ruleset = "rules\rules_windows_generic.json"
+                $LogFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
+                $OutputFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json"
+                $NavigatorOutput = "$OUTPUT_FOLDER\EventLogs\Zircolite\Navigator\navigator.json"
+                $PackageDir = "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer"
+                $MyLocation = $pwd
 
-                    Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-                    python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --events $ScanPath --ruleset $Ruleset -o $OutputFile --logfile $LogFile 2>&1  | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" -Encoding UTF8
-                    Set-Location "$MyLocation"
-                }
-                else
-                {
-                    # JSON + Mini-GUI + ATT&CK Navigator
-                    Write-Output "[Info]  Creating JSON output and ZircoGui package ..."
-                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON" -ItemType Directory -Force | Out-Null
-                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI" -ItemType Directory -Force | Out-Null
-                    New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Navigator" -ItemType Directory -Force | Out-Null # https://mitre-attack.github.io/attack-navigator/
-
-                    $ScanPath = "$OUTPUT_FOLDER\EventLogs\EventLogs"
-                    $Ruleset = "rules\rules_windows_generic.json"
-                    $LogFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\Zircolite.txt"
-                    $PackageDir = "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI"
-                    $OutputFile = "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json"
-                    $NavigatorOutput = "$OUTPUT_FOLDER\EventLogs\Zircolite\Navigator\navigator.json"
-                    $MyLocation = $pwd
-
-                    Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-                    python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --events $ScanPath --ruleset $Ruleset --package --package-dir $PackageDir -o $OutputFile --logfile $LogFile --navigator-output $NavigatorOutput 2>&1 | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" -Encoding UTF8
-                    Set-Location "$MyLocation"
-                }
+                Set-Location "$SCRIPT_DIR\Tools\Zircolite"
+                & $Zircolite --events $ScanPath --ruleset $Ruleset -o $OutputFile --logfile $LogFile --navigator-output $NavigatorOutput --package --package-dir $PackageDir 2>&1 | Out-File "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" -Encoding UTF8
+                Set-Location "$MyLocation"
 
                 # File Size (JSON)
                 if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\JSON\detected_events.json")
@@ -6555,30 +6848,30 @@ if (Test-Path "$($MemProcFS)")
                     Write-Output "[Info]  File Size (JSON): $Size"
                 }
 
-                # ZircoGui
-                if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip")
+                # Zircolite Viewer
+                if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer\zircolite-package-*.zip")
                 {
-                    # Unzip ZircoGui Package
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip")
+                    # Unzip Zircolite Viewer Package
+                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer\zircolite-package-*.zip")
                     {
-                        Expand-Archive "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip" -DestinationPath "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI"
-                        Get-ChildItem -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\zircogui-output-*.zip" | Remove-Item -Force
+                        Expand-Archive "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer\zircolite-package-*.zip" -DestinationPath "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer"
+                        Get-ChildItem -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer\zircolite-package-*.zip" | Remove-Item -Force
                     }
 
-                    # Open ZircoGui
-                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\index.html")
+                    # Open Zircolite Viewer
+                    if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer\index.html")
                     {
                         # Check if Google Chrome is installed
                         if (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")
                         {
                             # Open ZircoGui w/ Google Chrome
                             $Chrome = ((Get-Item (Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe")."(Default)").VersionInfo).FileName
-                            Start-Process -FilePath $Chrome -ArgumentList "--start-fullscreen $OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\index.html"
+                            Start-Process -FilePath $Chrome -ArgumentList "--start-fullscreen $OUTPUT_FOLDER\EventLogs\Zircolite\Viewer\index.html"
                         }
                         else
                         {
-                            # Open ZircoGui in your Default Browser
-                            Start-Process "$OUTPUT_FOLDER\EventLogs\Zircolite\MiniGUI\index.html"
+                            # Launch Zircolite Viewer
+                            Start-Process "$OUTPUT_FOLDER\EventLogs\Zircolite\Viewer\index.html"
                         }
                     }
                 }
@@ -6593,8 +6886,10 @@ if (Test-Path "$($MemProcFS)")
                 $MyLocation = $pwd
 
                 Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-                python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --quiet --events $ScanPath --ruleset $Ruleset --csv -o $OutputFile 2>&1 | Out-Null
+                & $Zircolite --quiet --events $ScanPath --ruleset $Ruleset --csv -o $OutputFile 2>&1 | Out-Null
                 Set-Location "$MyLocation"
+                Remove-Item Env:\COLUMNS
+                [Console]::OutputEncoding = $ConsoleEncoding
 
                 # File Size (CSV)
                 if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv")
@@ -6606,18 +6901,17 @@ if (Test-Path "$($MemProcFS)")
                 # XLSX
                 if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv")
                 {
-                    if([int](& $xsv count "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv") -gt 0)
+                    if([int](& $xsv count -d ";" "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv") -gt 0)
                     {
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv" -Delimiter ";" -Encoding UTF8 | Select-Object @{Name='SystemTime [UTC]'; Expression={ (Get-Date $_.SystemTime).ToString("yyyy-MM-dd HH:mm:ss.ffffff") }},rule_title,rule_description,@{Name='rule_level'; Expression={ ($_.rule_level).Substring(0,1).ToUpper() + ($_.rule_level).Substring(1)}},rule_count,row_id,Channel,Computer,EventID,EventRecordID,Guid,Keywords,Level,Opcode,OriginalLogfile,ProcessID,Provider_Name,Task,ThreadID,UserID,Version,ProductName,ProductVersion | Sort-Object { $_."SystemTime [UTC]" -as [datetime] } -Descending
+                        $IMPORT = Import-CsvUnique -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv" -Delimiter ";" | Select-Object @{Name='SystemTime [UTC]'; Expression={ (Get-Date $_.SystemTime).ToString("yyyy-MM-dd HH:mm:ss.ffffff") }},rule_title,rule_description,@{Name='rule_level'; Expression={ ($_.rule_level).Substring(0,1).ToUpper() + ($_.rule_level).Substring(1)}},rule_count,Channel,Computer,EventID,EventRecordID,Guid,Keywords,Level,Opcode,OriginalLogfile,@{Name='ProcessID'; Expression={ $_.Execution_ProcessID }},Provider_Name,Task,@{Name='ThreadID'; Expression={ $_.Execution_ThreadID }},UserID,Version,ProductName,ProductVersion | Sort-Object { $_."SystemTime [UTC]" -as [datetime] } -Descending
                         $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Zircolite.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Zircolite" -CellStyleSB {
                         param($WorkSheet)
                         # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:W1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns A, D-N and P-W
+                        Set-Format -Address $WorkSheet.Cells["A1:V1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns A, D-M and O-V
                         $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["D:N"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["P:W"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["D:M"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["O:V"].Style.HorizontalAlignment="Center"
                         # ConditionalFormatting - rule_level
                         Add-ConditionalFormatting -Address $WorkSheet.Cells["D:D"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("Critical",$D1)))' -BackgroundColor $CriticalColor
                         Add-ConditionalFormatting -Address $WorkSheet.Cells["D:D"] -WorkSheet $WorkSheet -RuleType 'Expression' 'NOT(ISERROR(FIND("High",$D1)))' -BackgroundColor $HighColor
@@ -6634,8 +6928,9 @@ if (Test-Path "$($MemProcFS)")
                     # Executed Ruleset
                     if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt")
                     {
-                        [int]$Ruleset = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Executing ruleset against unified database" | ForEach-Object{($_ -split " - ")[1]} | ForEach-Object{($_ -split "\s+")[0]}
-                        $Events = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Total events processed:" | ForEach-Object{($_ -split ": ")[1]} | ForEach-Object{($_ -split "\s+")[0]} | ForEach-Object{($_ -replace ",",".")}
+                        # Zircolite v4: "[+] 2291 rules loaded" and Summary "Events  489,461 (10,449 filtered out ...)"
+                        [int]$Ruleset = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" -Encoding UTF8 | Select-String -Pattern "\[\+\] \d+ rules loaded" | Select-Object -First 1 | ForEach-Object{($_ -split "\s+")[1]}
+                        $Events = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" -Encoding UTF8 | Select-String -Pattern "Events\s+[\d,]+" -CaseSensitive | Select-Object -First 1 | ForEach-Object{[regex]::Match($_.Line, "Events\s+([\d,]+)").Groups[1].Value} | ForEach-Object{($_ -replace ",",".")}
                         $Rules = '{0:N0}' -f $Ruleset
                         Write-Output "[Info]  Executed ruleset ($Events events) - $Rules rules"
                     }
@@ -6648,14 +6943,14 @@ if (Test-Path "$($MemProcFS)")
 
                     if ($Rules -gt 0)
                     {
-                        $Detections = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Matched" -CaseSensitive | ForEach-Object{($_ -split " events across")[-2]} | ForEach-Object{($_ -split "\s+")[-1]}
+                        $Detections = Get-Content "$OUTPUT_FOLDER\EventLogs\Zircolite\Screenlog.txt" | Select-String -Pattern "Matched" -CaseSensitive | ForEach-Object{($_ -split " events across")[-2]} | ForEach-Object{($_ -split "\s+")[-1]} | ForEach-Object{($_ -replace ",",".")}
 
                         Write-Host "[Alert] $Detections Alert(s) found ($Rules rules)" -ForegroundColor Red
 
                         # Stats (Alerts by Sigma Rules Level)
                         if (Test-Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv")
                         {
-                            $Data = Import-Csv "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv" -Delimiter ";" -Encoding UTF8
+                            $Data = Import-CsvUnique -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\CSV\detected_events.csv" -Delimiter ";"
 
                             $Alerts = ($Data | Select-Object rule_title | Measure-Object).Count
                             $Rules = ($Data | Select-Object rule_title -Unique | Measure-Object).Count
@@ -6687,7 +6982,7 @@ if (Test-Path "$($MemProcFS)")
         }
         else
         {
-            Write-Host "[Error] zircolite.py NOT found." -ForegroundColor Red
+            Write-Host "[Error] Zircolite.exe NOT found." -ForegroundColor Red
         }
 
         # Results
@@ -6780,8 +7075,7 @@ if (Test-Path "$($MemProcFS)")
                     $RuleLevel | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Alerts-by-Sigma-Rule-Level.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SIGMA Rule Level" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-A and C-D
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -6975,8 +7269,7 @@ if (Test-Path "$($MemProcFS)")
                     $Tactics | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Alerts-by-Sigma-Rule-Tactics.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MITRE ATT&CK Tactics" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-C and E-E
                     $WorkSheet.Cells["A:C"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["E:E"].Style.HorizontalAlignment="Center"
@@ -6994,8 +7287,7 @@ if (Test-Path "$($MemProcFS)")
                     $Channel | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Alerts-by-Channel.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Alerts by Channel" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-C
                     $WorkSheet.Cells["B:C"].Style.HorizontalAlignment="Center"
                     }
@@ -7009,8 +7301,7 @@ if (Test-Path "$($MemProcFS)")
                     $Detections | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\Zircolite\XLSX\Detections.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Detections" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns C-H
                     $WorkSheet.Cells["C:H"].Style.HorizontalAlignment="Center"
                     # ConditionalFormatting - Level
@@ -7037,7 +7328,7 @@ if (Test-Path "$($MemProcFS)")
         Function Get-Timesketch {
 
         # Timesketch
-        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Zircolite.exe")
         {
             Write-Output "[Info]  Creating Timesketch output ..."
             New-Item "$OUTPUT_FOLDER\EventLogs\Zircolite\Timesketch" -ItemType Directory -Force | Out-Null
@@ -7055,7 +7346,7 @@ if (Test-Path "$($MemProcFS)")
             {
                 $script:MyLocation = $pwd
                 Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-                python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --events $ScanPath --ruleset $Ruleset --template $Template --templateOutput $TemplateOutput --logfile $LogFile 2>&1 | Out-Null
+                & $Zircolite --events $ScanPath --ruleset $Ruleset --template $Template --templateOutput $TemplateOutput --logfile $LogFile 2>&1 | Out-Null
                 Set-Location "$MyLocation"
             }
             
@@ -7072,7 +7363,7 @@ if (Test-Path "$($MemProcFS)")
         }
         else
         {
-            Write-Host "[Error] zircolite.py NOT found." -ForegroundColor Red
+            Write-Host "[Error] Zircolite.exe NOT found." -ForegroundColor Red
         }
 
         }
@@ -7105,26 +7396,51 @@ if (Test-Path "$($MemProcFS)")
         
         Function Get-Amcache {
 
+        # Amcache Databases (Windows 11 26H1 and later)
+        # Note: The Root\Inventory* keys of Amcache.hve move to SQLite databases next to the hive. Only databases with recoverable file objects in memory can be collected.
+        $AmcacheDatabases = @()
+        if (Test-Path "$DriveLetter\forensic\files\ROOT\Windows\AppCompat\Programs")
+        {
+            $AmcacheDatabases = @(Get-ChildItem -Path "$DriveLetter\forensic\files\ROOT\Windows\AppCompat\Programs" -File -Force | Where-Object { $_.Name -match '[A-Za-z]+\.db(-wal|-journal)?$' -and $_.Length -gt 0 })
+        }
+
         # AmcacheParser
-        if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*Amcache*.reghive") 
+        if ((Test-Path "$OUTPUT_FOLDER\Registry\Registry\*Amcache*.reghive") -or ($AmcacheDatabases.Count -gt 0))
         {
             if (Test-Path "$($AmcacheParser)")
             {
                 Write-Output "[Info]  Analyzing Amcache Hive ... "
 
                 # Collecting Amcache.hve
+                # Note: -f with the folder ignores the hive, so the folder is only used when no hive was found
                 New-Item "$OUTPUT_FOLDER\Amcache\Amcache" -ItemType Directory -Force 2>&1 | Out-Null
-                Copy-Item "$DriveLetter\registry\hive_files\0x*Amcachehve-*.reghive" "$OUTPUT_FOLDER\Amcache\Amcache\Amcache.hve"
-                
+                $AmcacheHive = "$OUTPUT_FOLDER\Amcache\Amcache"
+                if (Test-Path "$DriveLetter\registry\hive_files\0x*Amcachehve-*.reghive")
+                {
+                    Copy-Item "$DriveLetter\registry\hive_files\0x*Amcachehve-*.reghive" "$OUTPUT_FOLDER\Amcache\Amcache\Amcache.hve"
+                    $AmcacheHive = "$OUTPUT_FOLDER\Amcache\Amcache\Amcache.hve"
+                }
+
+                # Collecting Amcache Databases
+                foreach ($AmcacheDatabase in $AmcacheDatabases)
+                {
+                    $null = $AmcacheDatabase.Name -match '[A-Za-z]+\.db(-wal|-journal)?$'
+                    Copy-Item -LiteralPath "$($AmcacheDatabase.FullName)" -Destination "$OUTPUT_FOLDER\Amcache\Amcache\$($Matches[0])" -ErrorAction SilentlyContinue
+                }
+
+                if ($AmcacheDatabases.Count -gt 0)
+                {
+                    Write-Output "[Info]  $($AmcacheDatabases.Count) Amcache Database(s) found [SQLite]"
+                }
+
                 # CSV
                 New-Item "$OUTPUT_FOLDER\Amcache\CSV" -ItemType Directory -Force | Out-Null
-                $AmcacheHive = "$OUTPUT_FOLDER\Amcache\Amcache\Amcache.hve"
-                & $AmcacheParser -f "$AmcacheHive" -i --csv "$OUTPUT_FOLDER\Amcache\CSV" --csvf AmcacheParser.csv > "$OUTPUT_FOLDER\Amcache\AmcacheParser.log" 2> $null
+                & $AmcacheParser -f "$AmcacheHive" -i --csv "$OUTPUT_FOLDER\Amcache\CSV" --csvf AmcacheParser.csv --temp "$OUTPUT_FOLDER\Amcache\Temp" > "$OUTPUT_FOLDER\Amcache\AmcacheParser.log" 2> $null
 
                 # Stats
                 if (Test-Path "$OUTPUT_FOLDER\Amcache\AmcacheParser.log")
                 {
-                    $Total = Get-Content "$OUTPUT_FOLDER\Amcache\AmcacheParser.log" | Select-String -Pattern "unassociated file entries"
+                    $Total = Get-Content "$OUTPUT_FOLDER\Amcache\AmcacheParser.log" | Select-String -Pattern "unassociated file entr"
                     if ($Total) 
                     { 
                         Write-Output "[Info]  $Total"
@@ -7137,170 +7453,155 @@ if (Test-Path "$($MemProcFS)")
 
                 # XLSX
                 # Note: The output of Windows 10 and Win 7 looks different --> optimized for Windows 10 only
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                # AssociatedFileEntries
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_AssociatedFileEntries.csv")
                 {
-                    # AssociatedFileEntries
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_AssociatedFileEntries.csv")
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_AssociatedFileEntries.csv") -gt 0)
                     {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_AssociatedFileEntries.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_AssociatedFileEntries.csv" -Delimiter "," | Sort-Object { $_.FileKeyLastWriteTimestamp -as [datetime] } -Descending
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_AssociatedFileEntries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "AssociatedFileEntries" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:U1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A-E and G-U
-                            $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["G:U"].Style.HorizontalAlignment="Center"
-                            # HorizontalAlignment "Center" of header of column F
-                            $WorkSheet.Cells["F1:F1"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-
-                    # DeviceContainers
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DeviceContainers.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DeviceContainers.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DeviceContainers.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DeviceContainers.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DeviceContainers" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:Q1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns B-Q
-                            $WorkSheet.Cells["B:Q"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-
-                    # DevicePnps
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DevicePnps.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DevicePnps.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DevicePnps.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DevicePnps.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DevicePnps" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:Y1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns B-E and G-Y
-                            $WorkSheet.Cells["B:E"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["G:Y"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-
-                    # DriveBinaries
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriveBinaries.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriveBinaries.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriveBinaries.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DriveBinaries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DriveBinaries" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:T1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns B-T
-                            $WorkSheet.Cells["B:T"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-
-                    # DriverPackages
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriverPackages.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriverPackages.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriverPackages.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DriverPackages.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DriverPackages" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns B-D and -L
-                            $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["F:L"].Style.HorizontalAlignment="Center"
-                            # HorizontalAlignment "Center" of header of column E
-                            $WorkSheet.Cells["E1:E1"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-
-                    # ProgramEntries
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ProgramEntries.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ProgramEntries.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ProgramEntries.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_ProgramEntries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ProgramEntries" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:Z1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A-J, L-N, P-S, V-X and Z
-                            $WorkSheet.Cells["A:J"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["L:N"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["P:S"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["V:X"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["Z:Z"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-
-                    # ShortCuts
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ShortCuts.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ShortCuts.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ShortCuts.csv" -Delimiter ","
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_ShortCuts.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ShortCuts" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A and C
-                            $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
-                            }
-                        }
-                    }
-
-                    # UnassociatedFileEntries
-                    if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_UnassociatedFileEntries.csv")
-                    {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_UnassociatedFileEntries.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_UnassociatedFileEntries.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.FileKeyLastWriteTimestamp -as [datetime] } -Descending
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_UnassociatedFileEntries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "UnassociatedFileEntries" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:U1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A-E and G-T
-                            $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["G:T"].Style.HorizontalAlignment="Center"
-                            # HorizontalAlignment "Center" of header of column F
-                            $WorkSheet.Cells["F1:F1"].Style.HorizontalAlignment="Center"
-                            }
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_AssociatedFileEntries.csv" -Delimiter "," | Sort-Object { $_.FileKeyLastWriteTimestamp -as [datetime] } -Descending
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_AssociatedFileEntries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "AssociatedFileEntries" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:U1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns A-E and G-U
+                        $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["G:U"].Style.HorizontalAlignment="Center"
+                        # HorizontalAlignment "Center" of header of column F
+                        $WorkSheet.Cells["F1:F1"].Style.HorizontalAlignment="Center"
                         }
                     }
                 }
-                else
+
+                # DeviceContainers
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DeviceContainers.csv")
                 {
-                    Write-Output "[Info]  PowerShell module 'ImportExcel' NOT found."
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DeviceContainers.csv") -gt 0)
+                    {
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DeviceContainers.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DeviceContainers.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DeviceContainers" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:Q1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns B-Q
+                        $WorkSheet.Cells["B:Q"].Style.HorizontalAlignment="Center"
+                        }
+                    }
+                }
+
+                # DevicePnps
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DevicePnps.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DevicePnps.csv") -gt 0)
+                    {
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DevicePnps.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DevicePnps.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DevicePnps" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:Y1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns B-E and G-Y
+                        $WorkSheet.Cells["B:E"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["G:Y"].Style.HorizontalAlignment="Center"
+                        }
+                    }
+                }
+
+                # DriveBinaries
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriveBinaries.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriveBinaries.csv") -gt 0)
+                    {
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriveBinaries.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DriveBinaries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DriveBinaries" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:T1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns B-T
+                        $WorkSheet.Cells["B:T"].Style.HorizontalAlignment="Center"
+                        }
+                    }
+                }
+
+                # DriverPackages
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriverPackages.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriverPackages.csv") -gt 0)
+                    {
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_DriverPackages.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_DriverPackages.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DriverPackages" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns B-D and -L
+                        $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["F:L"].Style.HorizontalAlignment="Center"
+                        # HorizontalAlignment "Center" of header of column E
+                        $WorkSheet.Cells["E1:E1"].Style.HorizontalAlignment="Center"
+                        }
+                    }
+                }
+
+                # ProgramEntries
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ProgramEntries.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ProgramEntries.csv") -gt 0)
+                    {
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ProgramEntries.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_ProgramEntries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ProgramEntries" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:Z1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns A-J, L-N, P-S, V-X and Z
+                        $WorkSheet.Cells["A:J"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["L:N"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["P:S"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["V:X"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["Z:Z"].Style.HorizontalAlignment="Center"
+                        }
+                    }
+                }
+
+                # ShortCuts
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ShortCuts.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ShortCuts.csv") -gt 0)
+                    {
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_ShortCuts.csv" -Delimiter ","
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_ShortCuts.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ShortCuts" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns A and C
+                        $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
+                        }
+                    }
+                }
+
+                # UnassociatedFileEntries
+                if (Test-Path "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_UnassociatedFileEntries.csv")
+                {
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_UnassociatedFileEntries.csv") -gt 0)
+                    {
+                        New-Item "$OUTPUT_FOLDER\Amcache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\CSV\AmcacheParser_UnassociatedFileEntries.csv" -Delimiter "," -Encoding UTF8 | Sort-Object { $_.FileKeyLastWriteTimestamp -as [datetime] } -Descending
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\XLSX\AmcacheParser_UnassociatedFileEntries.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "UnassociatedFileEntries" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:U1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns A-E and G-T
+                        $WorkSheet.Cells["A:E"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["G:T"].Style.HorizontalAlignment="Center"
+                        # HorizontalAlignment "Center" of header of column F
+                        $WorkSheet.Cells["F1:F1"].Style.HorizontalAlignment="Center"
+                        }
+                    }
                 }
 
                 # Amcache Scan --> Check SHA1 File Hashes on VirusTotal
@@ -7314,21 +7615,17 @@ if (Test-Path "$($MemProcFS)")
                     Remove-Item "$OUTPUT_FOLDER\Amcache\SHA1\SHA1-draft.csv"
 
                     # XLSX
-                    if (Get-Module -ListAvailable -Name ImportExcel)
+                    if (Test-Path "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.csv")
                     {
-                        if (Test-Path "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.csv")
+                        if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.csv") -gt 0)
                         {
-                            if([int](& $xsv count "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.csv") -gt 0)
-                            {
-                                $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.csv" -Delimiter ","
-                                $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SHA1" -CellStyleSB {
-                                param($WorkSheet)
-                                # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
-                                # HorizontalAlignment "Center" of column E
-                                $WorkSheet.Cells["E:E"].Style.HorizontalAlignment="Center"
-                                }
+                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.csv" -Delimiter ","
+                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Amcache\SHA1\SHA1.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SHA1" -CellStyleSB {
+                            param($WorkSheet)
+                            # BackgroundColor and FontColor for specific cells of TopRow
+                            Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                            # HorizontalAlignment "Center" of column E
+                            $WorkSheet.Cells["E:E"].Style.HorizontalAlignment="Center"
                             }
                         }
                     }
@@ -7375,23 +7672,20 @@ if (Test-Path "$($MemProcFS)")
                 }
 
                 # XLSX
-                if (Get-Module -ListAvailable -Name ImportExcel)
+                if (Test-Path "$OUTPUT_FOLDER\Registry\ShimCache\CSV\AppCompatCacheParser.csv")
                 {
-                    if (Test-Path "$OUTPUT_FOLDER\Registry\ShimCache\CSV\AppCompatCacheParser.csv")
+                    if([int](& $xsv count "$OUTPUT_FOLDER\Registry\ShimCache\CSV\AppCompatCacheParser.csv") -gt 0)
                     {
-                        if([int](& $xsv count "$OUTPUT_FOLDER\Registry\ShimCache\CSV\AppCompatCacheParser.csv") -gt 0)
-                        {
-                            New-Item "$OUTPUT_FOLDER\Registry\ShimCache\XLSX" -ItemType Directory -Force | Out-Null
-                            $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\ShimCache\CSV\AppCompatCacheParser.csv" -Delimiter "," | Sort-Object { $_.LastModifiedTimeUTC -as [datetime] } -Descending
-                            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\ShimCache\XLSX\AppCompatCacheParser.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ShimCache" -CellStyleSB {
-                            param($WorkSheet)
-                            # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
-                            # HorizontalAlignment "Center" of columns A-B and D-F
-                            $WorkSheet.Cells["A:B"].Style.HorizontalAlignment="Center"
-                            $WorkSheet.Cells["D:F"].Style.HorizontalAlignment="Center"
-                            }
+                        New-Item "$OUTPUT_FOLDER\Registry\ShimCache\XLSX" -ItemType Directory -Force | Out-Null
+                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\ShimCache\CSV\AppCompatCacheParser.csv" -Delimiter "," | Sort-Object { $_.LastModifiedTimeUTC -as [datetime] } -Descending
+                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\ShimCache\XLSX\AppCompatCacheParser.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ShimCache" -CellStyleSB {
+                        param($WorkSheet)
+                        # BackgroundColor and FontColor for specific cells of TopRow
+                        Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                        # HorizontalAlignment "Center" of columns A-B, D-F and H
+                        $WorkSheet.Cells["A:B"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["D:F"].Style.HorizontalAlignment="Center"
+                        $WorkSheet.Cells["H:H"].Style.HorizontalAlignment="Center"
                         }
                     }
                 }
@@ -7428,7 +7722,7 @@ if (Test-Path "$($MemProcFS)")
                 # Stats
                 if (Test-Path "$OUTPUT_FOLDER\Syscache\Syscache.log")
                 {
-                    $Total = Get-Content "$OUTPUT_FOLDER\Syscache\Syscache.log" | Select-String -Pattern "key/value pairs"
+                    $Total = Get-Content "$OUTPUT_FOLDER\Syscache\Syscache.log" | Select-String -Pattern "key/value pair"
                     Write-Output "[Info]  $Total"
                 }
 
@@ -7454,8 +7748,7 @@ if (Test-Path "$($MemProcFS)")
                         $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Syscache\XLSX\Syscache.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SysCache" -CellStyleSB {
                         param($WorkSheet)
                         # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                        Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                         # HorizontalAlignment "Center" of columns B-N
                         $WorkSheet.Cells["B:N"].Style.HorizontalAlignment="Center"
                         }
@@ -7473,8 +7766,7 @@ if (Test-Path "$($MemProcFS)")
                         $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Syscache\XLSX\Syscache_SyscacheObjectTable.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "SysCache (Plugin)" -CellStyleSB {
                         param($WorkSheet)
                         # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor White
+                        Set-Format -Address $WorkSheet.Cells["A1:L1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                         # HorizontalAlignment "Center" of columns B-L
                         $WorkSheet.Cells["B:L"].Style.HorizontalAlignment="Center"
                         $WorkSheet.Cells["D:L"].Style.HorizontalAlignment="Center"
@@ -7521,7 +7813,7 @@ if (Test-Path "$($MemProcFS)")
                     ForEach( $FilePath in $FilePathList )
                     {
                         $FileName = $FilePath | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.")[0]}
-                        $SID = $FileName | ForEach-Object{($_ -split "_")[1]}
+                        $SID = Get-HiveId $FileName
 
                         # Check if UserAssist key exists
                         if (Test-Path "$DriveLetter\registry\by-hive\$FileName\ROOT\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\UserAssist")
@@ -7545,7 +7837,7 @@ if (Test-Path "$($MemProcFS)")
                                     if (!(Get-Content -Path "$OUTPUT_FOLDER\Registry\UserAssist\$SID-UserAssist.log" | Select-String -Pattern "Found 0 key/value pairs across 1 file" -Quiet))
                                     {
                                         # Count
-                                        $Total = Get-Content "$OUTPUT_FOLDER\Registry\UserAssist\$SID-UserAssist.log" | Select-String -Pattern "key/value pairs"
+                                        $Total = Get-Content "$OUTPUT_FOLDER\Registry\UserAssist\$SID-UserAssist.log" | Select-String -Pattern "key/value pair"
                                         Write-Output "[Info]  $Total ($SID)"
 
                                         # Array
@@ -7598,8 +7890,7 @@ if (Test-Path "$($MemProcFS)")
                                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\UserAssist\XLSX\$SID-UserAssist.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "UserAssist" -CellStyleSB {
                                     param($WorkSheet)
                                     # BackgroundColor and FontColor for specific cells of TopRow
-                                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                    Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                                    Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                     # HorizontalAlignment "Center" of columns B-D, G and J-N
                                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                                     $WorkSheet.Cells["G:G"].Style.HorizontalAlignment="Center"
@@ -7617,8 +7908,7 @@ if (Test-Path "$($MemProcFS)")
                                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\UserAssist\XLSX\$SID-UserAssist_PluginDetailFile.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "UserAssist (Plugin)" -CellStyleSB {
                                     param($WorkSheet)
                                     # BackgroundColor and FontColor for specific cells of TopRow
-                                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                     # HorizontalAlignment "Center" of columns D-G
                                     $WorkSheet.Cells["D:G"].Style.HorizontalAlignment="Center"
                                     }
@@ -7634,8 +7924,7 @@ if (Test-Path "$($MemProcFS)")
                                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\UserAssist\XLSX\$SID-UserAssist-Stats.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "UserAssist (Stats)" -CellStyleSB {
                                     param($WorkSheet)
                                     # BackgroundColor and FontColor for specific cells of TopRow
-                                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                    Set-Format -Address $WorkSheet.Cells["A1:B1"] -BackgroundColor $BackgroundColor -FontColor White
+                                    Set-Format -Address $WorkSheet.Cells["A1:B1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                     # HorizontalAlignment "Center" of column B
                                     $WorkSheet.Cells["B:B"].Style.HorizontalAlignment="Center"
                                     }
@@ -7702,7 +7991,7 @@ if (Test-Path "$($MemProcFS)")
                             if (!(Get-Content -Path "$OUTPUT_FOLDER\Registry\BAM\BAM.log" | Select-String -Pattern "Found 0 key/value pairs across 1 file" -Quiet))
                             {
                                 # Count
-                                $Count = Get-Content "$OUTPUT_FOLDER\Registry\BAM\BAM.log" | Select-String -Pattern "key/value pairs"
+                                $Count = Get-Content "$OUTPUT_FOLDER\Registry\BAM\BAM.log" | Select-String -Pattern "key/value pair"
                                 Write-Output "[Info]  $Count"
                             }
                             else
@@ -7720,8 +8009,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\BAM\XLSX\BAM.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "BAM" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns B-D, G and I-N
                                 $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["G:G"].Style.HorizontalAlignment="Center"
@@ -7739,8 +8027,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\BAM\XLSX\BAM_PluginDetailFile.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "BAM (Plugin)" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of column C
                                 $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
                                 }
@@ -7777,7 +8064,7 @@ if (Test-Path "$($MemProcFS)")
                 ForEach( $FilePath in $FilePathList )
                 {
                     $FileName = $FilePath | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.")[0]}
-                    $SID = $FileName | ForEach-Object{($_ -split "_")[1]}
+                    $SID = Get-HiveId $FileName
 
                     # Check if MUICache key exists (Vista+)
                     if (Test-Path "$DriveLetter\registry\by-hive\$FileName\ROOT\Local Settings\Software\Microsoft\Windows\Shell\MuiCache")
@@ -7792,7 +8079,7 @@ if (Test-Path "$($MemProcFS)")
                             if (!(Get-Content -Path "$OUTPUT_FOLDER\Registry\MUICache\$SID-MUICache.log" | Select-String -Pattern "Found 0 key/value pairs across 1 file" -Quiet))
                             {
                                 # Count
-                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\MUICache\$SID-MUICache.log" | Select-String -Pattern "key/value pairs"
+                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\MUICache\$SID-MUICache.log" | Select-String -Pattern "key/value pair"
                                 Write-Output "[Info]  $Total ($SID)"
                             }
                         }
@@ -7806,8 +8093,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\MUICache\XLSX\$SID-MUICache.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MUICache" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns B-D, G and I-O
                                 $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["G:G"].Style.HorizontalAlignment="Center"
@@ -7847,14 +8133,14 @@ if (Test-Path "$($MemProcFS)")
                                     {  
                                         New-Object -TypeName PSObject -Property @{
 
-                                            "FileName"          = $FileName
-                                            "FilePath"          = $FilePath
+                                            "FileName"           = $FileName
+                                            "FilePath"           = $FilePath
                                             "ApplicationCompany" = $ApplicationCompany # Company Name
                                             "FriendlyAppName"    = $FriendlyAppName # File Description
-                                            "HivePath"          = $HivePath
+                                            "HivePath"           = $HivePath
                                             "LastWriteTimestamp" = $LastWriteTimestamp
                                             "SID"                = $SID
-                                            "UserName"           = Get-Content "$OUTPUT_FOLDER\sys\users\users.txt" | Select-String -Pattern "$SID" | ForEach-Object{($_ -split "\s+")[1]}
+                                            "UserName"           = if ($SID -like "S-1-*") { Select-String -Path "$OUTPUT_FOLDER\sys\users\users.txt" -Pattern "$SID" -SimpleMatch | ForEach-Object{($_ -split "\s+")[1]} }
                                             }
 
                                         $Counter=0
@@ -7882,8 +8168,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\MUICache\XLSX\$SID-MUICache_Custom.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "MUICache" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns C, E-F and H
                                 $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["E:F"].Style.HorizontalAlignment="Center"
@@ -7933,7 +8218,7 @@ if (Test-Path "$($MemProcFS)")
                 ForEach( $FilePath in $FilePathList )
                 {
                     $FileName = $FilePath | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.")[0]}
-                    $SID = $FileName | ForEach-Object{($_ -split "_")[1]}
+                    $SID = Get-HiveId $FileName
 
                     # Check if OpenSavePidlMRU key exists
                     if (Test-Path "$DriveLetter\registry\by-hive\$FileName\ROOT\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSavePidlMRU")
@@ -7955,7 +8240,7 @@ if (Test-Path "$($MemProcFS)")
                             if (!(Get-Content -Path "$OUTPUT_FOLDER\Registry\OpenSaveMRU\$SID-OpenSavePidlMRU.log" | Select-String -Pattern "Found 0 key/value pairs across 1 file" -Quiet))
                             {
                                 # Count
-                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\OpenSaveMRU\$SID-OpenSavePidlMRU.log" | Select-String -Pattern "key/value pairs"
+                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\OpenSaveMRU\$SID-OpenSavePidlMRU.log" | Select-String -Pattern "key/value pair"
                                 Write-Output "[Info]  $Total ($SID)"
                             }
                         }
@@ -7971,8 +8256,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\OpenSaveMRU\XLSX\$SID-OpenSavePidlMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "OpenSavePidlMRU" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns B-F, I and K-N
                                 $WorkSheet.Cells["B:F"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["I:I"].Style.HorizontalAlignment="Center"
@@ -7990,8 +8274,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\OpenSaveMRU\XLSX\$SID-OpenSavePidlMRU_PluginDetailFile.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "OpenSavePidlMRU (Plugin)" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns A, C-E and G
                                 $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["C:E"].Style.HorizontalAlignment="Center"
@@ -8039,7 +8322,7 @@ if (Test-Path "$($MemProcFS)")
                 ForEach( $FilePath in $FilePathList )
                 {
                     $FileName = $FilePath | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.")[0]}
-                    $SID = $FileName | ForEach-Object{($_ -split "_")[1]}
+                    $SID = Get-HiveId $FileName
 
                     # Check if LastVisitedPidlMRU key exists
                     if (Test-Path "$DriveLetter\registry\by-hive\$FileName\ROOT\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU")
@@ -8061,7 +8344,7 @@ if (Test-Path "$($MemProcFS)")
                             if (!(Get-Content -Path "$OUTPUT_FOLDER\Registry\LastVisitedMRU\$SID-LastVisitedPidlMRU.log" | Select-String -Pattern "Found 0 key/value pairs across 1 file" -Quiet))
                             {
                                 # Count
-                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\LastVisitedMRU\$SID-LastVisitedPidlMRU.log" | Select-String -Pattern "key/value pairs"
+                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\LastVisitedMRU\$SID-LastVisitedPidlMRU.log" | Select-String -Pattern "key/value pair"
                                 Write-Output "[Info]  $Total ($SID)"
                             }
                         }
@@ -8074,11 +8357,10 @@ if (Test-Path "$($MemProcFS)")
                             if([int](& $xsv count "$OUTPUT_FOLDER\Registry\LastVisitedMRU\CSV\$SID-LastVisitedPidlMRU.csv") -gt 0)
                             {
                                 $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\LastVisitedMRU\CSV\$SID-LastVisitedPidlMRU.csv" -Delimiter "," -Encoding UTF8
-                                $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\LastVisitedMRU\XLSX\$SID-LastVisitedPidlMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "LastVisitedPidlMRU" -CellStyleSB {
+                                $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\LastVisitedMRU\XLSX\$SID-LastVisitedPidlMRU.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "LastVisitedPidlMRU" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns B-G, I and K-N
                                 $WorkSheet.Cells["B:G"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["I:I"].Style.HorizontalAlignment="Center"
@@ -8096,8 +8378,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\LastVisitedMRU\XLSX\$SID-LastVisitedPidlMRU_PluginDetailFile.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "LastVisitedPidlMRU (Plugin)" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns A, C-E and G
                                 $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["C:E"].Style.HorizontalAlignment="Center"
@@ -8138,7 +8419,7 @@ if (Test-Path "$($MemProcFS)")
                 ForEach( $FilePath in $FilePathList )
                 {
                     $FileName = $FilePath | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.")[0]}
-                    $SID = $FileName | ForEach-Object{($_ -split "_")[1]}
+                    $SID = Get-HiveId $FileName
 
                     # Check if LastVisitedPidlMRU key exists
                     if (Test-Path "$DriveLetter\registry\by-hive\$FileName\ROOT\SOFTWARE\Microsoft\Terminal Server Client")
@@ -8178,8 +8459,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\TerminalServerClient\XLSX\$SID-TerminalServerClient.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "TerminalServerClient" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns B-D, F-J and L-N
                                 $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["F:J"].Style.HorizontalAlignment="Center"
@@ -8197,8 +8477,7 @@ if (Test-Path "$($MemProcFS)")
                                 $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\LastVisitedMRU\XLSX\$SID-TerminalServerClient_PluginDetailFile.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "TerminalServerClient (Plugin)" -CellStyleSB {
                                 param($WorkSheet)
                                 # BackgroundColor and FontColor for specific cells of TopRow
-                                $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                                Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                                Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                                 # HorizontalAlignment "Center" of columns A, C-F
                                 $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                                 $WorkSheet.Cells["C:F"].Style.HorizontalAlignment="Center"
@@ -8285,8 +8564,7 @@ if (Test-Path "$($MemProcFS)")
                             $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\ShellBags\XLSX\$FileName.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ShellBags" -CellStyleSB {
                             param($WorkSheet)
                             # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:S1"] -BackgroundColor $BackgroundColor -FontColor White
+                            Set-Format -Address $WorkSheet.Cells["A1:S1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                             # HorizontalAlignment "Center" of columns B-D, F and H-S
                             $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                             $WorkSheet.Cells["F:F"].Style.HorizontalAlignment="Center"
@@ -8329,7 +8607,7 @@ if (Test-Path "$($MemProcFS)")
                     # Stats
                     if (Test-Path "$OUTPUT_FOLDER\Registry\RegistryASEPs\RegistryASEPs.log")
                     {
-                        [string]$Total = (Get-Content "$OUTPUT_FOLDER\Registry\RegistryASEPs\RegistryASEPs.log" | Select-String -Pattern "key/value pairs" | Out-String).Trim()
+                        [string]$Total = (Get-Content "$OUTPUT_FOLDER\Registry\RegistryASEPs\RegistryASEPs.log" | Select-String -Pattern "key/value pair" | Out-String).Trim()
                         Write-Output "[Info]  $Total"
                     }
 
@@ -8343,8 +8621,7 @@ if (Test-Path "$($MemProcFS)")
                             $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\RegistryASEPs\XLSX\RegistryASEPs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "RegistryASEPs" -CellStyleSB {
                             param($WorkSheet)
                             # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                            Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                             # HorizontalAlignment "Center" of columns B-D, G and L-O
                             $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                             $WorkSheet.Cells["G:G"].Style.HorizontalAlignment="Center"
@@ -8626,7 +8903,7 @@ if (Test-Path "$($clamd)")
     if (Test-Path "$($clamdscan)")
     {
         Write-Output "[Info]  Starting ClamAV Daemon ..."
-        Start-Process powershell.exe -FilePath "$clamd" -WindowStyle Minimized
+        Start-Process -FilePath "$clamd" -WindowStyle Minimized
         $ProgressPreference = 'SilentlyContinue'
         do {
           Start-Sleep -Seconds 5
@@ -8653,10 +8930,19 @@ if (Test-Path "$($clamd)")
 
         # ClamAV Detection(s)
 
-        # FOUND (Infected Files)
+        # PUA (Possibly Unwanted Applications) --> clamd.conf: DetectPUA yes
         New-Item "$OUTPUT_FOLDER\ClamAV\Infected" -ItemType Directory -Force | Out-Null
-        $InfectedFilesCount = (Get-Content $LogFile | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND" -NotMatch | Measure-Object).Count
-        $InfectedFilesMatches = Get-Content $LogFile | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND" -NotMatch
+        $PUAMatches = Get-Content $LogFile | Select-String -Pattern ": PUA\..* FOUND$" -CaseSensitive
+        $PUACount = ($PUAMatches | Measure-Object).Count
+        if ($PUACount -gt 0)
+        {
+            $PUAMatches | ForEach-Object { $_.Line } | Out-File "$OUTPUT_FOLDER\ClamAV\Infected\PUA.txt"
+            Write-Host "[Info]  $PUACount PUA detection(s) found --> ClamAV\Infected\PUA.txt" -ForegroundColor Yellow
+        }
+
+        # FOUND (Infected Files)
+        $InfectedFilesCount = (Get-Content $LogFile | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND|: PUA\..* FOUND" -NotMatch | Measure-Object).Count
+        $InfectedFilesMatches = Get-Content $LogFile | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND|: PUA\..* FOUND" -NotMatch
         if ($InfectedFilesCount -eq "0")
         {
             Write-Host "[Info]  0 infected file(s) found" -ForegroundColor Green
@@ -8665,14 +8951,27 @@ if (Test-Path "$($clamd)")
         {
             ($InfectedFilesMatches | Out-String).Trim() | Out-File "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles.txt"
 
-            # Whitelist
-            # MsMpEng.exe   = Microsoft Defender
-            # cyserver.exe  = Palo Alto Cortex XDR
-            # tlaworker.exe = Palo Alto Cortex XDR
-            $Whitelist = "(cyserver.exe|MsMpEng.exe|tlaworker.exe)"
-            Get-Content "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles.txt" | Where-Object {$_ -notmatch "$Whitelist"} | Out-File "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles-filtered.txt"
+            # Process Whitelist (Config.json)
+            if ($ForensicProcessWhitelist)
+            {
+                $Processes = ($ForensicProcessWhitelist.Split(",") | ForEach-Object { [regex]::Escape($_) }) -join "|"
+                $Whitelist = "\\name\\($Processes)-\d+\\"
+                Get-Content "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles.txt" | Where-Object {$_ -notmatch $Whitelist} | Out-File "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles-filtered.txt"
+            }
+            else
+            {
+                Copy-Item "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles.txt" "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles-filtered.txt"
+            }
+
             $FilteredCount = (Get-Content "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles-filtered.txt" | Measure-Object).Count
-            Write-Host "[Alert] $FilteredCount infected file(s) found ($InfectedFilesCount)" -ForegroundColor Red
+            if ($FilteredCount -eq 0)
+            {
+                Write-Host "[Info]  0 infected file(s) found ($InfectedFilesCount whitelisted)" -ForegroundColor Green
+            }
+            else
+            {
+                Write-Host "[Alert] $FilteredCount infected file(s) found ($InfectedFilesCount)" -ForegroundColor Red
+            }
         }
 
         # Collect Infected Files
@@ -8736,7 +9035,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 ForEach( $FilePath in $FilePathList )
                 {
                     $FileName = $FilePath | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.reghive$")[0]}
-                    $SID = $FileName | ForEach-Object{($_ -split "_")[1]}
+                    $SID = Get-HiveId $FileName
 
                     # Check if RecentDocs key exists
                     if (Test-Path "$DriveLetter\registry\by-hive\$FileName\ROOT\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs")
@@ -8753,7 +9052,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                             # Check if key/value pairs were found
                             if (!(Get-Content -Path "$OUTPUT_FOLDER\Registry\RecentDocs\$SID-RecentDocs.log" | Select-String -Pattern "Found 0 key/value pairs across 1 file" -Quiet))
                             {
-                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\RecentDocs\$SID-RecentDocs.log" | Select-String -Pattern "key/value pairs"
+                                $Total = Get-Content "$OUTPUT_FOLDER\Registry\RecentDocs\$SID-RecentDocs.log" | Select-String -Pattern "key/value pair"
                                 Write-Host "[Info]  $Total ($SID)"
                             }
                             else
@@ -8779,8 +9078,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                             $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\RecentDocs\XLSX\$SID-RecentDocs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "RecentDocs" -CellStyleSB {
                             param($WorkSheet)
                             # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                            Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                             # HorizontalAlignment "Center" of columns B, D, F-G and J-N
                             $WorkSheet.Cells["B:B"].Style.HorizontalAlignment="Center"
                             $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
@@ -8800,8 +9098,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                             $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\RecentDocs\XLSX\$SID-RecentDocs_RecentDocs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "RecentDocs (Plugin)" -CellStyleSB {
                             param($WorkSheet)
                             # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor White
+                            Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                             # HorizontalAlignment "Center" of columns A, C-D and G-I
                             $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                             $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -8849,7 +9146,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                 ForEach( $FilePath in $FilePathList )
                 {
                     $FileName = $FilePath | ForEach-Object{($_ -split "\\")[-1]} | ForEach-Object{($_ -split "\.reghive$")[0]}
-                    $SID = $FileName | ForEach-Object{($_ -split "_")[1]}
+                    $SID = Get-HiveId $FileName
 
                     # Check if TrustedDocuments key exists
                     if (Test-Path "$DriveLetter\registry\by-hive\$FileName\ROOT\SOFTWARE\Microsoft\Office\*\*\Security\Trusted Documents\TrustRecords")
@@ -8884,8 +9181,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                             $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\TrustedDocuments\XLSX\$SID-TrustedDocuments.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "TrustedDocuments" -CellStyleSB {
                             param($WorkSheet)
                             # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                            Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                             # HorizontalAlignment "Center" of columns B, D, F-G and J-N
                             $WorkSheet.Cells["B:B"].Style.HorizontalAlignment="Center"
                             $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
@@ -8906,8 +9202,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                             $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\TrustedDocuments\XLSX\$SID-TrustedDocuments_TrustedDocuments.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "TrustedDocuments (Plugin)" -CellStyleSB {
                             param($WorkSheet)
                             # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                             # HorizontalAlignment "Center" of columns A, C, and F
                             $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                             $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
@@ -8964,7 +9259,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
             {
                 if (Get-Content "$SCRIPT_DIR\Tools\RECmd\Sync.log" | Select-String -Pattern "No new batch files available" -Quiet)
                 {
-                    Write-Output "[Info]  No new RECmd Batch Files available."
+                    Write-Host "[Info]  No new RECmd Batch Files available." -ForegroundColor Green
                 }
             }
 
@@ -9019,8 +9314,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\DFIR.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Batch" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:O1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, G and L-N
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["G:G"].Style.HorizontalAlignment="Center"
@@ -9043,8 +9337,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Adobe.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Adobe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, C-D, F and I-J
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -9067,8 +9360,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_AppCompat.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_AppCompat" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and D-E
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
@@ -9085,8 +9377,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_AppCompatFlags2.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_AppCompatFlags2" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of column C
                     $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
                     }
@@ -9102,8 +9393,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_AppPaths.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_AppPaths" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A nd D
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
@@ -9120,8 +9410,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_BamDam.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_BamDam" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of column C
                     $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
                     }
@@ -9137,8 +9426,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_CIDSizeMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_CIDSizeMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns C-E
                     $WorkSheet.Cells["C:E"].Style.HorizontalAlignment="Center"
                     }
@@ -9154,8 +9442,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_DeviceClasses.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_DeviceClasses" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-G
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:G"].Style.HorizontalAlignment="Center"
@@ -9172,8 +9459,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_ETW.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_ETW" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, C-D and F-G
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -9191,8 +9477,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_FileExts.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_FileExts" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and D-F
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:F"].Style.HorizontalAlignment="Center"
@@ -9209,8 +9494,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_FirewallRules.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_FirewallRules" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-H
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:H"].Style.HorizontalAlignment="Center"
@@ -9227,10 +9511,25 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_FirstFolder.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_FirstFolder" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns C-F
                     $WorkSheet.Cells["C:F"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
+
+            # DFIR_IconLayouts.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_IconLayouts.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_IconLayouts.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_IconLayouts.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_IconLayouts.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_IconLayouts" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:C1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of column C
+                    $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -9244,8 +9543,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_JumplistData.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_JumplistData" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of column C
                     $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
                     }
@@ -9261,8 +9559,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_KnownNetworks.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_KnownNetworks" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-K
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:K"].Style.HorizontalAlignment="Center"
@@ -9279,8 +9576,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_LastVisitedPidlMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_LastVisitedPidlMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, C-E and G
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:E"].Style.HorizontalAlignment="Center"
@@ -9298,8 +9594,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_MountedDevices.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_MountedDevices" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:D1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     }
                 }
             }
@@ -9313,8 +9608,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_NetworkAdapters.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_NetworkAdapters" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and D-G
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:G"].Style.HorizontalAlignment="Center"
@@ -9331,8 +9625,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_NetworkSetup2.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_NetworkSetup2" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns C-H
                     $WorkSheet.Cells["C:H"].Style.HorizontalAlignment="Center"
                     }
@@ -9348,8 +9641,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_OpenSavePidlMRU.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_OpenSavePidlMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, C-E and G
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:E"].Style.HorizontalAlignment="Center"
@@ -9367,8 +9659,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Products.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Products" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and D-H 
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:H"].Style.HorizontalAlignment="Center"
@@ -9386,8 +9677,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_ProfileList.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_ProfileList" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and D
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
@@ -9396,7 +9686,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
             }
 
             # DFIR_RADAR.csv
-                   if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RADAR.csv")
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RADAR.csv")
             {
                 if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RADAR.csv") -gt 0)
                 {
@@ -9404,14 +9694,29 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_RADAR.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_RADAR" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-E
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:E"].Style.HorizontalAlignment="Center"
                     }
                 }
-            }     
+            }
+
+            # DFIR_RecentApps.csv
+            if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RecentApps.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RecentApps.csv") -gt 0)
+                {
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RecentApps.csv" -Delimiter ","
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_RecentApps.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_RecentApps" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:H1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns D-H
+                    $WorkSheet.Cells["D:H"].Style.HorizontalAlignment="Center"
+                    }
+                }
+            }
 
             # DFIR_RecentDocs.csv
             if (Test-Path "$OUTPUT_FOLDER\Registry\DFIRBatch\CSV\PluginDetailFiles\DFIR_RecentDocs.csv")
@@ -9422,8 +9727,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_RecentDocs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_RecentDocs" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:I1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, C-D and F-I
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -9441,8 +9745,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_RunMRU.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_RunMRU" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:f1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:f1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-F
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:F"].Style.HorizontalAlignment="Center"
@@ -9459,8 +9762,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_SAMBuiltin.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_SAMBuiltin" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and D-E
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
@@ -9477,8 +9779,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_SCSI.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_SCSI" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-M
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:M"].Style.HorizontalAlignment="Center"
@@ -9495,8 +9796,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Services.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Services" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B, D and F-J
                     $WorkSheet.Cells["B:B"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
@@ -9514,8 +9814,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_Taskband.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_Taskband" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns D-E
                     $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
                     }
@@ -9531,8 +9830,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TaskCache.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TaskCache" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A-D and F-J
                     $WorkSheet.Cells["A:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["F:J"].Style.HorizontalAlignment="Center"
@@ -9549,8 +9847,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TimeZoneInfo.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TimeZoneInfo" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of column D
                     $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
                     # HorizontalAlignment "Left" of columnc C and E
@@ -9569,8 +9866,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TrustedDocuments.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TrustedDocuments" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, C and F
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:C"].Style.HorizontalAlignment="Center"
@@ -9588,8 +9884,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_TypedURLs.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_TypedURLs" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:E1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and D-E
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
@@ -9606,8 +9901,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_UnInstall.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_UnInstall" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, D and F-H
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["D:D"].Style.HorizontalAlignment="Center"
@@ -9625,8 +9919,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_USB.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_USB" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-J
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:J"].Style.HorizontalAlignment="Center"
@@ -9643,8 +9936,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_USBSTOR.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_USBSTOR" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:M1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-M
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:M"].Style.HorizontalAlignment="Center"
@@ -9661,8 +9953,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_UserAccounts.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_UserAccounts" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:AE1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:AE1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A, C-O and Q-AE
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:O"].Style.HorizontalAlignment="Center"
@@ -9680,8 +9971,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_UserAssist.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_UserAssist" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns D-G
                     $WorkSheet.Cells["D:G"].Style.HorizontalAlignment="Center"
                     }
@@ -9697,8 +9987,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_VolumeInfoCache.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_VolumeInfoCache" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-F
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:F"].Style.HorizontalAlignment="Center"
@@ -9715,8 +10004,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_WindowsApp.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_WindowsApp" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns D-E
                     $WorkSheet.Cells["D:E"].Style.HorizontalAlignment="Center"
                     }
@@ -9732,8 +10020,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_WindowsPortableDevices.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_WindowsPortableDevices" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:G1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-G
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:G"].Style.HorizontalAlignment="Center"
@@ -9750,8 +10037,7 @@ if (Test-Path "$OUTPUT_FOLDER\Registry\Registry\*.reghive")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\Registry\DFIRBatch\XLSX\PluginDetailFiles\DFIR_WordWheelQuery.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "DFIR_WordWheelQuery" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns A and C-F
                     $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["C:F"].Style.HorizontalAlignment="Center"
@@ -9873,49 +10159,43 @@ if (Test-Path "$($yara64)")
 
             # XLSX
 
-            # Check if PowerShell module 'ImportExcel' exists
-            if (Get-Module -ListAvailable -Name ImportExcel) 
+            # lnk_parser.csv
+            if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser.csv")
             {
-                # lnk_parser.csv
-                if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser.csv")
+                if([int](& $xsv count "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser.csv") -gt 0)
                 {
-                    if([int](& $xsv count "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser.csv") -gt 0)
-                    {
-                        New-Item "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX" -ItemType Directory -Force | Out-Null
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser.csv" -Delimiter "," | Select-Object "target_full_path",@{Name='target_modification_time';Expression={([datetime]$_."target_modification_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='target_access_time';Expression={([datetime]$_."target_access_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='target_creation_time';Expression={([datetime]$_."target_creation_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},target_size,target_hostname,lnk_full_path,@{Name='lnk_modification_time';Expression={([datetime]$_."lnk_modification_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='lnk_access_time';Expression={([datetime]$_."lnk_access_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='lnk_creation_time';Expression={([datetime]$_."lnk_creation_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}}
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX\lnk_parser.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "lnk_parser" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns B-D, F and H-J
-                        $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["F:F"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["H:J"].Style.HorizontalAlignment="Center"
-                        # HorizontalAlignment "Center" of header of column E
-                        $WorkSheet.Cells["E1:E1"].Style.HorizontalAlignment="Center"
-                        }
+                    New-Item "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX" -ItemType Directory -Force | Out-Null
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser.csv" -Delimiter "," | Select-Object "target_full_path",@{Name='target_modification_time';Expression={([datetime]$_."target_modification_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='target_access_time';Expression={([datetime]$_."target_access_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='target_creation_time';Expression={([datetime]$_."target_creation_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},target_size,target_hostname,lnk_full_path,@{Name='lnk_modification_time';Expression={([datetime]$_."lnk_modification_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='lnk_access_time';Expression={([datetime]$_."lnk_access_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='lnk_creation_time';Expression={([datetime]$_."lnk_creation_time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}}
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX\lnk_parser.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "lnk_parser" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:J1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns B-D, F and H-J
+                    $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["F:F"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["H:J"].Style.HorizontalAlignment="Center"
+                    # HorizontalAlignment "Center" of header of column E
+                    $WorkSheet.Cells["E1:E1"].Style.HorizontalAlignment="Center"
                     }
                 }
+            }
 
-                # lnk_parser-hunt.csv
-                # https://attack.mitre.org/techniques/T1547/009/
-                if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
+            # lnk_parser-hunt.csv
+            # https://attack.mitre.org/techniques/T1547/009/
+            if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
+            {
+                if([int](& $xsv count "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv") -gt 0)
                 {
-                    if([int](& $xsv count "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv") -gt 0)
-                    {
-                        New-Item "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX" -ItemType Directory -Force | Out-Null
-                        $IMPORT = Import-Csv "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv" -Delimiter "," | Select-Object "LNK Full Path",@{Name='LNK Modification Time';Expression={([datetime]$_."LNK Modification Time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='LNK Access Time';Expression={([datetime]$_."LNK Access Time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='LNK Creation Time';Expression={([datetime]$_."LNK Creation Time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},"Target Full Path","Working Directory","Arguments","Relative Path","Icon Location","Local Base Path","Shortcut Key","LNK Size","MD5","SHA1","SHA256","Entropy" | Sort-Object { $_."LNK Creation Time" -as [datetime] } -Descending
-                        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX\lnk_parser-hunt.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "lnk_parser-hunt" -CellStyleSB {
-                        param($WorkSheet)
-                        # BackgroundColor and FontColor for specific cells of TopRow
-                        $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                        Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
-                        # HorizontalAlignment "Center" of columns B-D, K and L-P
-                        $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
-                        $WorkSheet.Cells["L:P"].Style.HorizontalAlignment="Center"
-                        }
+                    New-Item "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX" -ItemType Directory -Force | Out-Null
+                    $IMPORT = Import-Csv "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv" -Delimiter "," | Select-Object "LNK Full Path",@{Name='LNK Modification Time';Expression={([datetime]$_."LNK Modification Time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='LNK Access Time';Expression={([datetime]$_."LNK Access Time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},@{Name='LNK Creation Time';Expression={([datetime]$_."LNK Creation Time").ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss")}},"Target Full Path","Working Directory","Arguments","Relative Path","Icon Location","Local Base Path","Shortcut Key","LNK Size","MD5","SHA1","SHA256","Entropy" | Sort-Object { $_."LNK Creation Time" -as [datetime] } -Descending
+                    $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\lnk_parser\XLSX\lnk_parser-hunt.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "lnk_parser-hunt" -CellStyleSB {
+                    param($WorkSheet)
+                    # BackgroundColor and FontColor for specific cells of TopRow
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+                    # HorizontalAlignment "Center" of columns B-D, K and L-P
+                    $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
+                    $WorkSheet.Cells["L:P"].Style.HorizontalAlignment="Center"
                     }
                 }
             }
@@ -9971,8 +10251,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-AutoIt3.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "AutoIt3.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10003,8 +10282,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-cmd.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "cmd.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10035,8 +10313,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-mshta.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "mshta.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10067,8 +10344,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-msiexec.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "msiexec.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10099,8 +10375,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-powershell.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "powershell.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10131,8 +10406,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-rundll32.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "rundll32.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10163,8 +10437,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-schtasks.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "schtasks.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10195,8 +10468,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\TargetFullPath\TargetFullPath-wscript.exe.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "wscript.exe" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10229,8 +10501,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\Arguments\Arguments-Long-Argument.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Long Argument" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10261,8 +10532,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\Arguments\Arguments-Long-Whitespace.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Long Whitespace" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10293,8 +10563,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\Arguments\Arguments-Suspicious-Strings-CommandLine-http.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "http" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10325,8 +10594,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\Arguments\Arguments-Suspicious-Strings-CommandLine-https.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "https" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10359,8 +10627,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\RelativePath\RelativePath-Long-Relative-Path.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Long Relative Path" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10393,8 +10660,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\Misc\Misc-Suspicious-LNK-Size.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Suspicious LNK Size" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10425,8 +10691,7 @@ if (Test-Path "$OUTPUT_FOLDER\LNK\lnk_parser\CSV\lnk_parser-hunt.csv")
                     $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\LNK\Hunt\XLSX\Misc\Misc-Suspicious-High-Entropy.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "High Entropy" -CellStyleSB {
                     param($WorkSheet)
                     # BackgroundColor and FontColor for specific cells of TopRow
-                    $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor White
+                    Set-Format -Address $WorkSheet.Cells["A1:P1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                     # HorizontalAlignment "Center" of columns B-D, K and L-P
                     $WorkSheet.Cells["B:D"].Style.HorizontalAlignment="Center"
                     $WorkSheet.Cells["K:K"].Style.HorizontalAlignment="Center"
@@ -10519,7 +10784,7 @@ if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogs\Microsoft-Windows-VHDMP-Operat
 
                     if ($EID1 -gt 0)
                     {
-                        Write-Host "[Alert] Image Mount Entries found: Event ID 1 - Mount ($Count)" -ForegroundColor Red
+                        Write-Host "[Alert] Image Mount Entries found: Event ID 1 - Mount ($EID1)" -ForegroundColor Red
                     }
 
                     # Event ID 2 - Contains entries of Image Files that has been removed (unsurfaced)
@@ -10528,7 +10793,7 @@ if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogs\Microsoft-Windows-VHDMP-Operat
 
                     if ($EID2 -gt 0)
                     {
-                        Write-Host "[Alert] Image Mount Entries found: Event ID 2 - Unmount ($Count)" -ForegroundColor Red
+                        Write-Host "[Alert] Image Mount Entries found: Event ID 2 - Unmount ($EID2)" -ForegroundColor Red
                     }
 
                     # ImageMount Hunt Summary
@@ -10549,8 +10814,7 @@ if (Test-Path "$OUTPUT_FOLDER\EventLogs\EventLogs\Microsoft-Windows-VHDMP-Operat
                             $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\EventLogs\VHDMP\XLSX\ImageMount.xlsx" -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "ImageMount" -CellStyleSB {
                             param($WorkSheet)
                             # BackgroundColor and FontColor for specific cells of TopRow
-                            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor White
+                            Set-Format -Address $WorkSheet.Cells["A1:K1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
                             # HorizontalAlignment "Center" of columns A-F and J-K
                             $WorkSheet.Cells["A:F"].Style.HorizontalAlignment="Center"
                             $WorkSheet.Cells["J:K"].Style.HorizontalAlignment="Center"
@@ -10585,8 +10849,7 @@ if (Test-Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv")
             $Data | Export-Excel -Path "$OUTPUT_FOLDER\RecentFiles\Image-Mount-Indicators\IMG.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname ".img" -CellStyleSB {
             param($WorkSheet)
             # BackgroundColor and FontColor for specific cells of TopRow
-            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
             # HorizontalAlignment "Center" of columns A, C-D and F
             $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
             $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -10610,8 +10873,7 @@ if (Test-Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv")
             $Data | Export-Excel -Path "$OUTPUT_FOLDER\RecentFiles\Image-Mount-Indicators\ISO.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname ".iso" -CellStyleSB {
             param($WorkSheet)
             # BackgroundColor and FontColor for specific cells of TopRow
-            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
             # HorizontalAlignment "Center" of columns A, C-D and F
             $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
             $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -10635,8 +10897,7 @@ if (Test-Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv")
             $Data | Export-Excel -Path "$OUTPUT_FOLDER\RecentFiles\Image-Mount-Indicators\VHD.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname ".vhd" -CellStyleSB {
             param($WorkSheet)
             # BackgroundColor and FontColor for specific cells of TopRow
-            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
             # HorizontalAlignment "Center" of columns A, C-D and F
             $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
             $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -10660,8 +10921,7 @@ if (Test-Path "$OUTPUT_FOLDER\RecentFiles\RecentFiles.csv")
             $Data | Export-Excel -Path "$OUTPUT_FOLDER\RecentFiles\Image-Mount-Indicators\VHDX.xlsx" -FreezePane 2,6 -BoldTopRow -AutoSize -AutoFilter -WorkSheetname ".vhdx" -CellStyleSB {
             param($WorkSheet)
             # BackgroundColor and FontColor for specific cells of TopRow
-            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor White
+            Set-Format -Address $WorkSheet.Cells["A1:F1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
             # HorizontalAlignment "Center" of columns A, C-D and F
             $WorkSheet.Cells["A:A"].Style.HorizontalAlignment="Center"
             $WorkSheet.Cells["C:D"].Style.HorizontalAlignment="Center"
@@ -10793,76 +11053,71 @@ if (Test-Path "$OUTPUT_FOLDER\sys\modules\CSV\modules-untouched.csv")
     }
 }
 
-# Check if PowerShell module 'ImportExcel' exists
-if (Get-Module -ListAvailable -Name ImportExcel) 
+# XLSX
+if (Test-Path "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv")
 {
-    # XLSX
-    if (Test-Path "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv")
+    if((Get-Item "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv").length -gt 0kb)
     {
-        if((Get-Item "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv").length -gt 0kb)
+        New-Item "$OUTPUT_FOLDER\sys\modules\XLSX" -ItemType Directory -Force | Out-Null
+        $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter ","
+        $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\modules\XLSX\modules.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Modules" -CellStyleSB {
+        param($WorkSheet)
+        # BackgroundColor and FontColor for specific cells of TopRow
+        Set-Format -Address $WorkSheet.Cells["A1:R1"] -BackgroundColor $BackgroundColor -FontColor $FontColor
+        # HorizontalAlignment "Center" of columns A-B, G-J and N-R
+        $WorkSheet.Cells["A:B"].Style.HorizontalAlignment="Center"
+        $WorkSheet.Cells["G:J"].Style.HorizontalAlignment="Center"
+        $WorkSheet.Cells["N:R"].Style.HorizontalAlignment="Center"
+        # HorizontalAlignment "Right" of columns K-L
+        $WorkSheet.Cells["K:L"].Style.HorizontalAlignment="Right"
+        # HorizontalAlignment "Center" of header of columns K-L
+        $WorkSheet.Cells["K1:L1"].Style.HorizontalAlignment="Center"
+
+        # Threat Hunting
+
+        # Fields are missing / empty (W/ Rule Priority)
+
+        # "Internal Name" and "Original FileName" and "File Description" and "Company Name" --> Red
+        $HighColor = [System.Drawing.Color]::FromArgb(255,0,0)
+        Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=AND($C1="",$D1="",$E1="",$H1="")' -BackgroundColor $HighColor
+        $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {(($_."Internal Name" -eq "") -and ($_."Original FileName" -eq "") -and ($_."File Description" -eq "") -and ($_."Company Name" -eq ""))}
+        $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
+        if ($Count -gt 0)
         {
-            New-Item "$OUTPUT_FOLDER\sys\modules\XLSX" -ItemType Directory -Force | Out-Null
-            $IMPORT = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter ","
-            $IMPORT | Export-Excel -Path "$OUTPUT_FOLDER\sys\modules\XLSX\modules.xlsx" -NoNumberConversion * -FreezeTopRow -BoldTopRow -AutoSize -AutoFilter -WorkSheetname "Modules" -CellStyleSB {
-            param($WorkSheet)
-            # BackgroundColor and FontColor for specific cells of TopRow
-            $BackgroundColor = [System.Drawing.Color]::FromArgb(50,60,220)
-            Set-Format -Address $WorkSheet.Cells["A1:R1"] -BackgroundColor $BackgroundColor -FontColor White
-            # HorizontalAlignment "Center" of columns A-B, G-J and N-R
-            $WorkSheet.Cells["A:B"].Style.HorizontalAlignment="Center"
-            $WorkSheet.Cells["G:J"].Style.HorizontalAlignment="Center"
-            $WorkSheet.Cells["N:R"].Style.HorizontalAlignment="Center"
-            # HorizontalAlignment "Right" of columns K-L
-            $WorkSheet.Cells["K:L"].Style.HorizontalAlignment="Right"
-            # HorizontalAlignment "Center" of header of columns K-L
-            $WorkSheet.Cells["K1:L1"].Style.HorizontalAlignment="Center"
+            Write-Host "[Alert] Missing Internal Name, Original FileName, File Description, and Company Name detected [Modules] (Count: $Count)" -ForegroundColor Red
+        }
 
-            # Threat Hunting
+        # "File Description" or "Company Name": Empty --> Orange
+        $MediumColor = [System.Drawing.Color]::FromArgb(255,192,0)
+        Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=OR($E1="",$H1="")' -BackgroundColor $MediumColor
+        $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {(($_."File Description" -eq "") -or ($_."Company Name" -eq ""))}
+        $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
+        if ($Count -gt 0)
+        {
+            Write-Host "[Alert] Missing File Description and/or Company Name detected [Modules] (Count: $Count)" -ForegroundColor Yellow
+        }
 
-            # Fields are missing / empty (W/ Rule Priority)
+        # "Internal Name" or "Original FileName": Empty --> Yellow
+        $LowColor = [System.Drawing.Color]::FromArgb(255,255,0)
+        Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=OR($C1="",$D1="")' -BackgroundColor $LowColor
+        $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {(($_."Internal Name" -eq "") -or ($_."Original FileName" -eq ""))}
+        $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
+        if ($Count -gt 0)
+        {
+            Write-Host "[Alert] Missing Internal Name and/or Original FileName detected [Modules] (Count: $Count)" -ForegroundColor Yellow
+        }
 
-            # "Internal Name" and "Original FileName" and "File Description" and "Company Name" --> Red
-            $HighColor = [System.Drawing.Color]::FromArgb(255,0,0)
-            Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=AND($C1="",$D1="",$E1="",$H1="")' -BackgroundColor $HighColor
-            $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {(($_."Internal Name" -eq "") -and ($_."Original FileName" -eq "") -and ($_."File Description" -eq "") -and ($_."Company Name" -eq ""))}
-            $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
-            if ($Count -gt 0)
-            {
-                Write-Host "[Alert] Missing Internal Name, Original FileName, File Description, and Company Name detected [Modules] (Count: $Count)" -ForegroundColor Red
-            }
+        # Mismatch on Original FileName
+        $LowColor = [System.Drawing.Color]::FromArgb(255,255,0)
+        $LastRow = $WorkSheet.Dimension.End.Row
+        Add-ConditionalFormatting -Address $WorkSheet.Cells["D2:D$LastRow"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue '=$A2<>$D2' -BackgroundColor $LowColor
+        $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {($_."File Name" -notlike $_."Original FileName")}
+        $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
+        if ($Count -gt 0)
+        {
+            Write-Host "[Alert] Mismatch on Original FileName detected [Modules] (Count: $Count)" -ForegroundColor Yellow
+        }
 
-            # "File Description" or "Company Name": Empty --> Orange
-            $MediumColor = [System.Drawing.Color]::FromArgb(255,192,0)
-            Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=OR($E1="",$H1="")' -BackgroundColor $MediumColor
-            $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {(($_."File Description" -eq "") -or ($_."Company Name" -eq ""))}
-            $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
-            if ($Count -gt 0)
-            {
-                Write-Host "[Alert] Missing File Description and/or Company Name detected [Modules] (Count: $Count)" -ForegroundColor Yellow
-            }
-
-            # "Internal Name" or "Original FileName": Empty --> Yellow
-            $LowColor = [System.Drawing.Color]::FromArgb(255,255,0)
-            Add-ConditionalFormatting -Address $WorkSheet.Dimension.Address -WorkSheet $WorkSheet -RuleType 'Expression' '=OR($C1="",$D1="")' -BackgroundColor $LowColor
-            $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {(($_."Internal Name" -eq "") -or ($_."Original FileName" -eq ""))}
-            $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
-            if ($Count -gt 0)
-            {
-                Write-Host "[Alert] Missing Internal Name and/or Original FileName detected [Modules] (Count: $Count)" -ForegroundColor Yellow
-            }
-
-            # Mismatch on Original FileName
-            $LowColor = [System.Drawing.Color]::FromArgb(255,255,0)
-            $LastRow = $WorkSheet.Dimension.End.Row
-            Add-ConditionalFormatting -Address $WorkSheet.Cells["D2:D$LastRow"] -WorkSheet $WorkSheet -RuleType 'Expression' -ConditionValue '=$A2<>$D2' -BackgroundColor $LowColor
-            $Import = Import-Csv "$OUTPUT_FOLDER\sys\modules\CSV\modules.csv" -Delimiter "," | Where-Object {($_."File Name" -notlike $_."Original FileName")}
-            $Count = [string]::Format('{0:N0}',($Import | Measure-Object).Count)
-            if ($Count -gt 0)
-            {
-                Write-Host "[Alert] Mismatch on Original FileName detected [Modules] (Count: $Count)" -ForegroundColor Yellow
-            }
-
-            }
         }
     }
 }
@@ -10990,8 +11245,7 @@ if (Get-Process -Name "MemProcFS" -ErrorAction SilentlyContinue)
         Start-Sleep -Seconds 1
 
         # MemProcFS
-        [void][System.Reflection.Assembly]::LoadWithPartialName("'Microsoft.VisualBasic")
-        [void][System.Reflection.Assembly]::LoadWithPartialName("'System.Windows.Forms")
+        Add-Type -AssemblyName Microsoft.VisualBasic, System.Windows.Forms
         $Process = Get-Process | Where-Object {$_.Name -eq "MemProcFS"}
         [Microsoft.VisualBasic.Interaction]::AppActivate($Process.Id)
         [System.Windows.Forms.SendKeys]::SendWait("^{c}")
@@ -11080,10 +11334,10 @@ $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
 
 # Main
 Header
-#Elasticsearch
-MicrosoftDefender
+if ($Module.Elasticsearch -eq $true) { Elasticsearch }
+if ($Module.MicrosoftDefender -eq $true) { MicrosoftDefender }
 MemProcFS
-#ELKImport
+if ($Module.ELKImport -eq $true) { ELKImport }
 
 if ($ClamAV -eq "Enabled")
 {
@@ -11091,14 +11345,232 @@ if ($ClamAV -eq "Enabled")
     ClamAV
 }
 
-Documents
-DFIRBatch
-#LNK
-#LNK_Hunt
-ImageMount
-Modules
-#Invoke-1768
-SecureArchive
+if ($Module.Documents -eq $true) { Documents }
+if ($Module.DFIRBatch -eq $true) { DFIRBatch }
+if ($Module.LNK -eq $true) { LNK }
+if ($Module.LNK_Hunt -eq $true) { LNK_Hunt }
+if ($Module.ImageMount -eq $true) { ImageMount }
+if ($Module.Modules -eq $true) { Modules }
+if ($Module."Invoke-1768" -eq $true) { Invoke-1768 }
+if ($Module.SecureArchive -eq $true) { SecureArchive }
 Footer
 
 #endregion Main
+
+#############################################################################################################################################################################################
+#############################################################################################################################################################################################
+
+# SIG # Begin signature block
+# MIInkAYJKoZIhvcNAQcCoIIngTCCJ30CAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBSbqyIUjRSQXG1
+# ClwtOrp2IindVL4Y4UEdTVhIR6ggGKCCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
+# O5B5FSCJIRwKMA0GCSqGSIb3DQEBDAUAMFYxCzAJBgNVBAYTAkdCMRgwFgYDVQQK
+# Ew9TZWN0aWdvIExpbWl0ZWQxLTArBgNVBAMTJFNlY3RpZ28gUHVibGljIENvZGUg
+# U2lnbmluZyBSb290IFI0NjAeFw0yMTAzMjIwMDAwMDBaFw0zNjAzMjEyMzU5NTla
+# MFQxCzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxKzApBgNV
+# BAMTIlNlY3RpZ28gUHVibGljIENvZGUgU2lnbmluZyBDQSBSMzYwggGiMA0GCSqG
+# SIb3DQEBAQUAA4IBjwAwggGKAoIBgQCbK51T+jU/jmAGQ2rAz/V/9shTUxjIztNs
+# fvxYB5UXeWUzCxEeAEZGbEN4QMgCsJLZUKhWThj/yPqy0iSZhXkZ6Pg2A2NVDgFi
+# gOMYzB2OKhdqfWGVoYW3haT29PSTahYkwmMv0b/83nbeECbiMXhSOtbam+/36F09
+# fy1tsB8je/RV0mIk8XL/tfCK6cPuYHE215wzrK0h1SWHTxPbPuYkRdkP05ZwmRmT
+# nAO5/arnY83jeNzhP06ShdnRqtZlV59+8yv+KIhE5ILMqgOZYAENHNX9SJDm+qxp
+# 4VqpB3MV/h53yl41aHU5pledi9lCBbH9JeIkNFICiVHNkRmq4TpxtwfvjsUedyz8
+# rNyfQJy/aOs5b4s+ac7IH60B+Ja7TVM+EKv1WuTGwcLmoU3FpOFMbmPj8pz44MPZ
+# 1f9+YEQIQty/NQd/2yGgW+ufflcZ/ZE9o1M7a5Jnqf2i2/uMSWymR8r2oQBMdlyh
+# 2n5HirY4jKnFH/9gRvd+QOfdRrJZb1sCAwEAAaOCAWQwggFgMB8GA1UdIwQYMBaA
+# FDLrkpr/NZZILyhAQnAgNpFcF4XmMB0GA1UdDgQWBBQPKssghyi47G9IritUpimq
+# F6TNDDAOBgNVHQ8BAf8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADATBgNVHSUE
+# DDAKBggrBgEFBQcDAzAbBgNVHSAEFDASMAYGBFUdIAAwCAYGZ4EMAQQBMEsGA1Ud
+# HwREMEIwQKA+oDyGOmh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGlnb1B1Ymxp
+# Y0NvZGVTaWduaW5nUm9vdFI0Ni5jcmwwewYIKwYBBQUHAQEEbzBtMEYGCCsGAQUF
+# BzAChjpodHRwOi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNDb2RlU2ln
+# bmluZ1Jvb3RSNDYucDdjMCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdv
+# LmNvbTANBgkqhkiG9w0BAQwFAAOCAgEABv+C4XdjNm57oRUgmxP/BP6YdURhw1aV
+# cdGRP4Wh60BAscjW4HL9hcpkOTz5jUug2oeunbYAowbFC2AKK+cMcXIBD0ZdOaWT
+# syNyBBsMLHqafvIhrCymlaS98+QpoBCyKppP0OcxYEdU0hpsaqBBIZOtBajjcw5+
+# w/KeFvPYfLF/ldYpmlG+vd0xqlqd099iChnyIMvY5HexjO2AmtsbpVn0OhNcWbWD
+# RF/3sBp6fWXhz7DcML4iTAWS+MVXeNLj1lJziVKEoroGs9Mlizg0bUMbOalOhOfC
+# ipnx8CaLZeVme5yELg09Jlo8BMe80jO37PU8ejfkP9/uPak7VLwELKxAMcJszkye
+# iaerlphwoKx1uHRzNyE6bxuSKcutisqmKL5OTunAvtONEoteSiabkPVSZ2z76mKn
+# zAfZxCl/3dq3dUNw4rg3sTCggkHSRqTqlLMS7gjrhTqBmzu1L90Y1KWN/Y5JKdGv
+# spbOrTfOXyXvmPL6E52z1NZJ6ctuMFBQZH3pwWvqURR8AgQdULUvrxjUYbHHj95E
+# jza63zdrEcxWLDX6xWls/GDnVNueKjWUH3fTv1Y8Wdho698YADR7TNx8X8z2Bev6
+# SivBBOHY+uqiirZtg0y9ShQoPzmCcn63Syatatvx157YK9hlcPmVoa1oDE5/L9Uo
+# 2bC5a4CH2RwwggZrMIIE06ADAgECAhEAjEGek78rzqyIBig7dhm9PDANBgkqhkiG
+# 9w0BAQwFADBUMQswCQYDVQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVk
+# MSswKQYDVQQDEyJTZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2MB4X
+# DTI0MTExNDAwMDAwMFoXDTI3MTExNDIzNTk1OVowVzELMAkGA1UEBhMCREUxFjAU
+# BgNVBAgMDU5pZWRlcnNhY2hzZW4xFzAVBgNVBAoMDk1hcnRpbiBXaWxsaW5nMRcw
+# FQYDVQQDDA5NYXJ0aW4gV2lsbGluZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCC
+# AgoCggIBANGfbuacjMHp2wkUsx7FBA1F3xoy/vcNOVrrwbpDy75XZNjUlD9niPag
+# Ij0BNbcrc/s0A92UTRCa12MLQX/viOx+KX+LwvDG7JPTfjBptWJkpRyh2YqwQWEz
+# 1qbxbmRSAu4LkUgrjA06rlN/Nh0dPIm7V5HZe5IOgynTCDjmY64U0FtgHwNUG0fG
+# hu9arh4KzeVTFfTvBHdCvZS1v3bDx5Ta8qvZKz3EiH9i8zhTGAGk7Ujo75ba0AHm
+# abKciCgJ9fua7qIPcD4CGlD0a/bT0bzfLwU+sUkhZTvtNN6ESts+NnTvjFfCuUSS
+# GcZQKTXD4qI21kdpKfRf6+eGonui0HFBlAARKWFZekMoK6eedWdWDC9Va1xwCHFk
+# 73l6J/pWyz9SEJoFnbqzOWd4a0V5MKUjj6Teap9a6h21eMdzyiEByVantdXLCWLC
+# EIUSwBwWSmQLKK97LSyoR+vCIydHLV6UfVLftdxBpq/n5u3grG0he45UTHe8z0wd
+# 2WtpbTLWifkTyLi1qB0jjlMfQtTTzS5tzYwqqrple2mVO7XB0XYKDLeF9JIuQmxx
+# FYCm+m847pW1ziNMb8A7qKo3kzpLB36DjRe2zEEP+BKT2QyqSAnWkPUanmCQec/W
+# 96635iAn3FZxEMkju9yKz2qxfC1XJt44KHnqtNC8L9N/oEm2KJ4RAgMBAAGjggGz
+# MIIBrzAfBgNVHSMEGDAWgBQPKssghyi47G9IritUpimqF6TNDDAdBgNVHQ4EFgQU
+# jHJkCYQeXu4B8TBsHifMjwwIItswDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQC
+# MAAwEwYDVR0lBAwwCgYIKwYBBQUHAwMwSgYDVR0gBEMwQTA1BgwrBgEEAbIxAQIB
+# AwIwJTAjBggrBgEFBQcCARYXaHR0cHM6Ly9zZWN0aWdvLmNvbS9DUFMwCAYGZ4EM
+# AQQBMEkGA1UdHwRCMEAwPqA8oDqGOGh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2Vj
+# dGlnb1B1YmxpY0NvZGVTaWduaW5nQ0FSMzYuY3JsMHkGCCsGAQUFBwEBBG0wazBE
+# BggrBgEFBQcwAoY4aHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUHVibGlj
+# Q29kZVNpZ25pbmdDQVIzNi5jcnQwIwYIKwYBBQUHMAGGF2h0dHA6Ly9vY3NwLnNl
+# Y3RpZ28uY29tMCgGA1UdEQQhMB+BHW13aWxsaW5nQGxldGhhbC1mb3JlbnNpY3Mu
+# Y29tMA0GCSqGSIb3DQEBDAUAA4IBgQBnR0EwzCW5YZv4wPWsZZo+1pes1meVmo5n
+# GBt2swsEoBCvRAZwgsJUhnhJlhp69PnIxHqMUZICOBoW2eTxmlu0bCKD9538L8PU
+# 17xJnJ9920Auez/kIfEydTySzu63t2xHrMUPj9uaWO6hSiLnlbr9dT/Wmv62pFpk
+# Ym+NIolAI30yEUC9dKk8+pGyPbvN7X4pggEXX8vQFbQdLR31mEZJSgTCowMulB/Z
+# 6okXLLLNa3bVVWEsXqaBnV0Tm0ItljsRHPHr+Hk3sXTDfrWiKCLMxsIx1JPb1c5z
+# mYHyroLJ7s6YR8zaMHJFZr5x3hHJyw3anbAdG6SmrjyJf609UqYfA0p/66m4o8NA
+# B5XgnuBQK168iw62jKILb5qaKa7zWjjbgOX42wDIIvPRJe80CFW+1TvcfrWC2g9r
+# 9Jai56bZL5vOnuga8Y+in/2aHgJeSLotV4MfeEMzyFmwmD8ROghaIOjNNzbJarBX
+# g7PJ3jHkjHyVyRcyBa7JZzGYsrVGYqkwggaCMIIEaqADAgECAhA2wrC9fBs656Oz
+# 3TbLyXVoMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQGEwJVUzETMBEGA1UECBMK
+# TmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoTFVRoZSBV
+# U0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZp
+# Y2F0aW9uIEF1dGhvcml0eTAeFw0yMTAzMjIwMDAwMDBaFw0zODAxMTgyMzU5NTla
+# MFcxCzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLjAsBgNV
+# BAMTJVNlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgUm9vdCBSNDYwggIiMA0G
+# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCIndi5RWedHd3ouSaBmlRUwHxJBZvM
+# WhUP2ZQQRLRBQIF3FJmp1OR2LMgIU14g0JIlL6VXWKmdbmKGRDILRxEtZdQnOh2q
+# mcxGzjqemIk8et8sE6J+N+Gl1cnZocew8eCAawKLu4TRrCoqCAT8uRjDeypoGJrr
+# uH/drCio28aqIVEn45NZiZQI7YYBex48eL78lQ0BrHeSmqy1uXe9xN04aG0pKG9k
+# i+PC6VEfzutu6Q3IcZZfm00r9YAEp/4aeiLhyaKxLuhKKaAdQjRaf/h6U13jQEV1
+# JnUTCm511n5avv4N+jSVwd+Wb8UMOs4netapq5Q/yGyiQOgjsP/JRUj0MAT9Yrcm
+# XcLgsrAimfWY3MzKm1HCxcquinTqbs1Q0d2VMMQyi9cAgMYC9jKc+3mW62/yVl4j
+# nDcw6ULJsBkOkrcPLUwqj7poS0T2+2JMzPP+jZ1h90/QpZnBkhdtixMiWDVgh60K
+# mLmzXiqJc6lGwqoUqpq/1HVHm+Pc2B6+wCy/GwCcjw5rmzajLbmqGygEgaj/OLoa
+# nEWP6Y52Hflef3XLvYnhEY4kSirMQhtberRvaI+5YsD3XVxHGBjlIli5u+NrLedI
+# xsE88WzKXqZjj9Zi5ybJL2WjeXuOTbswB7XjkZbErg7ebeAQUQiS/uRGZ58NHs57
+# ZPUfECcgJC+v2wIDAQABo4IBFjCCARIwHwYDVR0jBBgwFoAUU3m/WqorSs9UgOHY
+# m8Cd8rIDZsswHQYDVR0OBBYEFPZ3at0//QET/xahbIICL9AKPRQlMA4GA1UdDwEB
+# /wQEAwIBhjAPBgNVHRMBAf8EBTADAQH/MBMGA1UdJQQMMAoGCCsGAQUFBwMIMBEG
+# A1UdIAQKMAgwBgYEVR0gADBQBgNVHR8ESTBHMEWgQ6BBhj9odHRwOi8vY3JsLnVz
+# ZXJ0cnVzdC5jb20vVVNFUlRydXN0UlNBQ2VydGlmaWNhdGlvbkF1dGhvcml0eS5j
+# cmwwNQYIKwYBBQUHAQEEKTAnMCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2Vy
+# dHJ1c3QuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQAOvmVB7WhEuOWhxdQRh+S3OyWM
+# 637ayBeR7djxQ8SihTnLf2sABFoB0DFR6JfWS0snf6WDG2gtCGflwVvcYXZJJlFf
+# ym1Doi+4PfDP8s0cqlDmdfyGOwMtGGzJ4iImyaz3IBae91g50QyrVbrUoT0mUGQH
+# bRcF57olpfHhQEStz5i6hJvVLFV/ueQ21SM99zG4W2tB1ExGL98idX8ChsTwbD/z
+# IExAopoe3l6JrzJtPxj8V9rocAnLP2C8Q5wXVVZcbw4x4ztXLsGzqZIiRh5i111T
+# W7HV1AtsQa6vXy633vCAbAOIaKcLAo/IU7sClyZUk62XD0VUnHD+YvVNvIGezjM6
+# CRpcWed/ODiptK+evDKPU2K6synimYBaNH49v9Ih24+eYXNtI38byt5kIvh+8aW8
+# 8WThRpv8lUJKaPn37+YHYafob9Rg7LyTrSYpyZoBmwRWSE4W6iPjB7wJjJpH2930
+# 8ZkpKKdpkiS9WNsf/eeUtvRrtIEiSJHN899L1P4l6zKVsdrUu1FX1T/ubSrsxrYJ
+# D+3f3aKg6yxdbugot06YwGXXiy5UUGZvOu3lXlxA+fC13dQ5OlL2gIb5lmF6Ii8+
+# CQOYDwXM+yd9dbmocQsHjcRPsccUd5E9FiswEqORvz8g3s+jR3SFCgXhN4wz7NgA
+# nOgpCdUo4uDyllU9PzCCBqcwggSPoAMCAQICEQCQrAhyIP3Fp8RrXMcN9z0GMA0G
+# CSqGSIb3DQEBDAUAMFcxCzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExp
+# bWl0ZWQxLjAsBgNVBAMTJVNlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgUm9v
+# dCBSNDYwHhcNMjYwMzI1MDAwMDAwWhcNNDEwMzI0MjM1OTU5WjBVMQswCQYDVQQG
+# EwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMSwwKgYDVQQDEyNTZWN0aWdv
+# IFB1YmxpYyBUaW1lIFN0YW1waW5nIENBIFI0MTCCAiIwDQYJKoZIhvcNAQEBBQAD
+# ggIPADCCAgoCggIBAK7kSqIBrYIcYvlmLVuaA8zw1RfBhkn4G1CoemzjcYtML6yN
+# UvKmwGH7y6/5MuSC1UYP/+9KYDSqvMQt/1hEKHYxMAD9oZpBkoaDQFEKbOJHelsK
+# e+BaO0ZcENTKfePcraVkA7wrGAW2XHA5gQCQv4IKori/3PNOXxnDMOk8yIMgVrlM
+# eTxqfWJ4XkjT1xc2s9DD7URHWWJOFobTPoWs6mrDFlaY9FlAHDYTfbzvxQHVsvRm
+# n3W+5ZmCwyk02I8KgGPT/UX4sTz41GiR+ppwUjQXa1+2tEHZbsdAKUtH3OPEVtZv
+# lt7atx4h83IdRR8oYi8wjY3OjFKXFecWpQbzzsPxbUKPwMWiTrzwkrFa8dH/1pDK
+# RJt371W62PfqKPayCr/XbnBOlRn8CALSmHnRtGzuAWtTJpcT3BKw6oy8IIL6wSbu
+# 938F6ZIbRNIc1dKbIJtr4ULN6R5ZfTdNEhwXctqp3RHDbg4fuOl6LjNoaFwjud92
+# EEDhzxFJzE1jqN4csceZIwxOT1aqfsfh0uFQE/lgTBuBs3i6/WL2W1OceWLy3XEd
+# XRK1f0EWCuea6dNfX2RRdjUfk5EltFnJkN2+bWhnK14OPRKcyjOv5hKZ0iV4NRNd
+# 1+hjtva1rPyzb5Bs7EvFxqEQhgZbOq7qH3nm0rBwA0dxniBOYCFPdu246JCxAgMB
+# AAGjggFuMIIBajAfBgNVHSMEGDAWgBT2d2rdP/0BE/8WoWyCAi/QCj0UJTAdBgNV
+# HQ4EFgQUOnSlDGfGQlDC/bX8x7spNIL0erkwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+# EwEB/wQIMAYBAf8CAQAwEwYDVR0lBAwwCgYIKwYBBQUHAwgwIwYDVR0gBBwwGjAI
+# BgZngQwBBAIwDgYMKwYBBAGyMQECAQMIMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6
+# Ly9jcmwuc2VjdGlnby5jb20vU2VjdGlnb1B1YmxpY1RpbWVTdGFtcGluZ1Jvb3RS
+# NDYuY3JsMHwGCCsGAQUFBwEBBHAwbjBHBggrBgEFBQcwAoY7aHR0cDovL2NydC5z
+# ZWN0aWdvLmNvbS9TZWN0aWdvUHVibGljVGltZVN0YW1waW5nUm9vdFI0Ni5wN2Mw
+# IwYIKwYBBQUHMAGGF2h0dHA6Ly9vY3NwLnNlY3RpZ28uY29tMA0GCSqGSIb3DQEB
+# DAUAA4ICAQAy3lJHZvGeA2b43yhzoarvobHVzbfl+RfuPDwej0wCQkYAN6scTt2G
+# wFe22qbOCv/tllqFlLKQZE+E9jVyuPTbyQHwrM7R0oLapAEDC1+CowsqSRf/ptir
+# a5Pfd4PoHICnb9coPQtyZmHSQp5y9IGvqWf1qNfq7V2fHZ8DvEQrLUzeoGF9BJRY
+# u2OzacW3QQtUum3NOVf0gPRwv6I4991uhncJ6VP4lcpUpHZKB7R3hiIUC09mR9Kj
+# zPVnXHvL9n2bAwiUECfK5Zezhiw27F2tgi39DETfU8M4n0N6xLgFzsf05M5GURX8
+# C9+IX9V6kpmmKtrUzMti4LD66gtmf+mSm934K81NL6YQeMEk1rpYrWPypcW76Mir
+# 6wb1AgseLIHqn/GkeuQm7zOTDf3f5WoX14qVNjZWNHF3JxkutV6ZnhinfCLfdv5b
+# nwKWUfceqOajCVntI6uCbHxjBg6SCsexc5AfIGno7gVFvwifT4XONPsSUaJ71XsJ
+# +EvciVUVnjOO4qxm0fWJTd8a7jP8mc4ZPqwJvQFtOp7+6G+kUJAF0fnE8YgD8utt
+# BReNTa1YmAeFMiqc38e8fI4eLm0zjM/eeGCHasnoqqrbGwcF41iz9HXzFDwN4iD5
+# z3QShp6HRiU3UpTwDJiiXcr0z6pjl7PyzJ3/tmWtGehV7CAfc/WlyzCCBuIwggTK
+# oAMCAQICEQDnTvJVsFBP+tum3/f8i6MVMA0GCSqGSIb3DQEBDAUAMFUxCzAJBgNV
+# BAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMTI1NlY3Rp
+# Z28gUHVibGljIFRpbWUgU3RhbXBpbmcgQ0EgUjQxMB4XDTI2MDMyNTAwMDAwMFoX
+# DTM3MDYyNDIzNTk1OVowcjELMAkGA1UEBhMCR0IxFzAVBgNVBAgTDkdyZWF0ZXIg
+# TG9uZG9uMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxMDAuBgNVBAMTJ1NlY3Rp
+# Z28gUHVibGljIFRpbWUgU3RhbXBpbmcgU2lnbmVyIFIzNzCCAiIwDQYJKoZIhvcN
+# AQEBBQADggIPADCCAgoCggIBALL/w21L3FDZRS0FEXfZuPtUrefibnRSqOT/NNyJ
+# LOJhXjQfUspqHT+gSSVgbjYThUI/cO+wFQHoOakKQNnSMKdkE8gR69ofXlkk5DAV
+# Y/ZlevliOUmlvrw2Vuz4SU28rHfb/Vgd17eqpRIvJuO6XE8vPpPzn4c4iorszUF6
+# nwuynKEQ/+rqfDmQbFNKsa+5+Z4f4kXwKdUFxUwUDjQWUhiHRwMlUWGF9N91aAvL
+# +9a4sxCgqR/ez8W8HJ/XqvSu1vIeb+J6bDFKKgkv3PJkMMpQ0BsdeXR2FejZXFRX
+# Y1w9dZe6gqyMv7px+TpWbYMefECUV0WxoEMgXUk6RKcLo94uUHOdmfZu4Xe8ghgl
+# yro3/N4VEKTj8dcPPvOBGxFEx1QH6uHKTkWhloGPDScurcZnd8KUtTHl6zmlQDHM
+# 04MwGfsmQViKnYEAYE8RHl5XRE6GTq0ZMb59SIyJX6+CODVic/kW+dhbIS1Z5AP8
+# HaGne/PRG+12QzSneKDJp3Ot+k4GrmmlWT9iy6FNCQ/32K+d4cAZ+Ll7uWbEn6Z6
+# gE+tEu7MyZvzWvPNsRKMkcyyflFW1zpRyzutwypALXc9Qg7sFsYERNXa58KZXqU9
+# Onc/tck6+adQJFM9tW8xOnE//P5I4eDj84IGGKqzgUD37ihC+WST3DfY0YBKWL0Z
+# aubnAgMBAAGjggGOMIIBijAfBgNVHSMEGDAWgBQ6dKUMZ8ZCUML9tfzHuyk0gvR6
+# uTAdBgNVHQ4EFgQUYRDpehKvUcSF1PLPpHQPUM0gr/gwDgYDVR0PAQH/BAQDAgbA
+# MAwGA1UdEwEB/wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwSgYDVR0gBEMw
+# QTAIBgZngQwBBAIwNQYMKwYBBAGyMQECAQMIMCUwIwYIKwYBBQUHAgEWF2h0dHBz
+# Oi8vc2VjdGlnby5jb20vQ1BTMEoGA1UdHwRDMEEwP6A9oDuGOWh0dHA6Ly9jcmwu
+# c2VjdGlnby5jb20vU2VjdGlnb1B1YmxpY1RpbWVTdGFtcGluZ0NBUjQxLmNybDB6
+# BggrBgEFBQcBAQRuMGwwRQYIKwYBBQUHMAKGOWh0dHA6Ly9jcnQuc2VjdGlnby5j
+# b20vU2VjdGlnb1B1YmxpY1RpbWVTdGFtcGluZ0NBUjQxLmNydDAjBggrBgEFBQcw
+# AYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wDQYJKoZIhvcNAQEMBQADggIBAAPq
+# PY3RrM36GXqTpsoHn9TpW5I6z3dkFvc9zPL1W0Egq7j3jtnkbAvRoWeAjGX4ZK4s
+# WsmA+u4EJG8okQmybuS/4tDUI5UIQb21n4hG2vihxShrneWB0VoQ2VLQ3jCCRmRt
+# AQ+/7H7WVKNiH5Pgl4v2ZTOdPsStzpKnl1YuRrmww/+bcZmLqgk909ywIpZqAfub
+# YfbEMYjIckLk90f2mG+L8qaGSS2JJVM02pV5XltZ1fbOFETpRN/PQhwygIv33qUU
+# jJ1fE4ITgw0McMzRqziWdOJP8ocxxw7qXxz1OdRWCalyL1qvUgAFnZTVdSRiMYZK
+# f0wLcQcM/1Xf1W4FW9nff8ERX8RZJGt/TtPuMWmUpf6BCv9Q6o8YyUTtknvZRpSQ
+# 0nLttWXdtwsrN2mMgfMuR//gxVrVXvDzCoK/lbiA6dEZOW53lQwBFtEzwE/FH8Jd
+# hegyYg4PymZOTZrGBEvgsbxe25yEhJ0IdGa1pwCYsarldJhJVMdNcAOU7jyIMqHc
+# czav3wtIXp/SwbXZ3xX0mfsLfANSJ47G4qPgx1atb6GIlTaQXzu/p4fTQeAIUVzZ
+# XT4K984IyfuO7NLjWMtog1wGUpZD98pv+4Mt9Y5bvfPUjaUVjtePy1DVdi0rl5ES
+# NYi0zyOmXVxtA5zzxu1H7RdLZOZugT/XjX69rY9bMYIGQjCCBj4CAQEwaTBUMQsw
+# CQYDVQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMSswKQYDVQQDEyJT
+# ZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEAjEGek78rzqyIBig7
+# dhm9PDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
+# MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCBXaP28XYH0NVg8hne1Z5zWfjg6pg39
+# o+uTNjSiBENRCTANBgkqhkiG9w0BAQEFAASCAgANuvzQxGMm8UsDNjowa9FqCinu
+# hBL0wm70Jn/8AN4B+fKebiZj7IdDlvLX9HLlTR6geY75R9mhlkL5sQK+o2O/y/2/
+# ls6TjTEVdZ034rlRIFjL8JGahmoWFesW79tjmYuDyOdXdx/oR8uDReqLrLwlqgDy
+# j4K7nR8KYxndeKFddjalXxh7GNHiGlOVHwWf37JJ23Csg+RSuh3NhT+eBOnARFe1
+# cp0oCh2OXHKtwiEtDL/2NfYHAKT64Us3gMIu43OV/EX1OWNUbTXGzKe2LlBLEgIA
+# 0SdW3cyO67RF75ahxVV3GHXtu/6EkVsUAvMNqcq/O0kjhyHbOeZ5ZFAPNKqlurhz
+# 7spJ7Rj/CUasmHNWR/nzYsMfVmhj/B5JpdhJ8mB5KSHVDVM3NtORmHjlghPdLKrY
+# z1rn3zSoZnJkgS2Qpjt4hBqfys0g6CntKxVSFYbjAw0a2gNC2ntL98p1tFXyqutr
+# TdCxbUU/IgZxPz55bww4G1FabFJxho7nBw09UQeZ0NkLCTSef/qsfZmTku7vSwA/
+# aAjUVY/QcPksr0W4VCmSkq34uDZSe6MQ22fpHOdYhvE7Yb3Ro72C2TedwHMayTDT
+# ao/OkUDrU7JNlpReb3tin+AHgGdi4o5ulP43TiIaNT+Hv+/9M4ZUOrtPY28Vai6q
+# 7Cx9DEMHi0ZW5ks1wqGCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
+# CzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMT
+# I1NlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgQ0EgUjQxAhEA507yVbBQT/rb
+# pt/3/IujFTANBglghkgBZQMEAgIFAKB5MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
+# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTEwOTEwMTM1NVowPwYJKoZIhvcNAQkEMTIE
+# MKInqvn6xsFofd7kvk8QxduN/mEeMt+YaK96vw6a03aUrz/g+lfkKtlYkeKlF0l1
+# GTANBgkqhkiG9w0BAQEFAASCAgCCXVRp+c+6+jihPQ/WnJyYm25mpPtgsrTVdMaw
+# 8k7i01Go/Yye4AWmPtjeEkWuraSTNf7ozG62nYdtBbPDdrv0wgdgSpjKXQ9xhjRW
+# O/7VsYlnyB9QmW6C1j83Ib7Tu6aQ4tYKh+aqPYYa7WyuOEH4zgxQqYEGcL/p3com
+# 3VjfcG2BkCz2beSFrtcdxERp2S8FwVzOHTYuQg7pCa6l6/njZApSN7worlzFAwxt
+# cU4kfBQxI2qeHmBOTppyFuYETe1Viz1Pora5tAawv4NW4kgckipHe7ytX2nt5GPc
+# 6zER53CDiCgvIzrzJ8RBtK0XsCAwR5X4L5z8Vvikaa9I/zw59VP7N0DQaUEeifm1
+# ne6Qyk0XqBFOJOHtOAQf5OTFU1hPSmwTc+rAJJr75cKEhmSRGIIYkkXPlcxAhDJ7
+# F0UAzKmAdOw/zcA3nkLhsHYVzUr2B2E4TS39hFAobFuOhApsziHqNm98kYu8LDHZ
+# K/60F0MQo5DREq90rAsV5Rtubc24//22CQTC6tgNLj0j0/I15UaBB+eX40Lr5snv
+# VkmTduwIKBCibsPX3I805roNR2s9g1IPZKg5nC6xCXHwrjaPsgnKmQOhvlluVsDb
+# A1uzGlDt9loMSZELrOy4acXgiOMJG+Ioxf7EXEGn3ic83gSl5kBcNFidy9WbsAMI
+# wLERDQ==
+# SIG # End signature block

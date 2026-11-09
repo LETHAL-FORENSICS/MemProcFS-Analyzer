@@ -1,10 +1,10 @@
-﻿# MemProcFS-Analyzer Updater v0.7
+﻿# MemProcFS-Analyzer Updater v0.8
 #
 # @author:    Martin Willing
 # @copyright: Copyright (c) 2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-08-31
+# @date:      2026-11-07
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -48,11 +48,18 @@
 # Added: GitHub API Rate Limit Check
 # Fixed: Get-Yara --> Check if the release contains a compiled version for Windows (x64)
 # Fixed: Get-Zircolite --> Check if Python is installed
-# Fixed: Minor fixes and improvements 
+# Fixed: Minor fixes and improvements
+#
+# Version 0.8
+# Release Date: 2026-11-07
+# Added: DotNetCheck
+# Added: EZTools 2026.10 (.NET 10)
+# Added: Zircolite v4 Support
+# Fixed: Minor fixes and improvements
 #
 #
-# Tested on Windows 11 Pro (x64) Version 25H2 (10.0.26100.9168) and PowerShell 5.1 (5.1.26100.9168)
-# Tested on Windows 11 Pro (x64) Version 25H2 (10.0.26100.9168) and PowerShell 7.6.5
+# Tested on Windows 11 Pro (x64) Version 26H2 (10.0.26300.9711) and PowerShell 7.6.9
+# Tested on Windows 11 Pro (x64) Version 26H2 (10.0.26300.9711) and PowerShell 5.1 (5.1.26100.9711)
 #
 #
 #############################################################################################################################################################################################
@@ -60,7 +67,7 @@
 
 <#
 .SYNOPSIS
-  MemProcFS-Analyzer Updater v0.7 - Automated Installer/Updater for MemProcFS-Analyzer
+  MemProcFS-Analyzer Updater v0.8 - Automated Installer/Updater for MemProcFS-Analyzer
 
 .DESCRIPTION
   Updater.ps1 is a PowerShell script utilized to automate the installation and the update process of MemProcFS-Analyzer (incl. all dependencies).
@@ -110,10 +117,24 @@ else
     $script:SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Definition
 }
 
+# Version
+$Version = "v0.8"
+
 # Tools
 
 # 7-Zip
-$script:7za = "$SCRIPT_DIR\Tools\7-Zip\7za.exe"
+
+# x64
+if ($env:PROCESSOR_ARCHITECTURE -eq "AMD64" -or $env:PROCESSOR_ARCHITEW6432 -eq "AMD64")
+{
+    $script:7za = "$SCRIPT_DIR\Tools\7-Zip\x64\7za.exe"
+}
+
+# x86
+if ($env:PROCESSOR_ARCHITECTURE -eq "x86" -and -not $env:PROCESSOR_ARCHITEW6432)
+{
+    $script:7za = "$SCRIPT_DIR\Tools\7-Zip\x86\7za.exe"
+}
 
 # AmcacheParser
 $script:AmcacheParser = "$SCRIPT_DIR\Tools\AmcacheParser\AmcacheParser.exe"
@@ -163,6 +184,9 @@ $script:xsv = "$SCRIPT_DIR\Tools\xsv\xsv.exe"
 # YARA
 $script:yara64 = "$SCRIPT_DIR\Tools\YARA\yara64.exe"
 
+# Zircolite
+$script:Zircolite = "$SCRIPT_DIR\Tools\Zircolite\Zircolite.exe"
+
 #endregion Declarations
 
 #############################################################################################################################################################################################
@@ -172,7 +196,7 @@ $script:yara64 = "$SCRIPT_DIR\Tools\YARA\yara64.exe"
 
 # Windows Title
 $DefaultWindowsTitle = $Host.UI.RawUI.WindowTitle
-$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer Updater v0.7 - Automated Installer/Updater for MemProcFS-Analyzer"
+$Host.UI.RawUI.WindowTitle = "MemProcFS-Analyzer Updater $Version - Automated Installer/Updater for MemProcFS-Analyzer"
 
 # Check if the PowerShell script is being run with admin rights
 if (!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
@@ -202,7 +226,7 @@ Write-Output "$Logo"
 Write-Output ""
 
 # Header
-Write-Output "MemProcFS-Analyzer Updater v0.7 - Automated Installer/Updater for MemProcFS-Analyzer"
+Write-Output "MemProcFS-Analyzer Updater $Version - Automated Installer/Updater for MemProcFS-Analyzer"
 Write-Output "(c) 2026 Martin Willing at Lethal-Forensics (https://lethal-forensics.com/)"
 Write-Output ""
 
@@ -731,9 +755,33 @@ else
 
 #############################################################################################################################################################################################
 
+Function DotNetCheck {
+
+# .NET 10 (EZTools)
+$Runtime = $null
+if (Get-Command -CommandType Application dotnet -ErrorAction SilentlyContinue)
+{
+    $Runtime = dotnet --list-runtimes | Select-String -Pattern "^Microsoft\.WindowsDesktop\.App (10\.\S+)" | Select-Object -Last 1
+}
+
+if ($Runtime)
+{
+    Write-Output "[Info]  Current Version: .NET Desktop Runtime v$($Runtime.Matches[0].Groups[1].Value)"
+    Write-Host "[Info]  .NET 10 is installed (required by EZTools)." -ForegroundColor Green
+}
+else
+{
+    Write-Host "[Error] .NET 10 NOT found (required by EZTools). Please download/install .NET 10.0 manually:" -ForegroundColor Red
+    Write-Host "        https://dotnet.microsoft.com/en-us/download/dotnet/10.0 (Recommended: .NET Desktop Runtime)" -ForegroundColor Red
+}
+
+}
+
+#############################################################################################################################################################################################
+
 Function Get-AmcacheParser {
 
-# AmcacheParser (.NET 9)
+# AmcacheParser (.NET 10)
 # https://ericzimmerman.github.io
 
 # Check Current Version and ETag of AmcacheParser
@@ -755,7 +803,7 @@ if (Test-Path "$($AmcacheParser)")
 
     # Determining latest release of AmcacheParser
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/AmcacheParser.zip" # https://download.ericzimmermanstools.com/net9/AmcacheParser.zip
+    $URL = "https://download.ericzimmermanstools.com/net/AmcacheParser.zip"
     $Headers = (Invoke-WebRequest -Uri $URL -UseBasicParsing -Method Head).Headers
     $LatestETag = ($Headers["ETag"]).Replace('"','')
 }
@@ -770,7 +818,7 @@ if ($null -eq $CurrentETag -or $CurrentETag -ne $LatestETag)
     # Download latest release from ericzimmermanstools.com
     Write-Output "[Info]  Dowloading Latest Release ..."
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/AmcacheParser.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/AmcacheParser.zip"
     $Zip = "AmcacheParser.zip"
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest -Uri $URL -OutFile "$SCRIPT_DIR\Tools\$Zip"
@@ -806,7 +854,7 @@ else
 
 Function Get-AppCompatCacheParser {
 
-# AppCompatCacheParser (.NET 9)
+# AppCompatCacheParser (.NET 10)
 # https://ericzimmerman.github.io
 
 # Check Current Version and ETag of AppCompatCacheParser
@@ -828,7 +876,7 @@ if (Test-Path "$($AppCompatCacheParser)")
 
     # Determining latest release of AppCompatCacheParser
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/AppCompatCacheParser.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/AppCompatCacheParser.zip"
     $Headers = (Invoke-WebRequest -Uri $URL -UseBasicParsing -Method Head).Headers
     $LatestETag = ($Headers["ETag"]).Replace('"','')
 }
@@ -843,7 +891,7 @@ if ($null -eq $CurrentETag -or $CurrentETag -ne $LatestETag)
     # Download latest release from ericzimmermanstools.com
     Write-Output "[Info]  Dowloading Latest Release ..."
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/AppCompatCacheParser.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/AppCompatCacheParser.zip"
     $Zip = "AppCompatCacheParser.zip"
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest -Uri $URL -OutFile "$SCRIPT_DIR\Tools\$Zip"
@@ -970,7 +1018,7 @@ else
 
 Function Get-EvtxECmd {
 
-# EvtxECmd (.NET 9)
+# EvtxECmd (.NET 10)
 # https://ericzimmerman.github.io
 
 # Check Current Version and ETag of EvtxECmd
@@ -992,7 +1040,7 @@ if (Test-Path "$($EvtxECmd)")
 
     # Determining latest release of EvtxECmd
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/EvtxECmd.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/EvtxECmd.zip"
     $Headers = (Invoke-WebRequest -Uri $URL -UseBasicParsing -Method Head).Headers
     $LatestETag = ($Headers["ETag"]).Replace('"','')
 }
@@ -1007,7 +1055,7 @@ if ($null -eq $CurrentETag -or $CurrentETag -ne $LatestETag)
     # Download latest release from ericzimmermanstools.com
     Write-Output "[Info]  Dowloading Latest Release ..."
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/EvtxECmd.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/EvtxECmd.zip"
     $Zip = "EvtxECmd.zip"
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest -Uri $URL -OutFile "$SCRIPT_DIR\Tools\$Zip"
@@ -1402,7 +1450,7 @@ else
 
 Function Get-RECmd {
 
-# RECmd (.NET 9)
+# RECmd (.NET 10)
 # https://ericzimmerman.github.io
 
 # Check Current Version and ETag of RECmd
@@ -1424,7 +1472,7 @@ if (Test-Path "$($RECmd)")
 
     # Determining latest release of RECmd
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/RECmd.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/RECmd.zip"
     $Headers = (Invoke-WebRequest -Uri $URL -UseBasicParsing -Method Head).Headers
     $LatestETag = ($Headers["ETag"]).Replace('"','')
 }
@@ -1439,7 +1487,7 @@ if ($null -eq $CurrentETag -or $CurrentETag -ne $LatestETag)
     # Download latest release from ericzimmermanstools.com
     Write-Output "[Info]  Dowloading Latest Release ..."
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/RECmd.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/RECmd.zip"
     $Zip = "RECmd.zip"
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest -Uri $URL -OutFile "$SCRIPT_DIR\Tools\$Zip"
@@ -1504,7 +1552,7 @@ else
 
 Function Get-SBECmd {
 
-# SBECmd (.NET 9)
+# SBECmd (.NET 10)
 # https://ericzimmerman.github.io
 
 # Check Current Version and ETag of SBECmd
@@ -1526,7 +1574,7 @@ if (Test-Path "$($SBECmd)")
 
     # Determining latest release of SBECmd
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/SBECmd.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/SBECmd.zip"
     $Headers = (Invoke-WebRequest -Uri $URL -UseBasicParsing -Method Head).Headers
     $LatestETag = ($Headers["ETag"]).Replace('"','')
 }
@@ -1541,7 +1589,7 @@ if ($null -eq $CurrentETag -or $CurrentETag -ne $LatestETag)
     # Download latest release from ericzimmermanstools.com
     Write-Output "[Info]  Dowloading Latest Release ..."
     $ProgressPreference = 'SilentlyContinue'
-    $URL = "https://download.ericzimmermanstools.com/net9/SBECmd.zip"
+    $URL = "https://download.ericzimmermanstools.com/net/SBECmd.zip"
     $Zip = "SBECmd.zip"
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest -Uri $URL -OutFile "$SCRIPT_DIR\Tools\$Zip"
@@ -1763,47 +1811,25 @@ else
 
 Function Get-Zircolite {
 
-# Dependencies:
-# https://github.com/wagga40/Zircolite/blob/master/requirements.txt
-#
-# cd "$SCRIPT_DIR\Tools\Zircolite"
-# pip install -r requirements.txt
-
-# Check if Python is installed
-if (Get-Command python -ErrorAction SilentlyContinue)
+# Check Current Version of Zircolite
+if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Zircolite.exe")
 {
-    $VersionOutput = (& python --version 2>&1)
-    if ($LASTEXITCODE -eq 0 -and $VersionOutput -match "Python \d+\.\d+\.\d+")
-    {
-        # Check Current Version of Zircolite
-        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
-        {
-            $MyLocation = $pwd
-            Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-            $CurrentVersion = (python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --version 2>&1 | Select-String -Pattern "Zircolite -" | ForEach-Object{($_ -split "Zircolite - ")[-1]} | ForEach-Object{($_ -replace "v","")}).Trim()
-            Set-Location "$MyLocation"
-            Write-Output "[Info]  Current Version: Zircolite v$CurrentVersion"
+    $MyLocation = $pwd
+    Set-Location "$SCRIPT_DIR\Tools\Zircolite"
+    $CurrentVersion = (& $Zircolite --version 2>&1 | Select-String -Pattern "Zircolite -" | ForEach-Object{($_ -split "Zircolite - ")[-1]} | ForEach-Object{($_ -replace "v","")}).Trim()
+    Set-Location "$MyLocation"
+    Write-Output "[Info]  Current Version: Zircolite v$CurrentVersion"
 
-            # zircolite.log
-            if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log")
-            {
-                Remove-Item -Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log" -Force
-            }
-        }
-        else
-        {
-            Write-Output "[Info]  Zircolite NOT found."
-            $CurrentVersion = ""
-        }
-    }
-    else
+    # zircolite.log
+    if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log")
     {
-        Write-Host "[Info]  Python is NOT installed (Store alias stub detected)." -ForegroundColor Red
+        Remove-Item -Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.log" -Force
     }
 }
 else
 {
-    Write-Host "[Info]  Python is NOT installed." -ForegroundColor Red
+    Write-Output "[Info]  Zircolite NOT found."
+    $CurrentVersion = ""
 }
 
 # Determining latest stable release on GitHub
@@ -1833,7 +1859,9 @@ else
     $LatestRelease = $Published.ToString("yyyy-MM-dd") # PowerShell 7
 }
 
-$Download = $Response.zipball_url
+# Packaged Windows binary (x64) - Note: zipball_url contains the source code only (no Zircolite.exe)
+$Download = ($Response.assets | Select-Object -ExpandProperty browser_download_url | Select-String -Pattern "Zircolite-.*-windows-x64\.zip$" | Out-String).Trim()
+$SHA256SUMS = ($Response.assets | Select-Object -ExpandProperty browser_download_url | Select-String -Pattern "/SHA256SUMS$" | Out-String).Trim()
 
 if ($CurrentVersion)
 {
@@ -1852,6 +1880,26 @@ if ($CurrentVersion -ne $Tag -Or $null -eq $CurrentVersion)
     $Zip = "Zircolite.zip"
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest -Uri $Download -OutFile "$SCRIPT_DIR\Tools\$Zip"
+
+    # Verify SHA256 Hash
+    if ((Test-Path "$SCRIPT_DIR\Tools\$Zip") -And ($SHA256SUMS))
+    {
+        $FileName = $Download.Split("/")[-1]
+        $Content = (Invoke-WebRequest -Uri $SHA256SUMS -UseBasicParsing).Content
+        if ($Content -is [byte[]]) { $Content = [System.Text.Encoding]::UTF8.GetString($Content) } # application/octet-stream
+        $Expected = ($Content -split "`n" | Select-String -Pattern ([regex]::Escape($FileName)) | ForEach-Object{($_ -split "\s+")[0]} | Select-Object -First 1)
+        $Actual = (Get-FileHash -Path "$SCRIPT_DIR\Tools\$Zip" -Algorithm SHA256).Hash
+
+        if ($Expected -and ($Actual -eq $Expected))
+        {
+            Write-Output "[Info]  SHA256 Hash verified."
+        }
+        else
+        {
+            Write-Host "[Error] SHA256 Hash mismatch: $FileName" -ForegroundColor Red
+            Remove-Item "$SCRIPT_DIR\Tools\$Zip" -Force
+        }
+    }
 
     if (Test-Path "$SCRIPT_DIR\Tools\$Zip")
     {
@@ -1878,9 +1926,9 @@ if ($CurrentVersion -ne $Tag -Or $null -eq $CurrentVersion)
 
         # Rename Unpacked Directory
         Start-Sleep 5
-        if (Test-Path "$SCRIPT_DIR\Tools\wagga40-Zircolite-*")
+        if (Test-Path "$SCRIPT_DIR\Tools\Zircolite-*-windows-x64")
         {
-            Get-ChildItem -Path "$SCRIPT_DIR\Tools\wagga40-Zircolite-*" | Rename-Item -NewName {"Zircolite"}
+            Get-ChildItem -Path "$SCRIPT_DIR\Tools\Zircolite-*-windows-x64" | Rename-Item -NewName {"Zircolite"}
         }
         else
         {
@@ -1898,20 +1946,25 @@ else
 }
 
 # Update SIGMA Rulesets
-if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
+if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Zircolite.exe")
 {
     Write-Output "[Info]  Updating SIGMA Rulesets ..."
     $MyLocation = $pwd
+    $ConsoleEncoding = [Console]::OutputEncoding
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 # Zircolite v4 writes UTF-8
+    $env:COLUMNS = 250 # Prevent line wrapping at 80 characters
     Set-Location "$SCRIPT_DIR\Tools\Zircolite"
-    python "$SCRIPT_DIR\Tools\Zircolite\zircolite.py" --update-rules 2>&1 | Out-File "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log"
+    & $Zircolite --update-rules 2>&1 | Out-File "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log"
     Set-Location "$MyLocation"
+    Remove-Item Env:\COLUMNS
+    [Console]::OutputEncoding = $ConsoleEncoding
 
     # No newer rulesets found
     if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log")
     {
-        if (Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log" | Select-String -Pattern "No newer rulesets found" -Quiet)
+        if (Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update-draft.log" | Select-String -Pattern "No newer rulesets" -Quiet)
         {
-            Write-Output "[Info]  No newer rulesets found"
+            Write-Host "[Info]  No newer rulesets found" -ForegroundColor Green
         }
     }
 
@@ -1933,14 +1986,14 @@ if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\zircolite.py")
 
     # Remove empty lines and add line breaks where needed
     $Clean = Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" | ForEach-Object{($_ -replace "^   ","")} | Where-Object {$_.Trim()} | ForEach-Object {($_ -replace "Finished in", "`nFinished in")} | ForEach-Object {($_ -replace "Sysmon Linux =-", "Sysmon Linux =-`n")}
-    @("") + ($Clean) | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log"
+    @("") + ($Clean) | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" -Encoding UTF8
 
     # Cleaning up
     if (Test-Path "$SCRIPT_DIR\Tools\Zircolite\Update.log")
     {
         $Filter = @("^zircolite\.exe","MemProcFS-Analyzer-v.*\.ps1","^\+","\+ CategoryInfo          : NotSpecified:","\+ FullyQualifiedErrorId : NativeCommandError","^tmp-rules-")
         $Clean = Get-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" | Select-String -Pattern $Filter -NotMatch 
-        $Clean | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log"
+        $Clean | Set-Content "$SCRIPT_DIR\Tools\Zircolite\Update.log" -Encoding UTF8
     }
 
     # zircolite.log
@@ -1966,6 +2019,7 @@ Get-Dokany
 ClamAVUpdate
 Get-Elasticsearch
 Get-Kibana
+DotNetCheck
 Get-AmcacheParser
 Get-AppCompatCacheParser
 Get-Entropy
@@ -2018,216 +2072,218 @@ $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
 #############################################################################################################################################################################################
 #############################################################################################################################################################################################
 
+# [Info]  No new RECmd Batch Files available. --> Green
 # SIG # Begin signature block
-# MIInawYJKoZIhvcNAQcCoIInXDCCJ1gCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
-# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUcYIOVVT/kZa/GdLjW3E3QyWN
-# bCCggiCkMIIGGjCCBAKgAwIBAgIQYh1tDFIBnjuQeRUgiSEcCjANBgkqhkiG9w0B
-# AQwFADBWMQswCQYDVQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMS0w
-# KwYDVQQDEyRTZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgUm9vdCBSNDYwHhcN
-# MjEwMzIyMDAwMDAwWhcNMzYwMzIxMjM1OTU5WjBUMQswCQYDVQQGEwJHQjEYMBYG
-# A1UEChMPU2VjdGlnbyBMaW1pdGVkMSswKQYDVQQDEyJTZWN0aWdvIFB1YmxpYyBD
-# b2RlIFNpZ25pbmcgQ0EgUjM2MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKC
-# AYEAmyudU/o1P45gBkNqwM/1f/bIU1MYyM7TbH78WAeVF3llMwsRHgBGRmxDeEDI
-# ArCS2VCoVk4Y/8j6stIkmYV5Gej4NgNjVQ4BYoDjGMwdjioXan1hlaGFt4Wk9vT0
-# k2oWJMJjL9G//N523hAm4jF4UjrW2pvv9+hdPX8tbbAfI3v0VdJiJPFy/7XwiunD
-# 7mBxNtecM6ytIdUlh08T2z7mJEXZD9OWcJkZk5wDuf2q52PN43jc4T9OkoXZ0arW
-# ZVeffvMr/iiIROSCzKoDmWABDRzV/UiQ5vqsaeFaqQdzFf4ed8peNWh1OaZXnYvZ
-# QgWx/SXiJDRSAolRzZEZquE6cbcH747FHncs/Kzcn0Ccv2jrOW+LPmnOyB+tAfiW
-# u01TPhCr9VrkxsHC5qFNxaThTG5j4/Kc+ODD2dX/fmBECELcvzUHf9shoFvrn35X
-# Gf2RPaNTO2uSZ6n9otv7jElspkfK9qEATHZcodp+R4q2OIypxR//YEb3fkDn3Uay
-# WW9bAgMBAAGjggFkMIIBYDAfBgNVHSMEGDAWgBQy65Ka/zWWSC8oQEJwIDaRXBeF
-# 5jAdBgNVHQ4EFgQUDyrLIIcouOxvSK4rVKYpqhekzQwwDgYDVR0PAQH/BAQDAgGG
-# MBIGA1UdEwEB/wQIMAYBAf8CAQAwEwYDVR0lBAwwCgYIKwYBBQUHAwMwGwYDVR0g
-# BBQwEjAGBgRVHSAAMAgGBmeBDAEEATBLBgNVHR8ERDBCMECgPqA8hjpodHRwOi8v
-# Y3JsLnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNDb2RlU2lnbmluZ1Jvb3RSNDYu
-# Y3JsMHsGCCsGAQUFBwEBBG8wbTBGBggrBgEFBQcwAoY6aHR0cDovL2NydC5zZWN0
-# aWdvLmNvbS9TZWN0aWdvUHVibGljQ29kZVNpZ25pbmdSb290UjQ2LnA3YzAjBggr
-# BgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wDQYJKoZIhvcNAQEMBQAD
-# ggIBAAb/guF3YzZue6EVIJsT/wT+mHVEYcNWlXHRkT+FoetAQLHI1uBy/YXKZDk8
-# +Y1LoNqHrp22AKMGxQtgCivnDHFyAQ9GXTmlk7MjcgQbDCx6mn7yIawsppWkvfPk
-# KaAQsiqaT9DnMWBHVNIabGqgQSGTrQWo43MOfsPynhbz2Hyxf5XWKZpRvr3dMapa
-# ndPfYgoZ8iDL2OR3sYztgJrbG6VZ9DoTXFm1g0Rf97Aaen1l4c+w3DC+IkwFkvjF
-# V3jS49ZSc4lShKK6BrPTJYs4NG1DGzmpToTnwoqZ8fAmi2XlZnuchC4NPSZaPATH
-# vNIzt+z1PHo35D/f7j2pO1S8BCysQDHCbM5Mnomnq5aYcKCsdbh0czchOm8bkinL
-# rYrKpii+Tk7pwL7TjRKLXkomm5D1Umds++pip8wH2cQpf93at3VDcOK4N7EwoIJB
-# 0kak6pSzEu4I64U6gZs7tS/dGNSljf2OSSnRr7KWzq03zl8l75jy+hOds9TWSenL
-# bjBQUGR96cFr6lEUfAIEHVC1L68Y1GGxx4/eRI82ut83axHMViw1+sVpbPxg51Tb
-# nio1lB93079WPFnYaOvfGAA0e0zcfF/M9gXr+korwQTh2Prqooq2bYNMvUoUKD85
-# gnJ+t0smrWrb8dee2CvYZXD5laGtaAxOfy/VKNmwuWuAh9kcMIIGazCCBNOgAwIB
-# AgIRAIxBnpO/K86siAYoO3YZvTwwDQYJKoZIhvcNAQEMBQAwVDELMAkGA1UEBhMC
-# R0IxGDAWBgNVBAoTD1NlY3RpZ28gTGltaXRlZDErMCkGA1UEAxMiU2VjdGlnbyBQ
-# dWJsaWMgQ29kZSBTaWduaW5nIENBIFIzNjAeFw0yNDExMTQwMDAwMDBaFw0yNzEx
-# MTQyMzU5NTlaMFcxCzAJBgNVBAYTAkRFMRYwFAYDVQQIDA1OaWVkZXJzYWNoc2Vu
-# MRcwFQYDVQQKDA5NYXJ0aW4gV2lsbGluZzEXMBUGA1UEAwwOTWFydGluIFdpbGxp
-# bmcwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDRn27mnIzB6dsJFLMe
-# xQQNRd8aMv73DTla68G6Q8u+V2TY1JQ/Z4j2oCI9ATW3K3P7NAPdlE0QmtdjC0F/
-# 74jsfil/i8LwxuyT034wabViZKUcodmKsEFhM9am8W5kUgLuC5FIK4wNOq5TfzYd
-# HTyJu1eR2XuSDoMp0wg45mOuFNBbYB8DVBtHxobvWq4eCs3lUxX07wR3Qr2Utb92
-# w8eU2vKr2Ss9xIh/YvM4UxgBpO1I6O+W2tAB5mmynIgoCfX7mu6iD3A+AhpQ9Gv2
-# 09G83y8FPrFJIWU77TTehErbPjZ074xXwrlEkhnGUCk1w+KiNtZHaSn0X+vnhqJ7
-# otBxQZQAESlhWXpDKCunnnVnVgwvVWtccAhxZO95eif6Vss/UhCaBZ26szlneGtF
-# eTClI4+k3mqfWuodtXjHc8ohAclWp7XVywliwhCFEsAcFkpkCyivey0sqEfrwiMn
-# Ry1elH1S37XcQaav5+bt4KxtIXuOVEx3vM9MHdlraW0y1on5E8i4tagdI45TH0LU
-# 080ubc2MKqq6ZXtplTu1wdF2Cgy3hfSSLkJscRWApvpvOO6Vtc4jTG/AO6iqN5M6
-# Swd+g40XtsxBD/gSk9kMqkgJ1pD1Gp5gkHnP1veut+YgJ9xWcRDJI7vcis9qsXwt
-# VybeOCh56rTQvC/Tf6BJtiieEQIDAQABo4IBszCCAa8wHwYDVR0jBBgwFoAUDyrL
-# IIcouOxvSK4rVKYpqhekzQwwHQYDVR0OBBYEFIxyZAmEHl7uAfEwbB4nzI8MCCLb
-# MA4GA1UdDwEB/wQEAwIHgDAMBgNVHRMBAf8EAjAAMBMGA1UdJQQMMAoGCCsGAQUF
-# BwMDMEoGA1UdIARDMEEwNQYMKwYBBAGyMQECAQMCMCUwIwYIKwYBBQUHAgEWF2h0
-# dHBzOi8vc2VjdGlnby5jb20vQ1BTMAgGBmeBDAEEATBJBgNVHR8EQjBAMD6gPKA6
-# hjhodHRwOi8vY3JsLnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNDb2RlU2lnbmlu
-# Z0NBUjM2LmNybDB5BggrBgEFBQcBAQRtMGswRAYIKwYBBQUHMAKGOGh0dHA6Ly9j
-# cnQuc2VjdGlnby5jb20vU2VjdGlnb1B1YmxpY0NvZGVTaWduaW5nQ0FSMzYuY3J0
-# MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdvLmNvbTAoBgNVHREEITAf
-# gR1td2lsbGluZ0BsZXRoYWwtZm9yZW5zaWNzLmNvbTANBgkqhkiG9w0BAQwFAAOC
-# AYEAZ0dBMMwluWGb+MD1rGWaPtaXrNZnlZqOZxgbdrMLBKAQr0QGcILCVIZ4SZYa
-# evT5yMR6jFGSAjgaFtnk8ZpbtGwig/ed/C/D1Ne8SZyffdtALns/5CHxMnU8ks7u
-# t7dsR6zFD4/bmljuoUoi55W6/XU/1pr+tqRaZGJvjSKJQCN9MhFAvXSpPPqRsj27
-# ze1+KYIBF1/L0BW0HS0d9ZhGSUoEwqMDLpQf2eqJFyyyzWt21VVhLF6mgZ1dE5tC
-# LZY7ERzx6/h5N7F0w361oigizMbCMdST29XOc5mB8q6Cye7OmEfM2jByRWa+cd4R
-# ycsN2p2wHRukpq48iX+tPVKmHwNKf+upuKPDQAeV4J7gUCtevIsOtoyiC2+amimu
-# 81o424Dl+NsAyCLz0SXvNAhVvtU73H61gtoPa/SWouem2S+bzp7oGvGPop/9mh4C
-# Xki6LVeDH3hDM8hZsJg/EToIWiDozTc2yWqwV4Ozyd4x5Ix8lckXMgWuyWcxmLK1
-# RmKpMIIGgjCCBGqgAwIBAgIQNsKwvXwbOuejs902y8l1aDANBgkqhkiG9w0BAQwF
-# ADCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcT
-# C0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAs
-# BgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcN
-# MjEwMzIyMDAwMDAwWhcNMzgwMTE4MjM1OTU5WjBXMQswCQYDVQQGEwJHQjEYMBYG
-# A1UEChMPU2VjdGlnbyBMaW1pdGVkMS4wLAYDVQQDEyVTZWN0aWdvIFB1YmxpYyBU
-# aW1lIFN0YW1waW5nIFJvb3QgUjQ2MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIIC
-# CgKCAgEAiJ3YuUVnnR3d6LkmgZpUVMB8SQWbzFoVD9mUEES0QUCBdxSZqdTkdizI
-# CFNeINCSJS+lV1ipnW5ihkQyC0cRLWXUJzodqpnMRs46npiJPHrfLBOifjfhpdXJ
-# 2aHHsPHggGsCi7uE0awqKggE/LkYw3sqaBia67h/3awoqNvGqiFRJ+OTWYmUCO2G
-# AXsePHi+/JUNAax3kpqstbl3vcTdOGhtKShvZIvjwulRH87rbukNyHGWX5tNK/WA
-# BKf+Gnoi4cmisS7oSimgHUI0Wn/4elNd40BFdSZ1EwpuddZ+Wr7+Dfo0lcHflm/F
-# DDrOJ3rWqauUP8hsokDoI7D/yUVI9DAE/WK3Jl3C4LKwIpn1mNzMyptRwsXKrop0
-# 6m7NUNHdlTDEMovXAIDGAvYynPt5lutv8lZeI5w3MOlCybAZDpK3Dy1MKo+6aEtE
-# 9vtiTMzz/o2dYfdP0KWZwZIXbYsTIlg1YIetCpi5s14qiXOpRsKqFKqav9R1R5vj
-# 3NgevsAsvxsAnI8Oa5s2oy25qhsoBIGo/zi6GpxFj+mOdh35Xn91y72J4RGOJEoq
-# zEIbW3q0b2iPuWLA911cRxgY5SJYubvjay3nSMbBPPFsyl6mY4/WYucmyS9lo3l7
-# jk27MAe145GWxK4O3m3gEFEIkv7kRmefDR7Oe2T1HxAnICQvr9sCAwEAAaOCARYw
-# ggESMB8GA1UdIwQYMBaAFFN5v1qqK0rPVIDh2JvAnfKyA2bLMB0GA1UdDgQWBBT2
-# d2rdP/0BE/8WoWyCAi/QCj0UJTAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUw
-# AwEB/zATBgNVHSUEDDAKBggrBgEFBQcDCDARBgNVHSAECjAIMAYGBFUdIAAwUAYD
-# VR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2VydHJ1c3QuY29tL1VTRVJUcnVz
-# dFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMDUGCCsGAQUFBwEBBCkwJzAl
-# BggrBgEFBQcwAYYZaHR0cDovL29jc3AudXNlcnRydXN0LmNvbTANBgkqhkiG9w0B
-# AQwFAAOCAgEADr5lQe1oRLjlocXUEYfktzsljOt+2sgXke3Y8UPEooU5y39rAARa
-# AdAxUeiX1ktLJ3+lgxtoLQhn5cFb3GF2SSZRX8ptQ6IvuD3wz/LNHKpQ5nX8hjsD
-# LRhsyeIiJsms9yAWnvdYOdEMq1W61KE9JlBkB20XBee6JaXx4UBErc+YuoSb1SxV
-# f7nkNtUjPfcxuFtrQdRMRi/fInV/AobE8Gw/8yBMQKKaHt5eia8ybT8Y/Ffa6HAJ
-# yz9gvEOcF1VWXG8OMeM7Vy7Bs6mSIkYeYtddU1ux1dQLbEGur18ut97wgGwDiGin
-# CwKPyFO7ApcmVJOtlw9FVJxw/mL1TbyBns4zOgkaXFnnfzg4qbSvnrwyj1NiurMp
-# 4pmAWjR+Pb/SIduPnmFzbSN/G8reZCL4fvGlvPFk4Uab/JVCSmj59+/mB2Gn6G/U
-# YOy8k60mKcmaAZsEVkhOFuoj4we8CYyaR9vd9PGZKSinaZIkvVjbH/3nlLb0a7SB
-# IkiRzfPfS9T+JesylbHa1LtRV9U/7m0q7Ma2CQ/t392ioOssXW7oKLdOmMBl14su
-# VFBmbzrt5V5cQPnwtd3UOTpS9oCG+ZZheiIvPgkDmA8FzPsnfXW5qHELB43ET7HH
-# FHeRPRYrMBKjkb8/IN7Po0d0hQoF4TeMM+zYAJzoKQnVKOLg8pZVPT8wgganMIIE
-# j6ADAgECAhEAkKwIciD9xafEa1zHDfc9BjANBgkqhkiG9w0BAQwFADBXMQswCQYD
-# VQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMS4wLAYDVQQDEyVTZWN0
-# aWdvIFB1YmxpYyBUaW1lIFN0YW1waW5nIFJvb3QgUjQ2MB4XDTI2MDMyNTAwMDAw
-# MFoXDTQxMDMyNDIzNTk1OVowVTELMAkGA1UEBhMCR0IxGDAWBgNVBAoTD1NlY3Rp
-# Z28gTGltaXRlZDEsMCoGA1UEAxMjU2VjdGlnbyBQdWJsaWMgVGltZSBTdGFtcGlu
-# ZyBDQSBSNDEwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCu5EqiAa2C
-# HGL5Zi1bmgPM8NUXwYZJ+BtQqHps43GLTC+sjVLypsBh+8uv+TLkgtVGD//vSmA0
-# qrzELf9YRCh2MTAA/aGaQZKGg0BRCmziR3pbCnvgWjtGXBDUyn3j3K2lZAO8KxgF
-# tlxwOYEAkL+CCqK4v9zzTl8ZwzDpPMiDIFa5THk8an1ieF5I09cXNrPQw+1ER1li
-# ThaG0z6FrOpqwxZWmPRZQBw2E32878UB1bL0Zp91vuWZgsMpNNiPCoBj0/1F+LE8
-# +NRokfqacFI0F2tftrRB2W7HQClLR9zjxFbWb5be2rceIfNyHUUfKGIvMI2NzoxS
-# lxXnFqUG887D8W1Cj8DFok688JKxWvHR/9aQykSbd+9Vutj36ij2sgq/125wTpUZ
-# /AgC0ph50bRs7gFrUyaXE9wSsOqMvCCC+sEm7vd/BemSG0TSHNXSmyCba+FCzeke
-# WX03TRIcF3Laqd0Rw24OH7jpei4zaGhcI7nfdhBA4c8RScxNY6jeHLHHmSMMTk9W
-# qn7H4dLhUBP5YEwbgbN4uv1i9ltTnHli8t1xHV0StX9BFgrnmunTX19kUXY1H5OR
-# JbRZyZDdvm1oZyteDj0SnMozr+YSmdIleDUTXdfoY7b2taz8s2+QbOxLxcahEIYG
-# Wzqu6h955tKwcANHcZ4gTmAhT3btuOiQsQIDAQABo4IBbjCCAWowHwYDVR0jBBgw
-# FoAU9ndq3T/9ARP/FqFsggIv0Ao9FCUwHQYDVR0OBBYEFDp0pQxnxkJQwv21/Me7
-# KTSC9Hq5MA4GA1UdDwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMBMGA1Ud
-# JQQMMAoGCCsGAQUFBwMIMCMGA1UdIAQcMBowCAYGZ4EMAQQCMA4GDCsGAQQBsjEB
-# AgEDCDBMBgNVHR8ERTBDMEGgP6A9hjtodHRwOi8vY3JsLnNlY3RpZ28uY29tL1Nl
-# Y3RpZ29QdWJsaWNUaW1lU3RhbXBpbmdSb290UjQ2LmNybDB8BggrBgEFBQcBAQRw
-# MG4wRwYIKwYBBQUHMAKGO2h0dHA6Ly9jcnQuc2VjdGlnby5jb20vU2VjdGlnb1B1
-# YmxpY1RpbWVTdGFtcGluZ1Jvb3RSNDYucDdjMCMGCCsGAQUFBzABhhdodHRwOi8v
-# b2NzcC5zZWN0aWdvLmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAMt5SR2bxngNm+N8o
-# c6Gq76Gx1c235fkX7jw8Ho9MAkJGADerHE7dhsBXttqmzgr/7ZZahZSykGRPhPY1
-# crj028kB8KzO0dKC2qQBAwtfgqMLKkkX/6bYq2uT33eD6ByAp2/XKD0LcmZh0kKe
-# cvSBr6ln9ajX6u1dnx2fA7xEKy1M3qBhfQSUWLtjs2nFt0ELVLptzTlX9ID0cL+i
-# OPfdboZ3CelT+JXKVKR2Sge0d4YiFAtPZkfSo8z1Z1x7y/Z9mwMIlBAnyuWXs4Ys
-# NuxdrYIt/QxE31PDOJ9DesS4Bc7H9OTORlEV/AvfiF/VepKZpira1MzLYuCw+uoL
-# Zn/pkpvd+CvNTS+mEHjBJNa6WK1j8qXFu+jIq+sG9QILHiyB6p/xpHrkJu8zkw39
-# 3+VqF9eKlTY2VjRxdycZLrVemZ4Yp3wi33b+W58CllH3HqjmowlZ7SOrgmx8YwYO
-# kgrHsXOQHyBp6O4FRb8In0+FzjT7ElGie9V7CfhL3IlVFZ4zjuKsZtH1iU3fGu4z
-# /JnOGT6sCb0BbTqe/uhvpFCQBdH5xPGIA/LrbQUXjU2tWJgHhTIqnN/HvHyOHi5t
-# M4zP3nhgh2rJ6Kqq2xsHBeNYs/R18xQ8DeIg+c90Eoaeh0YlN1KU8AyYol3K9M+q
-# Y5ez8syd/7ZlrRnoVewgH3P1pcswggbiMIIEyqADAgECAhEA507yVbBQT/rbpt/3
-# /IujFTANBgkqhkiG9w0BAQwFADBVMQswCQYDVQQGEwJHQjEYMBYGA1UEChMPU2Vj
-# dGlnbyBMaW1pdGVkMSwwKgYDVQQDEyNTZWN0aWdvIFB1YmxpYyBUaW1lIFN0YW1w
-# aW5nIENBIFI0MTAeFw0yNjAzMjUwMDAwMDBaFw0zNzA2MjQyMzU5NTlaMHIxCzAJ
-# BgNVBAYTAkdCMRcwFQYDVQQIEw5HcmVhdGVyIExvbmRvbjEYMBYGA1UEChMPU2Vj
-# dGlnbyBMaW1pdGVkMTAwLgYDVQQDEydTZWN0aWdvIFB1YmxpYyBUaW1lIFN0YW1w
-# aW5nIFNpZ25lciBSMzcwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCy
-# /8NtS9xQ2UUtBRF32bj7VK3n4m50Uqjk/zTciSziYV40H1LKah0/oEklYG42E4VC
-# P3DvsBUB6DmpCkDZ0jCnZBPIEevaH15ZJOQwFWP2ZXr5YjlJpb68Nlbs+ElNvKx3
-# 2/1YHde3qqUSLybjulxPLz6T85+HOIqK7M1Bep8LspyhEP/q6nw5kGxTSrGvufme
-# H+JF8CnVBcVMFA40FlIYh0cDJVFhhfTfdWgLy/vWuLMQoKkf3s/FvByf16r0rtby
-# Hm/iemwxSioJL9zyZDDKUNAbHXl0dhXo2VxUV2NcPXWXuoKsjL+6cfk6Vm2DHnxA
-# lFdFsaBDIF1JOkSnC6PeLlBznZn2buF3vIIYJcq6N/zeFRCk4/HXDz7zgRsRRMdU
-# B+rhyk5FoZaBjw0nLq3GZ3fClLUx5es5pUAxzNODMBn7JkFYip2BAGBPER5eV0RO
-# hk6tGTG+fUiMiV+vgjg1YnP5FvnYWyEtWeQD/B2hp3vz0RvtdkM0p3igyadzrfpO
-# Bq5ppVk/YsuhTQkP99ivneHAGfi5e7lmxJ+meoBPrRLuzMmb81rzzbESjJHMsn5R
-# Vtc6Ucs7rcMqQC13PUIO7BbGBETV2ufCmV6lPTp3P7XJOvmnUCRTPbVvMTpxP/z+
-# SOHg4/OCBhiqs4FA9+4oQvlkk9w32NGASli9GWrm5wIDAQABo4IBjjCCAYowHwYD
-# VR0jBBgwFoAUOnSlDGfGQlDC/bX8x7spNIL0erkwHQYDVR0OBBYEFGEQ6XoSr1HE
-# hdTyz6R0D1DNIK/4MA4GA1UdDwEB/wQEAwIGwDAMBgNVHRMBAf8EAjAAMBYGA1Ud
-# JQEB/wQMMAoGCCsGAQUFBwMIMEoGA1UdIARDMEEwCAYGZ4EMAQQCMDUGDCsGAQQB
-# sjEBAgEDCDAlMCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzBK
-# BgNVHR8EQzBBMD+gPaA7hjlodHRwOi8vY3JsLnNlY3RpZ28uY29tL1NlY3RpZ29Q
-# dWJsaWNUaW1lU3RhbXBpbmdDQVI0MS5jcmwwegYIKwYBBQUHAQEEbjBsMEUGCCsG
-# AQUFBzAChjlodHRwOi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNUaW1l
-# U3RhbXBpbmdDQVI0MS5jcnQwIwYIKwYBBQUHMAGGF2h0dHA6Ly9vY3NwLnNlY3Rp
-# Z28uY29tMA0GCSqGSIb3DQEBDAUAA4ICAQAD6j2N0azN+hl6k6bKB5/U6VuSOs93
-# ZBb3Pczy9VtBIKu4947Z5GwL0aFngIxl+GSuLFrJgPruBCRvKJEJsm7kv+LQ1COV
-# CEG9tZ+IRtr4ocUoa53lgdFaENlS0N4wgkZkbQEPv+x+1lSjYh+T4JeL9mUznT7E
-# rc6Sp5dWLka5sMP/m3GZi6oJPdPcsCKWagH7m2H2xDGIyHJC5PdH9phvi/Kmhkkt
-# iSVTNNqVeV5bWdX2zhRE6UTfz0IcMoCL996lFIydXxOCE4MNDHDM0as4lnTiT/KH
-# MccO6l8c9TnUVgmpci9ar1IABZ2U1XUkYjGGSn9MC3EHDP9V39VuBVvZ33/BEV/E
-# WSRrf07T7jFplKX+gQr/UOqPGMlE7ZJ72UaUkNJy7bVl3bcLKzdpjIHzLkf/4MVa
-# 1V7w8wqCv5W4gOnRGTlud5UMARbRM8BPxR/CXYXoMmIOD8pmTk2axgRL4LG8Xtuc
-# hISdCHRmtacAmLGq5XSYSVTHTXADlO48iDKh3HM2r98LSF6f0sG12d8V9Jn7C3wD
-# UieOxuKj4MdWrW+hiJU2kF87v6eH00HgCFFc2V0+CvfOCMn7juzS41jLaINcBlKW
-# Q/fKb/uDLfWOW73z1I2lFY7Xj8tQ1XYtK5eREjWItM8jpl1cbQOc88btR+0XS2Tm
-# boE/141+va2PWzGCBjEwggYtAgEBMGkwVDELMAkGA1UEBhMCR0IxGDAWBgNVBAoT
-# D1NlY3RpZ28gTGltaXRlZDErMCkGA1UEAxMiU2VjdGlnbyBQdWJsaWMgQ29kZSBT
-# aWduaW5nIENBIFIzNgIRAIxBnpO/K86siAYoO3YZvTwwCQYFKw4DAhoFAKB4MBgG
-# CisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcC
-# AQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYE
-# FBXBuOElvVpDsqWGS3gagprYnr9bMA0GCSqGSIb3DQEBAQUABIICAKNP8r9iaB2r
-# 1bQdL1eRB/4RYt5y1ymkPq4VL9sHEO/DGn1AlP2ljRa80G5cqe6jOIMAQymoWWR9
-# 5/SyAq53jiL/ISkFLUOhU48helLTm5iyGLKFVEdo/+lK1NHlEabYRP3/bPp7OjEk
-# rPUJPTCJrHT0nXzav6x529264ciL+pSC4tOC6oyhSDhPL9R05dJXtU+rFfInaaBt
-# PydAbuD45FRCJOVKika6LGzapR3m9xQfDuo9XIw4BXF1PMihEecDWC/Ic0gsQhmz
-# EZy4L2YGW0/GJsU/ObP+FUoVdkKFtqNhp2alh9G+Zd35b3WHxMSBnkI+F5Hv2GG6
-# 3bVq5Jf/C9dNNnEAf4rT4QHIOBsPBbVmcmL24WeCtXI8zCdJv5NDAlz8NIGTlWTM
-# 9OVpNeZnFvG2Tr0qGPcmhjNXb85oBiOci2WA040xQOw/acGmIjfSlW3ZfvV3ZGD4
-# z6WR3iQZNLO1XZxsgdHk+DzoRtNyN2ocl8qxiwCm+wtUurft5Ji11Ucb2fwWjmgd
-# pLft9UrRNFKbUzj4XQCOYzsPe7ROIzKUBy5XnxtXaXeVUJTteBGIRC/pPFthFGf1
-# CoYb77FRURcoTQH0HvTF94rH3nEtlPA3IKpGWo3tEmP7Zd9hfDyocea0skX+wBcG
-# 2espARnhZLQd9fZg9Jz4vAhM0m/K6MKqoYIDIzCCAx8GCSqGSIb3DQEJBjGCAxAw
-# ggMMAgEBMGowVTELMAkGA1UEBhMCR0IxGDAWBgNVBAoTD1NlY3RpZ28gTGltaXRl
-# ZDEsMCoGA1UEAxMjU2VjdGlnbyBQdWJsaWMgVGltZSBTdGFtcGluZyBDQSBSNDEC
-# EQDnTvJVsFBP+tum3/f8i6MVMA0GCWCGSAFlAwQCAgUAoHkwGAYJKoZIhvcNAQkD
-# MQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjYwODMxMTAzNzIzWjA/Bgkq
-# hkiG9w0BCQQxMgQwHW8D4/H8QBqcvjTEY90g/nJV5Jt4iHEk6Y6t6IqX0bFU5V0j
-# IcEo23hqCvlKqmitMA0GCSqGSIb3DQEBAQUABIICAEtkVp0Uy9y/xUZD/O3U7cf4
-# bQ0wugs+Y1KT8dyfM/WI3TMGe5yDLXtnCNs4O7fwaNUfWw0AYLSKLRkaQkZ1by9S
-# bqG0YkznOU7oWESlttb0uAsbHiacX29dfc97622OPpZWWuzE9bN1EiYyzvhQGRqz
-# S+CiIeJKChtIb3HshM1EUOfEtFZ/BJvIZIITVo4bLFyIfmCRYtzh6lBqwocNT+jY
-# 35DWVTGk4MUjeY6J+ZWqRrYWxoB11tI6hpg+kc/octYzdg458qfxg0g84JV7+YLH
-# ik2gm2Aw3Wq+vyYWGTG4D8b3PCcvyZfUXzU2yXinoq97OC0z2NdbfJvmjifPcJXi
-# 2aSwZLoNkKIEXqw6f733TbMP8yDJqVfWHYq+Txepf85+nXByw3xu54KYLYyL4gYj
-# 9NM74AaTN0bn2AtOsq78R/fPED0AcDZAxWDmRm+8hHNbYU0IEwYM6ULvtNEv/2Ye
-# rX6DZsCINNLw3eyhaA+IqZMMRdMVWWNL/K9C0me5JJU41j2nUApFgvEhWmjrX/04
-# 2bseYqlzk13hkCuW47RweCGY1HZagrGNv/bIs9hT1vjAlMRSYJA5XuzEhUI8TF6w
-# bCpeSBVT2Crijpgn8pJYgIyuQXgcUPt2WEBlVhDJnj+lXQNtUAceWZ4v1truZSaR
-# k+7fwO659TdjIfDScAMz
+# MIInkAYJKoZIhvcNAQcCoIIngTCCJ30CAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBw1YW271pDuf71
+# kdaXWai/PzUfwc9f3jo15P0HEhE9+KCCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
+# O5B5FSCJIRwKMA0GCSqGSIb3DQEBDAUAMFYxCzAJBgNVBAYTAkdCMRgwFgYDVQQK
+# Ew9TZWN0aWdvIExpbWl0ZWQxLTArBgNVBAMTJFNlY3RpZ28gUHVibGljIENvZGUg
+# U2lnbmluZyBSb290IFI0NjAeFw0yMTAzMjIwMDAwMDBaFw0zNjAzMjEyMzU5NTla
+# MFQxCzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxKzApBgNV
+# BAMTIlNlY3RpZ28gUHVibGljIENvZGUgU2lnbmluZyBDQSBSMzYwggGiMA0GCSqG
+# SIb3DQEBAQUAA4IBjwAwggGKAoIBgQCbK51T+jU/jmAGQ2rAz/V/9shTUxjIztNs
+# fvxYB5UXeWUzCxEeAEZGbEN4QMgCsJLZUKhWThj/yPqy0iSZhXkZ6Pg2A2NVDgFi
+# gOMYzB2OKhdqfWGVoYW3haT29PSTahYkwmMv0b/83nbeECbiMXhSOtbam+/36F09
+# fy1tsB8je/RV0mIk8XL/tfCK6cPuYHE215wzrK0h1SWHTxPbPuYkRdkP05ZwmRmT
+# nAO5/arnY83jeNzhP06ShdnRqtZlV59+8yv+KIhE5ILMqgOZYAENHNX9SJDm+qxp
+# 4VqpB3MV/h53yl41aHU5pledi9lCBbH9JeIkNFICiVHNkRmq4TpxtwfvjsUedyz8
+# rNyfQJy/aOs5b4s+ac7IH60B+Ja7TVM+EKv1WuTGwcLmoU3FpOFMbmPj8pz44MPZ
+# 1f9+YEQIQty/NQd/2yGgW+ufflcZ/ZE9o1M7a5Jnqf2i2/uMSWymR8r2oQBMdlyh
+# 2n5HirY4jKnFH/9gRvd+QOfdRrJZb1sCAwEAAaOCAWQwggFgMB8GA1UdIwQYMBaA
+# FDLrkpr/NZZILyhAQnAgNpFcF4XmMB0GA1UdDgQWBBQPKssghyi47G9IritUpimq
+# F6TNDDAOBgNVHQ8BAf8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADATBgNVHSUE
+# DDAKBggrBgEFBQcDAzAbBgNVHSAEFDASMAYGBFUdIAAwCAYGZ4EMAQQBMEsGA1Ud
+# HwREMEIwQKA+oDyGOmh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGlnb1B1Ymxp
+# Y0NvZGVTaWduaW5nUm9vdFI0Ni5jcmwwewYIKwYBBQUHAQEEbzBtMEYGCCsGAQUF
+# BzAChjpodHRwOi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29QdWJsaWNDb2RlU2ln
+# bmluZ1Jvb3RSNDYucDdjMCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdv
+# LmNvbTANBgkqhkiG9w0BAQwFAAOCAgEABv+C4XdjNm57oRUgmxP/BP6YdURhw1aV
+# cdGRP4Wh60BAscjW4HL9hcpkOTz5jUug2oeunbYAowbFC2AKK+cMcXIBD0ZdOaWT
+# syNyBBsMLHqafvIhrCymlaS98+QpoBCyKppP0OcxYEdU0hpsaqBBIZOtBajjcw5+
+# w/KeFvPYfLF/ldYpmlG+vd0xqlqd099iChnyIMvY5HexjO2AmtsbpVn0OhNcWbWD
+# RF/3sBp6fWXhz7DcML4iTAWS+MVXeNLj1lJziVKEoroGs9Mlizg0bUMbOalOhOfC
+# ipnx8CaLZeVme5yELg09Jlo8BMe80jO37PU8ejfkP9/uPak7VLwELKxAMcJszkye
+# iaerlphwoKx1uHRzNyE6bxuSKcutisqmKL5OTunAvtONEoteSiabkPVSZ2z76mKn
+# zAfZxCl/3dq3dUNw4rg3sTCggkHSRqTqlLMS7gjrhTqBmzu1L90Y1KWN/Y5JKdGv
+# spbOrTfOXyXvmPL6E52z1NZJ6ctuMFBQZH3pwWvqURR8AgQdULUvrxjUYbHHj95E
+# jza63zdrEcxWLDX6xWls/GDnVNueKjWUH3fTv1Y8Wdho698YADR7TNx8X8z2Bev6
+# SivBBOHY+uqiirZtg0y9ShQoPzmCcn63Syatatvx157YK9hlcPmVoa1oDE5/L9Uo
+# 2bC5a4CH2RwwggZrMIIE06ADAgECAhEAjEGek78rzqyIBig7dhm9PDANBgkqhkiG
+# 9w0BAQwFADBUMQswCQYDVQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVk
+# MSswKQYDVQQDEyJTZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2MB4X
+# DTI0MTExNDAwMDAwMFoXDTI3MTExNDIzNTk1OVowVzELMAkGA1UEBhMCREUxFjAU
+# BgNVBAgMDU5pZWRlcnNhY2hzZW4xFzAVBgNVBAoMDk1hcnRpbiBXaWxsaW5nMRcw
+# FQYDVQQDDA5NYXJ0aW4gV2lsbGluZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCC
+# AgoCggIBANGfbuacjMHp2wkUsx7FBA1F3xoy/vcNOVrrwbpDy75XZNjUlD9niPag
+# Ij0BNbcrc/s0A92UTRCa12MLQX/viOx+KX+LwvDG7JPTfjBptWJkpRyh2YqwQWEz
+# 1qbxbmRSAu4LkUgrjA06rlN/Nh0dPIm7V5HZe5IOgynTCDjmY64U0FtgHwNUG0fG
+# hu9arh4KzeVTFfTvBHdCvZS1v3bDx5Ta8qvZKz3EiH9i8zhTGAGk7Ujo75ba0AHm
+# abKciCgJ9fua7qIPcD4CGlD0a/bT0bzfLwU+sUkhZTvtNN6ESts+NnTvjFfCuUSS
+# GcZQKTXD4qI21kdpKfRf6+eGonui0HFBlAARKWFZekMoK6eedWdWDC9Va1xwCHFk
+# 73l6J/pWyz9SEJoFnbqzOWd4a0V5MKUjj6Teap9a6h21eMdzyiEByVantdXLCWLC
+# EIUSwBwWSmQLKK97LSyoR+vCIydHLV6UfVLftdxBpq/n5u3grG0he45UTHe8z0wd
+# 2WtpbTLWifkTyLi1qB0jjlMfQtTTzS5tzYwqqrple2mVO7XB0XYKDLeF9JIuQmxx
+# FYCm+m847pW1ziNMb8A7qKo3kzpLB36DjRe2zEEP+BKT2QyqSAnWkPUanmCQec/W
+# 96635iAn3FZxEMkju9yKz2qxfC1XJt44KHnqtNC8L9N/oEm2KJ4RAgMBAAGjggGz
+# MIIBrzAfBgNVHSMEGDAWgBQPKssghyi47G9IritUpimqF6TNDDAdBgNVHQ4EFgQU
+# jHJkCYQeXu4B8TBsHifMjwwIItswDgYDVR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQC
+# MAAwEwYDVR0lBAwwCgYIKwYBBQUHAwMwSgYDVR0gBEMwQTA1BgwrBgEEAbIxAQIB
+# AwIwJTAjBggrBgEFBQcCARYXaHR0cHM6Ly9zZWN0aWdvLmNvbS9DUFMwCAYGZ4EM
+# AQQBMEkGA1UdHwRCMEAwPqA8oDqGOGh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2Vj
+# dGlnb1B1YmxpY0NvZGVTaWduaW5nQ0FSMzYuY3JsMHkGCCsGAQUFBwEBBG0wazBE
+# BggrBgEFBQcwAoY4aHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUHVibGlj
+# Q29kZVNpZ25pbmdDQVIzNi5jcnQwIwYIKwYBBQUHMAGGF2h0dHA6Ly9vY3NwLnNl
+# Y3RpZ28uY29tMCgGA1UdEQQhMB+BHW13aWxsaW5nQGxldGhhbC1mb3JlbnNpY3Mu
+# Y29tMA0GCSqGSIb3DQEBDAUAA4IBgQBnR0EwzCW5YZv4wPWsZZo+1pes1meVmo5n
+# GBt2swsEoBCvRAZwgsJUhnhJlhp69PnIxHqMUZICOBoW2eTxmlu0bCKD9538L8PU
+# 17xJnJ9920Auez/kIfEydTySzu63t2xHrMUPj9uaWO6hSiLnlbr9dT/Wmv62pFpk
+# Ym+NIolAI30yEUC9dKk8+pGyPbvN7X4pggEXX8vQFbQdLR31mEZJSgTCowMulB/Z
+# 6okXLLLNa3bVVWEsXqaBnV0Tm0ItljsRHPHr+Hk3sXTDfrWiKCLMxsIx1JPb1c5z
+# mYHyroLJ7s6YR8zaMHJFZr5x3hHJyw3anbAdG6SmrjyJf609UqYfA0p/66m4o8NA
+# B5XgnuBQK168iw62jKILb5qaKa7zWjjbgOX42wDIIvPRJe80CFW+1TvcfrWC2g9r
+# 9Jai56bZL5vOnuga8Y+in/2aHgJeSLotV4MfeEMzyFmwmD8ROghaIOjNNzbJarBX
+# g7PJ3jHkjHyVyRcyBa7JZzGYsrVGYqkwggaCMIIEaqADAgECAhA2wrC9fBs656Oz
+# 3TbLyXVoMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQGEwJVUzETMBEGA1UECBMK
+# TmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoTFVRoZSBV
+# U0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZp
+# Y2F0aW9uIEF1dGhvcml0eTAeFw0yMTAzMjIwMDAwMDBaFw0zODAxMTgyMzU5NTla
+# MFcxCzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLjAsBgNV
+# BAMTJVNlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgUm9vdCBSNDYwggIiMA0G
+# CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCIndi5RWedHd3ouSaBmlRUwHxJBZvM
+# WhUP2ZQQRLRBQIF3FJmp1OR2LMgIU14g0JIlL6VXWKmdbmKGRDILRxEtZdQnOh2q
+# mcxGzjqemIk8et8sE6J+N+Gl1cnZocew8eCAawKLu4TRrCoqCAT8uRjDeypoGJrr
+# uH/drCio28aqIVEn45NZiZQI7YYBex48eL78lQ0BrHeSmqy1uXe9xN04aG0pKG9k
+# i+PC6VEfzutu6Q3IcZZfm00r9YAEp/4aeiLhyaKxLuhKKaAdQjRaf/h6U13jQEV1
+# JnUTCm511n5avv4N+jSVwd+Wb8UMOs4netapq5Q/yGyiQOgjsP/JRUj0MAT9Yrcm
+# XcLgsrAimfWY3MzKm1HCxcquinTqbs1Q0d2VMMQyi9cAgMYC9jKc+3mW62/yVl4j
+# nDcw6ULJsBkOkrcPLUwqj7poS0T2+2JMzPP+jZ1h90/QpZnBkhdtixMiWDVgh60K
+# mLmzXiqJc6lGwqoUqpq/1HVHm+Pc2B6+wCy/GwCcjw5rmzajLbmqGygEgaj/OLoa
+# nEWP6Y52Hflef3XLvYnhEY4kSirMQhtberRvaI+5YsD3XVxHGBjlIli5u+NrLedI
+# xsE88WzKXqZjj9Zi5ybJL2WjeXuOTbswB7XjkZbErg7ebeAQUQiS/uRGZ58NHs57
+# ZPUfECcgJC+v2wIDAQABo4IBFjCCARIwHwYDVR0jBBgwFoAUU3m/WqorSs9UgOHY
+# m8Cd8rIDZsswHQYDVR0OBBYEFPZ3at0//QET/xahbIICL9AKPRQlMA4GA1UdDwEB
+# /wQEAwIBhjAPBgNVHRMBAf8EBTADAQH/MBMGA1UdJQQMMAoGCCsGAQUFBwMIMBEG
+# A1UdIAQKMAgwBgYEVR0gADBQBgNVHR8ESTBHMEWgQ6BBhj9odHRwOi8vY3JsLnVz
+# ZXJ0cnVzdC5jb20vVVNFUlRydXN0UlNBQ2VydGlmaWNhdGlvbkF1dGhvcml0eS5j
+# cmwwNQYIKwYBBQUHAQEEKTAnMCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2Vy
+# dHJ1c3QuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQAOvmVB7WhEuOWhxdQRh+S3OyWM
+# 637ayBeR7djxQ8SihTnLf2sABFoB0DFR6JfWS0snf6WDG2gtCGflwVvcYXZJJlFf
+# ym1Doi+4PfDP8s0cqlDmdfyGOwMtGGzJ4iImyaz3IBae91g50QyrVbrUoT0mUGQH
+# bRcF57olpfHhQEStz5i6hJvVLFV/ueQ21SM99zG4W2tB1ExGL98idX8ChsTwbD/z
+# IExAopoe3l6JrzJtPxj8V9rocAnLP2C8Q5wXVVZcbw4x4ztXLsGzqZIiRh5i111T
+# W7HV1AtsQa6vXy633vCAbAOIaKcLAo/IU7sClyZUk62XD0VUnHD+YvVNvIGezjM6
+# CRpcWed/ODiptK+evDKPU2K6synimYBaNH49v9Ih24+eYXNtI38byt5kIvh+8aW8
+# 8WThRpv8lUJKaPn37+YHYafob9Rg7LyTrSYpyZoBmwRWSE4W6iPjB7wJjJpH2930
+# 8ZkpKKdpkiS9WNsf/eeUtvRrtIEiSJHN899L1P4l6zKVsdrUu1FX1T/ubSrsxrYJ
+# D+3f3aKg6yxdbugot06YwGXXiy5UUGZvOu3lXlxA+fC13dQ5OlL2gIb5lmF6Ii8+
+# CQOYDwXM+yd9dbmocQsHjcRPsccUd5E9FiswEqORvz8g3s+jR3SFCgXhN4wz7NgA
+# nOgpCdUo4uDyllU9PzCCBqcwggSPoAMCAQICEQCQrAhyIP3Fp8RrXMcN9z0GMA0G
+# CSqGSIb3DQEBDAUAMFcxCzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExp
+# bWl0ZWQxLjAsBgNVBAMTJVNlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgUm9v
+# dCBSNDYwHhcNMjYwMzI1MDAwMDAwWhcNNDEwMzI0MjM1OTU5WjBVMQswCQYDVQQG
+# EwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMSwwKgYDVQQDEyNTZWN0aWdv
+# IFB1YmxpYyBUaW1lIFN0YW1waW5nIENBIFI0MTCCAiIwDQYJKoZIhvcNAQEBBQAD
+# ggIPADCCAgoCggIBAK7kSqIBrYIcYvlmLVuaA8zw1RfBhkn4G1CoemzjcYtML6yN
+# UvKmwGH7y6/5MuSC1UYP/+9KYDSqvMQt/1hEKHYxMAD9oZpBkoaDQFEKbOJHelsK
+# e+BaO0ZcENTKfePcraVkA7wrGAW2XHA5gQCQv4IKori/3PNOXxnDMOk8yIMgVrlM
+# eTxqfWJ4XkjT1xc2s9DD7URHWWJOFobTPoWs6mrDFlaY9FlAHDYTfbzvxQHVsvRm
+# n3W+5ZmCwyk02I8KgGPT/UX4sTz41GiR+ppwUjQXa1+2tEHZbsdAKUtH3OPEVtZv
+# lt7atx4h83IdRR8oYi8wjY3OjFKXFecWpQbzzsPxbUKPwMWiTrzwkrFa8dH/1pDK
+# RJt371W62PfqKPayCr/XbnBOlRn8CALSmHnRtGzuAWtTJpcT3BKw6oy8IIL6wSbu
+# 938F6ZIbRNIc1dKbIJtr4ULN6R5ZfTdNEhwXctqp3RHDbg4fuOl6LjNoaFwjud92
+# EEDhzxFJzE1jqN4csceZIwxOT1aqfsfh0uFQE/lgTBuBs3i6/WL2W1OceWLy3XEd
+# XRK1f0EWCuea6dNfX2RRdjUfk5EltFnJkN2+bWhnK14OPRKcyjOv5hKZ0iV4NRNd
+# 1+hjtva1rPyzb5Bs7EvFxqEQhgZbOq7qH3nm0rBwA0dxniBOYCFPdu246JCxAgMB
+# AAGjggFuMIIBajAfBgNVHSMEGDAWgBT2d2rdP/0BE/8WoWyCAi/QCj0UJTAdBgNV
+# HQ4EFgQUOnSlDGfGQlDC/bX8x7spNIL0erkwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+# EwEB/wQIMAYBAf8CAQAwEwYDVR0lBAwwCgYIKwYBBQUHAwgwIwYDVR0gBBwwGjAI
+# BgZngQwBBAIwDgYMKwYBBAGyMQECAQMIMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6
+# Ly9jcmwuc2VjdGlnby5jb20vU2VjdGlnb1B1YmxpY1RpbWVTdGFtcGluZ1Jvb3RS
+# NDYuY3JsMHwGCCsGAQUFBwEBBHAwbjBHBggrBgEFBQcwAoY7aHR0cDovL2NydC5z
+# ZWN0aWdvLmNvbS9TZWN0aWdvUHVibGljVGltZVN0YW1waW5nUm9vdFI0Ni5wN2Mw
+# IwYIKwYBBQUHMAGGF2h0dHA6Ly9vY3NwLnNlY3RpZ28uY29tMA0GCSqGSIb3DQEB
+# DAUAA4ICAQAy3lJHZvGeA2b43yhzoarvobHVzbfl+RfuPDwej0wCQkYAN6scTt2G
+# wFe22qbOCv/tllqFlLKQZE+E9jVyuPTbyQHwrM7R0oLapAEDC1+CowsqSRf/ptir
+# a5Pfd4PoHICnb9coPQtyZmHSQp5y9IGvqWf1qNfq7V2fHZ8DvEQrLUzeoGF9BJRY
+# u2OzacW3QQtUum3NOVf0gPRwv6I4991uhncJ6VP4lcpUpHZKB7R3hiIUC09mR9Kj
+# zPVnXHvL9n2bAwiUECfK5Zezhiw27F2tgi39DETfU8M4n0N6xLgFzsf05M5GURX8
+# C9+IX9V6kpmmKtrUzMti4LD66gtmf+mSm934K81NL6YQeMEk1rpYrWPypcW76Mir
+# 6wb1AgseLIHqn/GkeuQm7zOTDf3f5WoX14qVNjZWNHF3JxkutV6ZnhinfCLfdv5b
+# nwKWUfceqOajCVntI6uCbHxjBg6SCsexc5AfIGno7gVFvwifT4XONPsSUaJ71XsJ
+# +EvciVUVnjOO4qxm0fWJTd8a7jP8mc4ZPqwJvQFtOp7+6G+kUJAF0fnE8YgD8utt
+# BReNTa1YmAeFMiqc38e8fI4eLm0zjM/eeGCHasnoqqrbGwcF41iz9HXzFDwN4iD5
+# z3QShp6HRiU3UpTwDJiiXcr0z6pjl7PyzJ3/tmWtGehV7CAfc/WlyzCCBuIwggTK
+# oAMCAQICEQDnTvJVsFBP+tum3/f8i6MVMA0GCSqGSIb3DQEBDAUAMFUxCzAJBgNV
+# BAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMTI1NlY3Rp
+# Z28gUHVibGljIFRpbWUgU3RhbXBpbmcgQ0EgUjQxMB4XDTI2MDMyNTAwMDAwMFoX
+# DTM3MDYyNDIzNTk1OVowcjELMAkGA1UEBhMCR0IxFzAVBgNVBAgTDkdyZWF0ZXIg
+# TG9uZG9uMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxMDAuBgNVBAMTJ1NlY3Rp
+# Z28gUHVibGljIFRpbWUgU3RhbXBpbmcgU2lnbmVyIFIzNzCCAiIwDQYJKoZIhvcN
+# AQEBBQADggIPADCCAgoCggIBALL/w21L3FDZRS0FEXfZuPtUrefibnRSqOT/NNyJ
+# LOJhXjQfUspqHT+gSSVgbjYThUI/cO+wFQHoOakKQNnSMKdkE8gR69ofXlkk5DAV
+# Y/ZlevliOUmlvrw2Vuz4SU28rHfb/Vgd17eqpRIvJuO6XE8vPpPzn4c4iorszUF6
+# nwuynKEQ/+rqfDmQbFNKsa+5+Z4f4kXwKdUFxUwUDjQWUhiHRwMlUWGF9N91aAvL
+# +9a4sxCgqR/ez8W8HJ/XqvSu1vIeb+J6bDFKKgkv3PJkMMpQ0BsdeXR2FejZXFRX
+# Y1w9dZe6gqyMv7px+TpWbYMefECUV0WxoEMgXUk6RKcLo94uUHOdmfZu4Xe8ghgl
+# yro3/N4VEKTj8dcPPvOBGxFEx1QH6uHKTkWhloGPDScurcZnd8KUtTHl6zmlQDHM
+# 04MwGfsmQViKnYEAYE8RHl5XRE6GTq0ZMb59SIyJX6+CODVic/kW+dhbIS1Z5AP8
+# HaGne/PRG+12QzSneKDJp3Ot+k4GrmmlWT9iy6FNCQ/32K+d4cAZ+Ll7uWbEn6Z6
+# gE+tEu7MyZvzWvPNsRKMkcyyflFW1zpRyzutwypALXc9Qg7sFsYERNXa58KZXqU9
+# Onc/tck6+adQJFM9tW8xOnE//P5I4eDj84IGGKqzgUD37ihC+WST3DfY0YBKWL0Z
+# aubnAgMBAAGjggGOMIIBijAfBgNVHSMEGDAWgBQ6dKUMZ8ZCUML9tfzHuyk0gvR6
+# uTAdBgNVHQ4EFgQUYRDpehKvUcSF1PLPpHQPUM0gr/gwDgYDVR0PAQH/BAQDAgbA
+# MAwGA1UdEwEB/wQCMAAwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwSgYDVR0gBEMw
+# QTAIBgZngQwBBAIwNQYMKwYBBAGyMQECAQMIMCUwIwYIKwYBBQUHAgEWF2h0dHBz
+# Oi8vc2VjdGlnby5jb20vQ1BTMEoGA1UdHwRDMEEwP6A9oDuGOWh0dHA6Ly9jcmwu
+# c2VjdGlnby5jb20vU2VjdGlnb1B1YmxpY1RpbWVTdGFtcGluZ0NBUjQxLmNybDB6
+# BggrBgEFBQcBAQRuMGwwRQYIKwYBBQUHMAKGOWh0dHA6Ly9jcnQuc2VjdGlnby5j
+# b20vU2VjdGlnb1B1YmxpY1RpbWVTdGFtcGluZ0NBUjQxLmNydDAjBggrBgEFBQcw
+# AYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wDQYJKoZIhvcNAQEMBQADggIBAAPq
+# PY3RrM36GXqTpsoHn9TpW5I6z3dkFvc9zPL1W0Egq7j3jtnkbAvRoWeAjGX4ZK4s
+# WsmA+u4EJG8okQmybuS/4tDUI5UIQb21n4hG2vihxShrneWB0VoQ2VLQ3jCCRmRt
+# AQ+/7H7WVKNiH5Pgl4v2ZTOdPsStzpKnl1YuRrmww/+bcZmLqgk909ywIpZqAfub
+# YfbEMYjIckLk90f2mG+L8qaGSS2JJVM02pV5XltZ1fbOFETpRN/PQhwygIv33qUU
+# jJ1fE4ITgw0McMzRqziWdOJP8ocxxw7qXxz1OdRWCalyL1qvUgAFnZTVdSRiMYZK
+# f0wLcQcM/1Xf1W4FW9nff8ERX8RZJGt/TtPuMWmUpf6BCv9Q6o8YyUTtknvZRpSQ
+# 0nLttWXdtwsrN2mMgfMuR//gxVrVXvDzCoK/lbiA6dEZOW53lQwBFtEzwE/FH8Jd
+# hegyYg4PymZOTZrGBEvgsbxe25yEhJ0IdGa1pwCYsarldJhJVMdNcAOU7jyIMqHc
+# czav3wtIXp/SwbXZ3xX0mfsLfANSJ47G4qPgx1atb6GIlTaQXzu/p4fTQeAIUVzZ
+# XT4K984IyfuO7NLjWMtog1wGUpZD98pv+4Mt9Y5bvfPUjaUVjtePy1DVdi0rl5ES
+# NYi0zyOmXVxtA5zzxu1H7RdLZOZugT/XjX69rY9bMYIGQjCCBj4CAQEwaTBUMQsw
+# CQYDVQQGEwJHQjEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMSswKQYDVQQDEyJT
+# ZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEAjEGek78rzqyIBig7
+# dhm9PDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
+# MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCCGevnO7T0gKyA6uemQi50pccFXouHp
+# Vo4Ugx6gcxGUnTANBgkqhkiG9w0BAQEFAASCAgDJW583MF7ZnV+v4FtmKvshkL4A
+# jqcLjA5F3ASxGfPPO1YshwS+rbXZ+nG+jA+WZ37EzHzht/x21YK9g30mAtoZp2a6
+# 5h1Vf17yd7kvvVsPaxrwkLklPcgcjs5dETkURYAy7QIn6Mu2FoNE4ygRJA8GlSQw
+# GXzD3GsVCTgoHDouibmSIq2cJsSWZa9Hxj0gkKqos79OvOVpqp+fLrf5hEFSKoED
+# Ho5BJ94AWMkJy04cyiBJ5l4plumjf+VPUCkD7CLniOzsLXgGWG5+lYsu4CIC1SAk
+# mDfW6fs8kQWDJijM77RmssyGYsuop+gW0X/MJXZtJkXa6e+u9qV9dJ1OJfzfJTzI
+# 4sUpvo6fkiQjc8EwCaF8/2F8Kjrb6hGjWHaJ3NDb+f7tXRyd/wQ9z6xPOfneSfpo
+# F1kjRrqXsM/iWQBu11lYWrMdR86RYFAeKj+T9FYezti2itnIbm38vpNIbQpgn5Sg
+# 76SnwLEUxHi9rD+Lg3y684DU0fep52cpps2rxBwb+06Bmv3fESvfHkeFnrk/OP9I
+# ZpsV4or5++iGYuMhMyYmuCvjPw44POAHdm7Sp68v55qIeXOFcTnO3t32XHbc5goh
+# 8IEY5LI8At96HwM/W+ifeDri4dChdiMfkQNoUWOxGEqhWSHfrV9KCf/AH7Wl6EST
+# A4lrkOJWffDZVCsLp6GCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
+# CzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMT
+# I1NlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgQ0EgUjQxAhEA507yVbBQT/rb
+# pt/3/IujFTANBglghkgBZQMEAgIFAKB5MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
+# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTEwOTEwMTM1MlowPwYJKoZIhvcNAQkEMTIE
+# MEuGoAor9lgmlqa2HW3XYTYZn7E4wI6osNtN0XCPb/zHclsbeg/+8S49nltVuWuq
+# 3jANBgkqhkiG9w0BAQEFAASCAgBOrDHpvFh8bfMHsS9TAy4jreWZzPLvuDnxUPwJ
+# cH48xxMWwqcQi31XVzdsLNlm1jNPdMl8O6wH6LwbYsHdwSaMDoZc9Bcc8oq0Pca7
+# YN/zqmecxARA24kF1yDZxT4Y3Kbiik5SnQ7stqejETI3D62j88EEH7vXv4GWpJC7
+# Lmtytuk7sG8fTkir3y198vyyIkK3Pi7+77n+uKtSUU08hLqT/mZT5y90t9jS9P+2
+# z7p79txpjXvjwka2flNjH9uKpjPvYxZs40vXZl2FWM8Tt30/jzqgLJlB1iyMaNzJ
+# zrjOqEd8Yrzc/B2uce7l9ecubxMOYxvxVGk7P8q0ON/rRfcXa6v1RwQEaGdrbitF
+# EFpHYuYdrHKIZUQZf+ri4H3CNdsuwjp3Y3HdY8O2PbbieiHK6QI95m7LvMKjpIKz
+# Lgjf0X21MJ5YgCfyiYVAji5uN3ZAW0ZGMlaaTH8R3QNUG8sk5WNX0SdRG0YhkaZf
+# 3NTGTrVhEKWQvPbywuWPDBcI2kLsa0nNj62j9fyBWHcil56xFb3w6GB85nxmcOkZ
+# 1jbClxDKww/bMh706mk36NMkiPmDPFRoTrcUTExnDsOwi5GEVguZKQauHtu9nj5n
+# HOPdqJSxf3+sB2rLQOo8xOKb92CPaOjgs5voIob2EDFMuwot3PlPya3pisEn+8Xt
+# 0SJ+Kg==
 # SIG # End signature block

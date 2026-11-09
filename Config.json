@@ -1,0 +1,61 @@
+{
+    "ImportExcel": [
+        {
+            "Name": "ImportExcel - Color Scheme",
+            "URL": "https://github.com/dfinke/ImportExcel",
+            "Note": "Choose your own Excel color scheme (Optional)",
+            "BackgroundColor": "50,60,220",
+            "FontColor": "White"
+        }
+    ],
+    "IPinfo": [
+        {
+            "Name": "IPinfo CLI - Access Token",
+            "URL": "https://ipinfo.io/signup?ref=cli --> Sign up for free",
+            "Note": "Please insert your Access Token here (Default: access_token)",
+            "AccessToken": "access_token"
+        }
+    ],
+    "MemProcFS": [
+        {
+            "Name": "MemProcFS - Forensic Process Skip",
+            "URL": "https://github.com/ufrisk/MemProcFS/wiki/_CommandLine#-forensic-process-skip",
+            "Note": "Short process names (max. 15 characters) to skip in forensic YARA and FindEvil scans (Optional). Copy entries from 'Examples' into 'ForensicProcessSkip' to use them.",
+            "ForensicProcessSkip": [],
+            "Examples": [
+                {
+                    "Process": "MsMpEng.exe",
+                    "Product": "Microsoft Defender"
+                },
+                {
+                    "Process": "NisSrv.exe",
+                    "Product": "Microsoft Defender"
+                }
+            ]
+        }
+    ],
+    "Modules": [
+        {
+            "Name": "MemProcFS-Analyzer - Modules",
+            "Note": "Enable (true) or disable (false) optional analysis modules",
+            "Elasticsearch": false,
+            "ELKImport": false,
+            "MicrosoftDefender": true,
+            "Documents": true,
+            "DFIRBatch": true,
+            "LNK": false,
+            "LNK_Hunt": false,
+            "ImageMount": true,
+            "Modules": true,
+            "Invoke-1768": false,
+            "SecureArchive": true
+        }
+    ],
+    "SecureArchive": [
+        {
+            "Name": "MemProcFS-Analyzer - Secure Archive Container",
+            "Note": "Password of the 7-Zip archive (AES-256, encrypted file names). Double quotes are not allowed.",
+            "Password": "MemProcFS"
+        }
+    ]
+}

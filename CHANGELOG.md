@@ -2,6 +2,33 @@
 
 All changes to MemProcFS-Analyzer will be documented in this file.  
 
+## [1.3.0] - 2026-11-09
+### Added
+- Config.json
+  - Custom Excel Color Scheme
+  - IPinfo CLI
+  - MemProcFS Process Whitelist
+  - Modules Selection
+  - ClamAV Process Whitelist (uses the MemProcFS Process Whitelist)
+  - Archive Password
+- CmdletBinding (Command-Line Parameters: -Memory, -Pagefile, -Yara, -ClamAV, -TimelineCSV, -TimelineXLSX, -OfflineMode, -OutputDir)
+- PowerShell 7 Support
+- Zircolite v4 (incl. Zircolite Viewer Package)
+- 803 YARA Custom Rules
+- Find-WmiPrvSEParentAnomaly.ps1
+- FindEvil Alerts
+  - PRIVATE_RX + HIGH_ENTROPY (Possible Injected Encrypted Payload)
+  - THREAD + BAD_MODULE (Possible Injected Code)
+- FS_Forensic_Amcache (incl. SHA1.txt w/ unique SHA1 hash values)
+- Amcache SQLite Database Support (Inventory*.db via AmcacheParser) - experimental
+- ClamAV: Separate Alert for PUA Detections (requires "DetectPUA yes" in clamd.conf)
+
+### Changed
+- Improved Fingerprinting of Memory Dump (Kernel Fallback for missing Registry Data)
+
+### Fixed
+- Minor fixes and improvements
+
 ## [1.2.1] - 2026-04-20
 ### Added
 - Zircolite v3
