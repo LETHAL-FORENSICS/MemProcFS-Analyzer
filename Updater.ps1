@@ -4,7 +4,7 @@
 # @copyright: Copyright (c) 2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-11-07
+# @date:      2026-11-10
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -1122,24 +1122,13 @@ Function Get-ImportExcel {
 # ImportExcel
 # https://github.com/dfinke/ImportExcel
 
-# Check if PowerShell module 'ImportExcel' exists
-if (Get-Module -ListAvailable -Name ImportExcel) 
-{
-    # Check if multiple versions of PowerShell module 'ImportExcel' exist
-    $Modules = (Get-Module -ListAvailable -Name ImportExcel | Measure-Object).Count
+# Check installed version(s) of PowerShell module 'ImportExcel' (newest first)
+$Installed = @(Get-Module -ListAvailable -Name ImportExcel | Sort-Object Version -Descending)
 
-    if ($Modules -eq "1")
-    {
-        # Check Current Version
-        $CurrentVersion = (Get-Module -ListAvailable -Name ImportExcel).Version.ToString()
-        Write-Output "[Info]  Current Version: ImportExcel v$CurrentVersion"
-    }
-    else
-    {
-        Write-Host "[Info]  Multiple installed versions of PowerShell module 'ImportExcel' found. Uninstalling ..."
-        Uninstall-Module -Name ImportExcel -AllVersions -ErrorAction SilentlyContinue
-        $CurrentVersion = $null
-    }
+if ($Installed.Count -gt 0)
+{
+    $CurrentVersion = $Installed[0].Version.ToString()
+    Write-Output "[Info]  Current Version: ImportExcel v$CurrentVersion"
 }
 else
 {
@@ -1147,53 +1136,47 @@ else
     $CurrentVersion = $null
 }
 
-# Determining latest release on GitHub
-$Repository = "dfinke/ImportExcel"
-$Releases = "https://api.github.com/repos/$Repository/releases"
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$Response = (Invoke-WebRequest -Uri $Releases -UseBasicParsing | ConvertFrom-Json)[0]
-$Tag = $Response.tag_name
-$Published = $Response.published_at
-if ($Published -is [String])
+# Determining latest release on PowerShell Gallery
+try
 {
-    $ReleaseDate = $Published.split('T')[0] # Windows PowerShell
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $Latest = Find-Module -Name ImportExcel -Repository PSGallery -ErrorAction Stop
 }
-else
+catch
 {
-    $ReleaseDate = $Published.ToString("yyyy-MM-dd") # PowerShell 7
+    Write-Host "[Error] PowerShell Gallery is not reachable. ImportExcel was not updated." -ForegroundColor Red
+    Return
 }
-$LatestRelease = $Tag.Substring(1)
+
+$LatestRelease = $Latest.Version.ToString()
+$ReleaseDate = $Latest.PublishedDate.ToString("yyyy-MM-dd")
 
 if ($CurrentVersion)
 {
-    Write-Output "[Info]  Latest Release:  ImportExcel $Tag ($ReleaseDate)"
+    Write-Output "[Info]  Latest Release:  ImportExcel v$LatestRelease ($ReleaseDate)"
 }
 else
 {
-    Write-Output "[Info]  Latest Release: ImportExcel $Tag ($ReleaseDate)"
+    Write-Output "[Info]  Latest Release: ImportExcel v$LatestRelease ($ReleaseDate)"
 }
 
-# Check if ImportExcel needs to be installed
-if ($null -eq $CurrentVersion)
+# Check if ImportExcel needs to be installed or updated
+if (($null -eq $CurrentVersion) -or ([version]$CurrentVersion -lt [version]$LatestRelease))
 {
-    Write-Output "[Info]  Installing ImportExcel v$LatestRelease ..."
-    Install-Module -Name ImportExcel -Scope CurrentUser -Repository PSGallery -Force
-    $CurrentVersion = (Get-Module -ListAvailable -Name ImportExcel).Version.ToString()
-}
-
-# Check if ImportExcel needs to be updated
-if ($CurrentVersion -ne $LatestRelease)
-{
-    # Update PowerShell module 'ImportExcel'
     try
     {
-        Write-Output "[Info]  Updating PowerShell module 'ImportExcel' ..."
-        Uninstall-Module -Name ImportExcel -AllVersions -ErrorAction SilentlyContinue
-        Install-Module -Name ImportExcel -Scope CurrentUser -Repository PSGallery -Force
+        # Install first, so that a failed download doesn't leave the system without ImportExcel
+        Write-Output "[Info]  Installing ImportExcel v$LatestRelease ..."
+        Install-Module -Name ImportExcel -RequiredVersion $LatestRelease -Scope CurrentUser -Repository PSGallery -Force -ErrorAction Stop
+
+        # Remove older versions (only those known to the current PowerShell edition)
+        Get-InstalledModule -Name ImportExcel -AllVersions -ErrorAction SilentlyContinue | Where-Object { [version]$_.Version -lt [version]$LatestRelease } | ForEach-Object {
+            Uninstall-Module -Name ImportExcel -RequiredVersion $_.Version -Force -ErrorAction SilentlyContinue
+        }
     }
     catch
     {
-        Write-Output "PowerShell module 'ImportExcel' is in use. Please close PowerShell session, and run MemProcFS-Analyzer.ps1 again."
+        Write-Host "[Error] ImportExcel could not be installed: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
 else
@@ -1528,7 +1511,7 @@ if (Test-Path "$($RECmd)")
     {
         if (Get-Content "$SCRIPT_DIR\Tools\RECmd\Sync.log" | Select-String -Pattern "No new batch files available" -Quiet)
         {
-            Write-Output "[Info]  No new RECmd Batch Files available."
+            Write-Host "[Info]  No new RECmd Batch Files available." -ForegroundColor Green
         }
     }
 
@@ -2072,12 +2055,11 @@ $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
 #############################################################################################################################################################################################
 #############################################################################################################################################################################################
 
-# [Info]  No new RECmd Batch Files available. --> Green
 # SIG # Begin signature block
 # MIInkAYJKoZIhvcNAQcCoIIngTCCJ30CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBw1YW271pDuf71
-# kdaXWai/PzUfwc9f3jo15P0HEhE9+KCCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBwXKCWFgW/mto7
+# KlX+uj/AcJw/lXjutWc/jYonMIa7EaCCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
 # O5B5FSCJIRwKMA0GCSqGSIb3DQEBDAUAMFYxCzAJBgNVBAYTAkdCMRgwFgYDVQQK
 # Ew9TZWN0aWdvIExpbWl0ZWQxLTArBgNVBAMTJFNlY3RpZ28gUHVibGljIENvZGUg
 # U2lnbmluZyBSb290IFI0NjAeFw0yMTAzMjIwMDAwMDBaFw0zNjAzMjEyMzU5NTla
@@ -2256,34 +2238,34 @@ $Host.UI.RawUI.WindowTitle = "$DefaultWindowsTitle"
 # ZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEAjEGek78rzqyIBig7
 # dhm9PDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCCGevnO7T0gKyA6uemQi50pccFXouHp
-# Vo4Ugx6gcxGUnTANBgkqhkiG9w0BAQEFAASCAgDJW583MF7ZnV+v4FtmKvshkL4A
-# jqcLjA5F3ASxGfPPO1YshwS+rbXZ+nG+jA+WZ37EzHzht/x21YK9g30mAtoZp2a6
-# 5h1Vf17yd7kvvVsPaxrwkLklPcgcjs5dETkURYAy7QIn6Mu2FoNE4ygRJA8GlSQw
-# GXzD3GsVCTgoHDouibmSIq2cJsSWZa9Hxj0gkKqos79OvOVpqp+fLrf5hEFSKoED
-# Ho5BJ94AWMkJy04cyiBJ5l4plumjf+VPUCkD7CLniOzsLXgGWG5+lYsu4CIC1SAk
-# mDfW6fs8kQWDJijM77RmssyGYsuop+gW0X/MJXZtJkXa6e+u9qV9dJ1OJfzfJTzI
-# 4sUpvo6fkiQjc8EwCaF8/2F8Kjrb6hGjWHaJ3NDb+f7tXRyd/wQ9z6xPOfneSfpo
-# F1kjRrqXsM/iWQBu11lYWrMdR86RYFAeKj+T9FYezti2itnIbm38vpNIbQpgn5Sg
-# 76SnwLEUxHi9rD+Lg3y684DU0fep52cpps2rxBwb+06Bmv3fESvfHkeFnrk/OP9I
-# ZpsV4or5++iGYuMhMyYmuCvjPw44POAHdm7Sp68v55qIeXOFcTnO3t32XHbc5goh
-# 8IEY5LI8At96HwM/W+ifeDri4dChdiMfkQNoUWOxGEqhWSHfrV9KCf/AH7Wl6EST
-# A4lrkOJWffDZVCsLp6GCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCCM6sykb5s4jQkOekLe579XWTr2VCUg
+# ckEXOgDCF1lcmzANBgkqhkiG9w0BAQEFAASCAgBE0seksDG97yBIKjPqRU2dM9+o
+# jemxVb6gIVrrdlXqadxcCiR1HvA56pAMowUzKlNp3c7ZFGunXHkPIW+4ApMvUGYK
+# qk/sHZBi+k3akI4OawZxOgVVs7WK+8+Ag5ifNY8mxTQ76xNrDhDhAA41XBoTImxd
+# R7ITpPldNvzUKurw5PfqOZ/bI5h7e/jRwhCXfKha+jvtpBNwK0+e/AIozbNpF7bz
+# m1vTdzfemqHdpeqZfB8V9q07T/Z8vhDnc4aG7/UpyGY3ko8QxzmqMQsB7A5cjDWY
+# ifFF0FZEmaqRfGpxBqxa2CluD16YCkaRhQvgJMc2B+P3Xwq//gQnLZFEHsxF3IYb
+# dpwsCd7awSRp6TqQScHuxV59STCSdjLodmT6dfg/+YynzO7+kljsxOvfX4mJz/Os
+# oFmpcm5zaEAK02gH/te+1IiqbkHUzjFIRVw4RuizqM5pM0XsLfGEi67OEiyrfWCP
+# 44PQkSc7nJqvmg1r1rR8oNBiKsC9GM2bD7CTzWJ4IFrdWQpRingU5I1knU19xgo6
+# Ecok9KJk7RElhA+BdG3pa176b9iuLMfxbghluMIwvhuKEzsMJvvyoJTEiFasI3JN
+# yZoV9gEyAmibP2SDLuK0JmrThb9LJqL3wBl95a6cwz+sGJWsbNJCAu1EhVQLqK2X
+# 4P6mOYijgXqI8yajBKGCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
 # CzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMT
 # I1NlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgQ0EgUjQxAhEA507yVbBQT/rb
 # pt/3/IujFTANBglghkgBZQMEAgIFAKB5MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTEwOTEwMTM1MlowPwYJKoZIhvcNAQkEMTIE
-# MEuGoAor9lgmlqa2HW3XYTYZn7E4wI6osNtN0XCPb/zHclsbeg/+8S49nltVuWuq
-# 3jANBgkqhkiG9w0BAQEFAASCAgBOrDHpvFh8bfMHsS9TAy4jreWZzPLvuDnxUPwJ
-# cH48xxMWwqcQi31XVzdsLNlm1jNPdMl8O6wH6LwbYsHdwSaMDoZc9Bcc8oq0Pca7
-# YN/zqmecxARA24kF1yDZxT4Y3Kbiik5SnQ7stqejETI3D62j88EEH7vXv4GWpJC7
-# Lmtytuk7sG8fTkir3y198vyyIkK3Pi7+77n+uKtSUU08hLqT/mZT5y90t9jS9P+2
-# z7p79txpjXvjwka2flNjH9uKpjPvYxZs40vXZl2FWM8Tt30/jzqgLJlB1iyMaNzJ
-# zrjOqEd8Yrzc/B2uce7l9ecubxMOYxvxVGk7P8q0ON/rRfcXa6v1RwQEaGdrbitF
-# EFpHYuYdrHKIZUQZf+ri4H3CNdsuwjp3Y3HdY8O2PbbieiHK6QI95m7LvMKjpIKz
-# Lgjf0X21MJ5YgCfyiYVAji5uN3ZAW0ZGMlaaTH8R3QNUG8sk5WNX0SdRG0YhkaZf
-# 3NTGTrVhEKWQvPbywuWPDBcI2kLsa0nNj62j9fyBWHcil56xFb3w6GB85nxmcOkZ
-# 1jbClxDKww/bMh706mk36NMkiPmDPFRoTrcUTExnDsOwi5GEVguZKQauHtu9nj5n
-# HOPdqJSxf3+sB2rLQOo8xOKb92CPaOjgs5voIob2EDFMuwot3PlPya3pisEn+8Xt
-# 0SJ+Kg==
+# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMDA1NTEzOVowPwYJKoZIhvcNAQkEMTIE
+# MET9FGk5si/nTiQ714XPLPEx6l2QilmSkhQuJ9p/qRpZnFZlshCX/6gGO0IO5uGg
+# SzANBgkqhkiG9w0BAQEFAASCAgBpGvPqTWqrQ33vyySe3tCrcs6ZnqUXhDN5scJq
+# fEXGmKnOqDe2ZeJiCSa9b0D173nSB6PyFx4WY7v+tFyBbYEPsMcnA6oYc4TWn/i8
+# vqyNDLjkU28W/zBMvF4hGFfE2zjIQwHl2HSS+AQEHPi6xpWpeoumNBn+D7wGwUPi
+# lPrgxG5QiYq3qYqoExvuR+yTtZa9VACkrtP4kyzNj3OJRxK0IRc/wIVGspVNcDPo
+# j91FU1ollpfb7kqJvfPflvxAwxBoY1hJU4zaD16xVbSr4MmlRUs81Ol1alCP3VBt
+# 0igtkbeB7fyF9M+vi4n6Mi1GzYAeFWMfL7Op7DQE3tK3Aa9cREdWvDqCM0n5Guhl
+# u/2ZJWHr/rlp4jqfv3Rp0gkpT+h9avVp8hrs+f9SRLcySyawjSAkVCnP3HnE4fy/
+# TZ+5PtmLN5TNkWN6E4kAfalEAMgQh+1tDyFUVmDxYMgQZfdBTQNuWyO45AQHv0do
+# z7kFOZsIQIfMYfqSlv0a85PpWexSms/Z2tRreYVacN2UyXDqNCB5uCeW+w4qK+RE
+# hmLAQeo+7vM70+QcSBVeGjJBQvjLb5VAxiL2QXLrefMycsqss4cjI0KPWJoNsXud
+# ZAFe1gge7R5bRvQKYnWP1/Sv9ts/4eEq6uagX3VdbuwTtR3g7l906G1XpXfuzcFf
+# /ifQ7w==
 # SIG # End signature block
