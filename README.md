@@ -168,6 +168,13 @@ https://dotnet.microsoft.com/en-us/download/dotnet/10.0
 3. Download and install the latest Windows package of ClamAV.  
 https://www.clamav.net/downloads#otherversions 
 
+> [!WARNING]
+> **Known issue in ClamAV 1.4.5+ and 1.5.3+ (Windows)**  
+> The ClamAV Daemon (clamd) refuses to scan files on volumes without a Windows Mount Manager DOS name, such as the MemProcFS drive (Dokany). Every file is skipped with "File path check failure", and the scan reports 0 infected files although nothing was scanned.  
+> MemProcFS-Analyzer detects this and shows an error instead of a false "0 infected file(s) found".  
+> Workaround: Use [ClamAV 1.4.4](https://github.com/Cisco-Talos/clamav/releases/tag/clamav-1.4.4) (the last version of the 1.4 LTS branch before the regression) until the issue is fixed. Note: This version doesn't include the latest security fixes, and MemProcFS-Analyzer will show "WARNING: Your ClamAV installation is OUTDATED!" (expected). ClamAV 1.5.2 is not recommended (clamd crashed during testing).  
+> https://github.com/Cisco-Talos/clamav/issues/1817
+
 4. First Time Set-Up of ClamAV  
 Launch Windows PowerShell console as Administrator.  
 `cd "C:\Program Files\ClamAV"`  
@@ -227,8 +234,8 @@ https://ericzimmerman.github.io/
 AppCompatCacheParser v2026.10.1.0 (.NET 10)  
 https://ericzimmerman.github.io/  
 
-ClamAV - Download &#8594; Windows &#8594; clamav-1.5.4.win.x64.msi (2026-08-07)  
-https://www.clamav.net/downloads    
+ClamAV - Download &#8594; Windows &#8594; clamav-1.4.4.win.x64.msi (2026-03-04) &#8594; see Known issue in Prerequisites    
+https://www.clamav.net/downloads   
 
 Dokany Library Bundle v2.3.1.1000 (2025-09-28)  
 https://github.com/dokan-dev/dokany/releases/latest &#8594; DokanSetup.exe  

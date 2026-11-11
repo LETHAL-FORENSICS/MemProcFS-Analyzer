@@ -4,7 +4,7 @@
 # @copyright: Copyright (c) 2021-2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-11-09
+# @date:      2026-11-11
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -8932,20 +8932,30 @@ if (Test-Path "$($clamd)")
 
         # PUA (Possibly Unwanted Applications) --> clamd.conf: DetectPUA yes
         New-Item "$OUTPUT_FOLDER\ClamAV\Infected" -ItemType Directory -Force | Out-Null
-        $PUAMatches = Get-Content $LogFile | Select-String -Pattern ": PUA\..* FOUND$" -CaseSensitive
+        $PUAMatches = Get-Content $LogFile -Encoding UTF8 | Select-String -Pattern ": PUA\..* FOUND$" -CaseSensitive
         $PUACount = ($PUAMatches | Measure-Object).Count
         if ($PUACount -gt 0)
         {
             $PUAMatches | ForEach-Object { $_.Line } | Out-File "$OUTPUT_FOLDER\ClamAV\Infected\PUA.txt"
-            Write-Host "[Info]  $PUACount PUA detection(s) found --> ClamAV\Infected\PUA.txt" -ForegroundColor Yellow
+            Write-Host "[Info]  $PUACount PUA detection(s) found" -ForegroundColor Yellow
         }
 
         # FOUND (Infected Files)
-        $InfectedFilesCount = (Get-Content $LogFile | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND|: PUA\..* FOUND" -NotMatch | Measure-Object).Count
-        $InfectedFilesMatches = Get-Content $LogFile | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND|: PUA\..* FOUND" -NotMatch
+        $InfectedFilesCount = (Get-Content $LogFile -Encoding UTF8 | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND|: PUA\..* FOUND" -NotMatch | Measure-Object).Count
+        $InfectedFilesMatches = Get-Content $LogFile -Encoding UTF8 | Select-String -Pattern "FOUND" -CaseSensitive | Select-String -Pattern "Heuristics.Encrypted.* FOUND|: PUA\..* FOUND" -NotMatch
         if ($InfectedFilesCount -eq "0")
         {
-            Write-Host "[Info]  0 infected file(s) found" -ForegroundColor Green
+            # Sanity Check: No detections at all (incl. PUA), but 'File path check failure' errors --> clamd did NOT scan the files on the MemProcFS drive
+            $PathCheckFailures = (Select-String -Path $LogFile -Pattern "File path check failure" -SimpleMatch | Measure-Object).Count
+            if (($PUACount -eq 0) -and ($PathCheckFailures -gt 0))
+            {
+                Write-Host "[Error] ClamAV did NOT scan the files on the MemProcFS drive ($PathCheckFailures 'File path check failure' errors)." -ForegroundColor Red
+                Write-Host "[Error] Known issue in ClamAV 1.4.5+ and 1.5.3+ (https://github.com/Cisco-Talos/clamav/issues/1817). Use ClamAV 1.4.4 or 1.5.2." -ForegroundColor Red
+            }
+            else
+            {
+                Write-Host "[Info]  0 infected file(s) found" -ForegroundColor Green
+            }
         }
         else
         {
@@ -11363,8 +11373,8 @@ Footer
 # SIG # Begin signature block
 # MIInkAYJKoZIhvcNAQcCoIIngTCCJ30CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBSbqyIUjRSQXG1
-# ClwtOrp2IindVL4Y4UEdTVhIR6ggGKCCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAKMXBaGnch/oqJ
+# mAg41fYTttynMgxSxDWc0MSKXiCA26CCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
 # O5B5FSCJIRwKMA0GCSqGSIb3DQEBDAUAMFYxCzAJBgNVBAYTAkdCMRgwFgYDVQQK
 # Ew9TZWN0aWdvIExpbWl0ZWQxLTArBgNVBAMTJFNlY3RpZ28gUHVibGljIENvZGUg
 # U2lnbmluZyBSb290IFI0NjAeFw0yMTAzMjIwMDAwMDBaFw0zNjAzMjEyMzU5NTla
@@ -11543,34 +11553,34 @@ Footer
 # ZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEAjEGek78rzqyIBig7
 # dhm9PDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCBXaP28XYH0NVg8hne1Z5zWfjg6pg39
-# o+uTNjSiBENRCTANBgkqhkiG9w0BAQEFAASCAgANuvzQxGMm8UsDNjowa9FqCinu
-# hBL0wm70Jn/8AN4B+fKebiZj7IdDlvLX9HLlTR6geY75R9mhlkL5sQK+o2O/y/2/
-# ls6TjTEVdZ034rlRIFjL8JGahmoWFesW79tjmYuDyOdXdx/oR8uDReqLrLwlqgDy
-# j4K7nR8KYxndeKFddjalXxh7GNHiGlOVHwWf37JJ23Csg+RSuh3NhT+eBOnARFe1
-# cp0oCh2OXHKtwiEtDL/2NfYHAKT64Us3gMIu43OV/EX1OWNUbTXGzKe2LlBLEgIA
-# 0SdW3cyO67RF75ahxVV3GHXtu/6EkVsUAvMNqcq/O0kjhyHbOeZ5ZFAPNKqlurhz
-# 7spJ7Rj/CUasmHNWR/nzYsMfVmhj/B5JpdhJ8mB5KSHVDVM3NtORmHjlghPdLKrY
-# z1rn3zSoZnJkgS2Qpjt4hBqfys0g6CntKxVSFYbjAw0a2gNC2ntL98p1tFXyqutr
-# TdCxbUU/IgZxPz55bww4G1FabFJxho7nBw09UQeZ0NkLCTSef/qsfZmTku7vSwA/
-# aAjUVY/QcPksr0W4VCmSkq34uDZSe6MQ22fpHOdYhvE7Yb3Ro72C2TedwHMayTDT
-# ao/OkUDrU7JNlpReb3tin+AHgGdi4o5ulP43TiIaNT+Hv+/9M4ZUOrtPY28Vai6q
-# 7Cx9DEMHi0ZW5ks1wqGCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDLES6SlTrvaVu4sOR7RR3rQNcxtdZc
+# LhEC66lfJm0HmjANBgkqhkiG9w0BAQEFAASCAgAVnygUtiyNtqWtQp8ush74eYqA
+# bgQ4JYCuTj3FehO6oWAoMyAtYf9TGoZyYKULbxy9w0jNCaNIq5HCt9aHqkTQw55c
+# oRsOTaNFjBhxK7Xyq+ZvqeQnuw2wdG00/3JKDUrTqU/gNtbUu+x3CF7tKP2o3gS2
+# 2bPno+6B65b7MDHAXu5mKMDbDQtfS2FNwgR99F04pOxr1cztLIpVFajQJ1zjg3F4
+# qirYCHerTKDjJf3PU26AE93AZc7hf56qJZdSvESvlGny5wgaDFrT/cEqNLa+hqIW
+# UyJ5gfds1BDu08CVL5eqJS/BqCBKXWe1R1U2m9eWmBzWDVXGJgfsFTmqrqbXqetr
+# pbBSDVDt/4se6hCPQRHV33RdSUvRsc5DwsUqHZJ+x7MPSOE2py73QkzElLhk1RcG
+# pSSgTmK/jfBauphYh9BNkdIMBfwYEN8NccijZbSaAWyHu14KrvaZm4csYrzOphs8
+# 7LIXzMrbTSSMeEXTmG3rVwWOuNW7Yo3gup94n8yqm3W0OvLm2eQhEhuWKftiG3Yo
+# /S3RWX1TOlnDvO30/E5IN8g/ePhX4ad2E0lXSCNA3j4WkV5iaPuA/P1SkmETEfWB
+# BdvTzDqEu6gVVREJuEc1VSkyimvMSPVuALvOH1Nr9gIdoWA7jOD5Sjs5a9XQNQTP
+# D7FTs4BD+Se5a/4UaqGCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
 # CzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMT
 # I1NlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgQ0EgUjQxAhEA507yVbBQT/rb
 # pt/3/IujFTANBglghkgBZQMEAgIFAKB5MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTEwOTEwMTM1NVowPwYJKoZIhvcNAQkEMTIE
-# MKInqvn6xsFofd7kvk8QxduN/mEeMt+YaK96vw6a03aUrz/g+lfkKtlYkeKlF0l1
-# GTANBgkqhkiG9w0BAQEFAASCAgCCXVRp+c+6+jihPQ/WnJyYm25mpPtgsrTVdMaw
-# 8k7i01Go/Yye4AWmPtjeEkWuraSTNf7ozG62nYdtBbPDdrv0wgdgSpjKXQ9xhjRW
-# O/7VsYlnyB9QmW6C1j83Ib7Tu6aQ4tYKh+aqPYYa7WyuOEH4zgxQqYEGcL/p3com
-# 3VjfcG2BkCz2beSFrtcdxERp2S8FwVzOHTYuQg7pCa6l6/njZApSN7worlzFAwxt
-# cU4kfBQxI2qeHmBOTppyFuYETe1Viz1Pora5tAawv4NW4kgckipHe7ytX2nt5GPc
-# 6zER53CDiCgvIzrzJ8RBtK0XsCAwR5X4L5z8Vvikaa9I/zw59VP7N0DQaUEeifm1
-# ne6Qyk0XqBFOJOHtOAQf5OTFU1hPSmwTc+rAJJr75cKEhmSRGIIYkkXPlcxAhDJ7
-# F0UAzKmAdOw/zcA3nkLhsHYVzUr2B2E4TS39hFAobFuOhApsziHqNm98kYu8LDHZ
-# K/60F0MQo5DREq90rAsV5Rtubc24//22CQTC6tgNLj0j0/I15UaBB+eX40Lr5snv
-# VkmTduwIKBCibsPX3I805roNR2s9g1IPZKg5nC6xCXHwrjaPsgnKmQOhvlluVsDb
-# A1uzGlDt9loMSZELrOy4acXgiOMJG+Ioxf7EXEGn3ic83gSl5kBcNFidy9WbsAMI
-# wLERDQ==
+# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMTA4NDg0MFowPwYJKoZIhvcNAQkEMTIE
+# MMhJ5Jf2mECom60cBd3CCVySI7V4RUeXM/IOsYstxvWBuYiE6mHc5bgcbbbUNxRS
+# ZjANBgkqhkiG9w0BAQEFAASCAgCIzqtjf+TfTKxpKKYwNZwu/l2oclQXl97WnYsF
+# E/3QiJlznxtFXwV1bh0siPowcPjA4TC5szSnmEkHyI4Y1lVVe0oA86U69CCt6JTz
+# +18tRxgzwPgZTjQpk5wJZbEuUgxkRBbV4ZAnU9CDSaKIZuHgVPYlK8PBnaMjTSEW
+# IWhcF52WX3eNd9lbDjPfK1adO4AqwMo8alXIB9dvYLGmhJOwup0ghm8RL5bvvAG+
+# UWoVZiX/xznp5lDzb/lY6xdIfCXJC9KrhGFZWlOB9rx/oD5Ov9G833U9SW/s2GfK
+# fQ8Re42agnsSW3TrCQEOoUEjDHsdWDhEqwRw6wXAV38HlYPNKVH3Vf0wHArmSovH
+# +LJwYLDzipZeI5wllboVdrSYb55OyIvzVrt5hlR0G0oOXiXQ3cU7t2KV8cUhn2m1
+# x7CafT0rT9jbbY23gC3+pvLAq6NLDvEkLbwnzlodAvm27CV3d4S3c4dJrEvDhG2z
+# RX13Z7SFg2YPkuZYbMMMaw9/s8Ohrl6HiqEOd2l5gIovdQHjFBG2q/3LE0sqLeAi
+# 31ti+L3Rnll1aP/f05+/BfcuyljnO7OKylvCx8f3KRBwka4MoK5HYiZyKmaK+0tn
+# m38TNB4jkRphBnaZKHROL2MIRU4NkbImRz+UBamKtNp7QjgZemsMErxQ4SDeiXzi
+# ODu/Ng==
 # SIG # End signature block
