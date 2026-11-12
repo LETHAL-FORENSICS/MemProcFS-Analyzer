@@ -4,7 +4,7 @@
 # @copyright: Copyright (c) 2021-2026 Martin Willing. All rights reserved. Licensed under the MIT license.
 # @contact:   Any feedback or suggestions are always welcome and much appreciated - mwilling@lethal-forensics.com
 # @url:       https://lethal-forensics.com/
-# @date:      2026-11-11
+# @date:      2026-11-12
 #
 #
 # ██╗     ███████╗████████╗██╗  ██╗ █████╗ ██╗      ███████╗ ██████╗ ██████╗ ███████╗███╗   ██╗███████╗██╗ ██████╗███████╗
@@ -29,7 +29,7 @@
 # AppCompatCacheParser v2026.10.1.0 (.NET 10)
 # https://ericzimmerman.github.io/
 #
-# ClamAV - Download --> Windows --> clamav-1.5.4.win.x64.msi (2026-08-07)
+# ClamAV - Download --> Windows --> clamav-1.4.4.win.x64.msi (2026-03-04)
 # https://www.clamav.net/downloads
 # https://docs.clamav.net/manual/Usage/Configuration.html#windows --> First Time Set-Up
 # https://blog.clamav.net/
@@ -8950,7 +8950,7 @@ if (Test-Path "$($clamd)")
             if (($PUACount -eq 0) -and ($PathCheckFailures -gt 0))
             {
                 Write-Host "[Error] ClamAV did NOT scan the files on the MemProcFS drive ($PathCheckFailures 'File path check failure' errors)." -ForegroundColor Red
-                Write-Host "[Error] Known issue in ClamAV 1.4.5+ and 1.5.3+ (https://github.com/Cisco-Talos/clamav/issues/1817). Use ClamAV 1.4.4 or 1.5.2." -ForegroundColor Red
+                Write-Host "[Error] Known issue in ClamAV 1.4.5+ and 1.5.3+ (https://github.com/Cisco-Talos/clamav/issues/1817). Use ClamAV 1.4.4." -ForegroundColor Red
             }
             else
             {
@@ -8962,9 +8962,10 @@ if (Test-Path "$($clamd)")
             ($InfectedFilesMatches | Out-String).Trim() | Out-File "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles.txt"
 
             # Process Whitelist (Config.json)
+            # Note: MemProcFS truncates process names under \name\ to 14 characters (e.g. CPFileAnlyz.exe --> CPFileAnlyz.ex-<PID>).
             if ($ForensicProcessWhitelist)
             {
-                $Processes = ($ForensicProcessWhitelist.Split(",") | ForEach-Object { [regex]::Escape($_) }) -join "|"
+                $Processes = ($ForensicProcessWhitelist.Split(",") | ForEach-Object { [regex]::Escape($_.Substring(0, [Math]::Min($_.Length, 14))) }) -join "|"
                 $Whitelist = "\\name\\($Processes)-\d+\\"
                 Get-Content "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles.txt" | Where-Object {$_ -notmatch $Whitelist} | Out-File "$OUTPUT_FOLDER\ClamAV\Infected\InfectedFiles-filtered.txt"
             }
@@ -11373,8 +11374,8 @@ Footer
 # SIG # Begin signature block
 # MIInkAYJKoZIhvcNAQcCoIIngTCCJ30CAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAKMXBaGnch/oqJ
-# mAg41fYTttynMgxSxDWc0MSKXiCA26CCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCASDw5QFNDn9rt+
+# 6C7ruXp6NdpqIYmBHCbeYwprYnyN9KCCIKQwggYaMIIEAqADAgECAhBiHW0MUgGe
 # O5B5FSCJIRwKMA0GCSqGSIb3DQEBDAUAMFYxCzAJBgNVBAYTAkdCMRgwFgYDVQQK
 # Ew9TZWN0aWdvIExpbWl0ZWQxLTArBgNVBAMTJFNlY3RpZ28gUHVibGljIENvZGUg
 # U2lnbmluZyBSb290IFI0NjAeFw0yMTAzMjIwMDAwMDBaFw0zNjAzMjEyMzU5NTla
@@ -11553,34 +11554,34 @@ Footer
 # ZWN0aWdvIFB1YmxpYyBDb2RlIFNpZ25pbmcgQ0EgUjM2AhEAjEGek78rzqyIBig7
 # dhm9PDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDLES6SlTrvaVu4sOR7RR3rQNcxtdZc
-# LhEC66lfJm0HmjANBgkqhkiG9w0BAQEFAASCAgAVnygUtiyNtqWtQp8ush74eYqA
-# bgQ4JYCuTj3FehO6oWAoMyAtYf9TGoZyYKULbxy9w0jNCaNIq5HCt9aHqkTQw55c
-# oRsOTaNFjBhxK7Xyq+ZvqeQnuw2wdG00/3JKDUrTqU/gNtbUu+x3CF7tKP2o3gS2
-# 2bPno+6B65b7MDHAXu5mKMDbDQtfS2FNwgR99F04pOxr1cztLIpVFajQJ1zjg3F4
-# qirYCHerTKDjJf3PU26AE93AZc7hf56qJZdSvESvlGny5wgaDFrT/cEqNLa+hqIW
-# UyJ5gfds1BDu08CVL5eqJS/BqCBKXWe1R1U2m9eWmBzWDVXGJgfsFTmqrqbXqetr
-# pbBSDVDt/4se6hCPQRHV33RdSUvRsc5DwsUqHZJ+x7MPSOE2py73QkzElLhk1RcG
-# pSSgTmK/jfBauphYh9BNkdIMBfwYEN8NccijZbSaAWyHu14KrvaZm4csYrzOphs8
-# 7LIXzMrbTSSMeEXTmG3rVwWOuNW7Yo3gup94n8yqm3W0OvLm2eQhEhuWKftiG3Yo
-# /S3RWX1TOlnDvO30/E5IN8g/ePhX4ad2E0lXSCNA3j4WkV5iaPuA/P1SkmETEfWB
-# BdvTzDqEu6gVVREJuEc1VSkyimvMSPVuALvOH1Nr9gIdoWA7jOD5Sjs5a9XQNQTP
-# D7FTs4BD+Se5a/4UaqGCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDLjj97mtk5sKRij94ENN84V6myuM9/
+# OKr9qnFWsUXwOjANBgkqhkiG9w0BAQEFAASCAgCERr2WuK2X8BWKmGrhUL23aokE
+# fHlH5WkgVYJzBD90oupo3bnZKwCJM/qEmbovFXNhSSachKl8Pb6hhNa8gitcPleK
+# UUQoMfYwR35rkF5VZiJeVWRQxh1blRrWkIk4PXktcNCz5VolOhvnQaT6T5QP0gr+
+# ffaRUJIA+sR9YCDls6EQfXAY9GvuFFyHjPefUjqI/hHnEU2tPHH6A/qZo3eKpi1p
+# QsbDSFFyqywgjJmEUvRoNgo3o5Yxcr85veho4z2l019jEUrwD+a256KWbdnMZQFX
+# 4ryXajhJfciu4y9ss4g3hZccwJMI/ZVBjC02xSShDwTP+oUNszEHu0mWDIRB5Lpd
+# PojgukFYPwaXpMFlwvQXBNSh3BeuTTiKpg8NdMOYVC213WL31mhwaiyE0y+fyh/Z
+# lhGdBZ0ZaVAWQgC4TIj6TF3e5TqOiH4MSMs1CwqIpjVmNm5PpJoDDs7r0CcsFCkN
+# 2hl15lTlLCOKpYGmI9nMuE51xK9xgwrMLFARwKKmwnQkRzysHPEc72cxJ+wXs8gl
+# 9nI5h0LuLvZuob5DJZvJIN1pfpB8tG5SFaK4Og0KGl8XgGbrqyZfHDQFNY8/20Y6
+# A/NwGiydFX4ww9q6HBuFbwaRuu5knRrsR+96afjFTfrVhpra/6bMIliDZI8kIUyn
+# GBhxMLrmivPJXQpniKGCAyMwggMfBgkqhkiG9w0BCQYxggMQMIIDDAIBATBqMFUx
 # CzAJBgNVBAYTAkdCMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMT
 # I1NlY3RpZ28gUHVibGljIFRpbWUgU3RhbXBpbmcgQ0EgUjQxAhEA507yVbBQT/rb
 # pt/3/IujFTANBglghkgBZQMEAgIFAKB5MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMTA4NDg0MFowPwYJKoZIhvcNAQkEMTIE
-# MMhJ5Jf2mECom60cBd3CCVySI7V4RUeXM/IOsYstxvWBuYiE6mHc5bgcbbbUNxRS
-# ZjANBgkqhkiG9w0BAQEFAASCAgCIzqtjf+TfTKxpKKYwNZwu/l2oclQXl97WnYsF
-# E/3QiJlznxtFXwV1bh0siPowcPjA4TC5szSnmEkHyI4Y1lVVe0oA86U69CCt6JTz
-# +18tRxgzwPgZTjQpk5wJZbEuUgxkRBbV4ZAnU9CDSaKIZuHgVPYlK8PBnaMjTSEW
-# IWhcF52WX3eNd9lbDjPfK1adO4AqwMo8alXIB9dvYLGmhJOwup0ghm8RL5bvvAG+
-# UWoVZiX/xznp5lDzb/lY6xdIfCXJC9KrhGFZWlOB9rx/oD5Ov9G833U9SW/s2GfK
-# fQ8Re42agnsSW3TrCQEOoUEjDHsdWDhEqwRw6wXAV38HlYPNKVH3Vf0wHArmSovH
-# +LJwYLDzipZeI5wllboVdrSYb55OyIvzVrt5hlR0G0oOXiXQ3cU7t2KV8cUhn2m1
-# x7CafT0rT9jbbY23gC3+pvLAq6NLDvEkLbwnzlodAvm27CV3d4S3c4dJrEvDhG2z
-# RX13Z7SFg2YPkuZYbMMMaw9/s8Ohrl6HiqEOd2l5gIovdQHjFBG2q/3LE0sqLeAi
-# 31ti+L3Rnll1aP/f05+/BfcuyljnO7OKylvCx8f3KRBwka4MoK5HYiZyKmaK+0tn
-# m38TNB4jkRphBnaZKHROL2MIRU4NkbImRz+UBamKtNp7QjgZemsMErxQ4SDeiXzi
-# ODu/Ng==
+# BwEwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMjA3MjQxOVowPwYJKoZIhvcNAQkEMTIE
+# MIHe866i1ViXz7a71InwwfEaxy3oCgm9OTMj4c0B7nTh7fjaAbxoyyh8AQ1hFmDr
+# YjANBgkqhkiG9w0BAQEFAASCAgAhqoflddRX5izw64/3w7xE5oo0dineRxyKfOdJ
+# oQNmGVbL4yxpRHHmGrWRZALEwVKzrPceu5fljnOLwUJnkwnJaXcbgHfxeSjg+EGZ
+# /N0XUuoZVf74KQZvwn7FCcEKrB2Tzh/6+BtxOfDLVviswKCo2OR9xdFLM4uZxwyo
+# gTCNu1bl8GtyxlmbZ3jl7fQe741djITs/iMXb3h35XIY7jE7XeN/h8esrIj2R3QY
+# XUOkQVrHlDLZskMbIr0q4m8T96lAuOM/duZjlHKd5FWflBrMBAuJaAY8Rg/nbe/J
+# bWVFoT72TIWgUjs/KwTGc2v5MGX1auZIJv83bKaMwnirqzJhlXmzUF4u7jvXrTOS
+# eZJd0ZKaPRntK/RVSkUS8oJzBzmRX+zI8Fgl2HNDZed3Y2BJ3inmKPn9TFX0fDbY
+# kCVi0JRskxe41vR/HdNkrdhGHJ15wyhrzFPWTpOjnwA/wr68d6LjrLRWyz33lvfj
+# y7hwsaSNWEuDA/Lf5GEBng3NAz0VwNWdt9YB4kn1Y+zBW0AcqPjU/dl5ioHi+CLs
+# 3/sr0Rof82NrYEOnHFl4dGRwD3hMUhVp2Mj+LSgwl0EAkx+6fzzNbh2JExSCiqWf
+# nc5cIuJyBeVQf2aaa07zZ/qNKUghIfqHDagr8ZaAJySg4h9gL44UaFYw+w/YsIlv
+# NSfu0g==
 # SIG # End signature block
